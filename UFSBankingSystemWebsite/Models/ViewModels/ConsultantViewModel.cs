@@ -2,9 +2,9 @@ namespace UFSBankingSystem.Models.ViewModels
 {
     public class ConsultantViewModel
     {
-        public IQueryable<AppUser> appUsers { get; set; }
+        public IQueryable<User> appUsers { get; set; }
         public IEnumerable<LoginSessions> loginSessions { get; set; }
-        public AppUser SelectedUser { get; set; }
+        public User SelectedUser { get; set; }
     }
 
     public class ConsultantDepositModel

@@ -12,13 +12,13 @@ namespace UFSBankingSystem.Controllers
     public class AccountController : Controller
     {
 
-        private readonly UserManager<AppUser> userManager;
-        private readonly SignInManager<AppUser> signInManager;
+        private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IRepositoryWrapper wrapper;
         private readonly string role = "User";
 
-        public AccountController(UserManager<AppUser> _userManager, SignInManager<AppUser> _signInManager,
+        public AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager,
             RoleManager<IdentityRole> _roleManager, IRepositoryWrapper _wrapper)
         {
             userManager = _userManager;
@@ -43,7 +43,7 @@ namespace UFSBankingSystem.Controllers
                 if (await roleManager.FindByNameAsync(role) == null)
                     await roleManager.CreateAsync(new(role));
 
-                AppUser user = new()
+                User user = new()
                 {
                     UserName = (registerModel.LastName + registerModel.FirstName).Substring(0, 10),
                     IDnumber = registerModel.IdPassportNumber,
@@ -237,7 +237,7 @@ namespace UFSBankingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser user = await userManager.FindByEmailAsync(model.Email);
+                User user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
                     var result = await signInManager.PasswordSignInAsync

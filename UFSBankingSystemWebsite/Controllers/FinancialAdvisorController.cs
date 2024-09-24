@@ -10,10 +10,10 @@ namespace UFSBankingSystem.Controllers
     [Authorize(Roles = "FAdvisor")]
     public class FinAdvisorController : Controller
     {
-        private readonly UserManager<AppUser> userManager;
+        private readonly UserManager<User> userManager;
         private readonly IRepositoryWrapper wrapper;
 
-        public FinAdvisorController(UserManager<AppUser> _userManager, IRepositoryWrapper wrapper)
+        public FinAdvisorController(UserManager<User> _userManager, IRepositoryWrapper wrapper)
         {
             userManager = _userManager;
             this.wrapper = wrapper;
@@ -25,7 +25,7 @@ namespace UFSBankingSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<AppUser> lstUsers = new List<AppUser>();
+            List<User> lstUsers = new List<User>();
             foreach (var user in userManager.Users)
             {
                 if (await userManager.IsInRoleAsync(user, "User"))

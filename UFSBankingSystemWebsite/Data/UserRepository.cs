@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace UFSBankingSystem.Data
 {
-    public class UserRepository : RepositoryBase<AppUser>, IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
         private readonly AppDbContext _context;
 

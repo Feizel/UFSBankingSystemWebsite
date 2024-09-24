@@ -10,9 +10,9 @@ namespace UFSBankingSystem.Controllers
     public class CustomerController : Controller
     {
         private readonly IRepositoryWrapper _repo;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public CustomerController(IRepositoryWrapper repo, UserManager<AppUser> userManager)
+        public CustomerController(IRepositoryWrapper repo, UserManager<User> userManager)
         {
             _repo = repo;
             _userManager = userManager;

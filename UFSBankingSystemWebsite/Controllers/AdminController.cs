@@ -15,10 +15,10 @@ namespace UFSBankingSystem.Controllers
     public class AdminController : Controller
     {
         private readonly IRepositoryWrapper _wrapper;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly string role = "User";
 
-        public AdminController(IRepositoryWrapper wrapper, UserManager<AppUser> userManager)
+        public AdminController(IRepositoryWrapper wrapper, UserManager<User> userManager)
         {
             _wrapper = wrapper;
             _userManager = userManager;
@@ -43,7 +43,7 @@ namespace UFSBankingSystem.Controllers
         }
         public async Task<IActionResult> ViewCustomer()
         {
-            List<AppUser> lstUsers = new List<AppUser>();
+            List<User> lstUsers = new List<User>();
             foreach (var user in _userManager.Users)
             {
                 if (await _userManager.IsInRoleAsync(user, "User"))
@@ -366,7 +366,7 @@ namespace UFSBankingSystem.Controllers
             if (ModelState.IsValid)
             {
                 // Create the user
-                var user = new AppUser
+                var user = new User
                 {
                     Email = model.EmailAddress,
                     FirstName = model.FirstName,

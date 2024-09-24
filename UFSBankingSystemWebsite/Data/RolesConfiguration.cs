@@ -26,8 +26,8 @@ namespace UFSBankingSystem.Data.SeedData
                 },
                 new IdentityRole
                 {
-                    Name = "FinAdvisor",
-                    NormalizedName = "FINADVISOR"
+                    Name = "FinancialAdvisor",
+                    NormalizedName = "FINANCIALADVISOR"
                 }
             );
         }

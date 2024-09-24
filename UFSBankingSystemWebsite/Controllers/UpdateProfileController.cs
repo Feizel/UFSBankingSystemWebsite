@@ -7,9 +7,9 @@ using UFSBankingSystem.Models;
 public class UpdateProfileController : Controller
 {
     // Inject your DbContext or UserManager (depending on your data storage)
-    private readonly UserManager<AppUser> _userManager;
+    private readonly UserManager<User> _userManager;
 
-    public UpdateProfileController(UserManager<AppUser> userManager)
+    public UpdateProfileController(UserManager<User> userManager)
     {
         _userManager = userManager;
     }

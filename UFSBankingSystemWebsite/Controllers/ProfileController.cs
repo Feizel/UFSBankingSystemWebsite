@@ -1,7 +1,7 @@
 ﻿//using Microsoft.AspNetCore.Identity;
 //using Microsoft.AspNetCore.Mvc;
 //using UFSBankingSystem.Data;
-//using UFSBankingSystem.Models.Entities;
+//using UFSBankingSystem.Models;
 //using UFSBankingSystem.Models.ViewModel;
 
 //namespace UFSBankingSystem.Controllers
@@ -19,16 +19,16 @@
 //        }
 //        public async Task<IActionResult> Index(string Message)
 //        {
-           
+
 //            if (!string.IsNullOrEmpty(Message))
 //                ViewBag.Message = Message;
 //            return View(await userManager.FindByEmailAsync(User!.Identity!.Name));
 
-            
+
 //        }
 //        public async Task<IActionResult> Edit()
 //        {
-           
+
 //            var user = await userManager.FindByEmailAsync(User!.Identity!.Name);
 //            return View(new AppUserViewModel
 //            {
@@ -40,7 +40,7 @@
 //        [HttpPost]
 //        public async Task<IActionResult> Edit(AppUserViewModel user)
 //        {
-           
+
 //            if (!ModelState.IsValid)
 //            {
 //                return View(user);
@@ -58,13 +58,13 @@
 //        }
 //        public IActionResult ChangePassword()
 //        {
-           
+
 //            return View();
 //        }
 //        [HttpPost]
 //        public async Task<IActionResult> ChangePassword(PasswordChangeModel model)
 //        {
-           
+
 //            if (!ModelState.IsValid)
 //            {
 //                return View(model);

@@ -4,7 +4,7 @@ namespace UFSBankingSystem.Models.ViewModels
 {
     public class FinancialAdvisorViewModel
     {
-        public AppUser CurrentUser { get; set; }
+        public User CurrentUser { get; set; }
         public List<Transactions> Transactions { get; set; }
         public BankAccount CurrentUserBankAccount { get; set; }
     }

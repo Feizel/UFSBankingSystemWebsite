@@ -4,8 +4,8 @@
     {
         public string CurrentPage { get; set; }
         public List<Transactions> Transactions { get; set; } = new List<Transactions>();
-        public List<AppUser> Consultants { get; set; } = new List<AppUser>();
-        public List<AppUser> FinAdvisor { get; set; } = new List<AppUser>();
-        public List<AppUser> Users { get; set; } = new List<AppUser>();
+        public List<User> Consultants { get; set; } = new List<User>();
+        public List<User> FinAdvisor { get; set; } = new List<User>();
+        public List<User> Users { get; set; } = new List<User>();
     }
 }

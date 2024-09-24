@@ -3,7 +3,7 @@ using UFSBankingSystem.Models.ViewModels.Admin;
 
 namespace UFSBankingSystem.Data.Interfaces
 {
-    public interface IUserRepository : IRepositoryBase<AppUser>
+    public interface IUserRepository : IRepositoryBase<User>
     {
         Task<List<UserViewModel>> GetAllUsersAndBankAccount();
     }
