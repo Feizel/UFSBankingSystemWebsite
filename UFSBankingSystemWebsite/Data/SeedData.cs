@@ -1,12 +1,17 @@
 using UFSBankingSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace UFSBankingSystem.Data.SeedData
 {
     public static class SeedData
     {
         private static readonly string password = "@TestApp123";
+
         private static readonly User Admin = new User
         {
             UserName = "_Admin",
@@ -19,6 +24,7 @@ namespace UFSBankingSystem.Data.SeedData
             AccountNumber = "0000000001",
             UserRole = "Admin"
         };
+
         private static readonly User Customer = new User
         {
             UserName = "_Customer",
@@ -29,8 +35,9 @@ namespace UFSBankingSystem.Data.SeedData
             IDnumber = "0206151810182",
             StudentStaffNumber = "7432108965",
             AccountNumber = "0000000002",
-            UserRole = "Admin"
+            UserRole = "Customer"
         };
+
         private static readonly User Consultant = new User
         {
             UserName = "_Consultant",
@@ -43,11 +50,12 @@ namespace UFSBankingSystem.Data.SeedData
             AccountNumber = "0000000003",
             UserRole = "Consultant"
         };
+
         private static readonly User FinancialAdvisor = new User
         {
             UserName = "_Financial Advisor",
-            FirstName= "Millicent",
-            LastName= "Kruger",
+            FirstName = "Millicent",
+            LastName = "Kruger",
             Email = "millicent@ufs.ac.za",
             DateOfBirth = DateTime.Now,
             IDnumber = "9204247204082",
@@ -55,56 +63,62 @@ namespace UFSBankingSystem.Data.SeedData
             AccountNumber = "0000000004",
             UserRole = "FinancialAdvisor"
         };
+
         public static async Task EnsurePopulatedAsync(IApplicationBuilder app)
         {
-            AppDbContext context = app.ApplicationServices.CreateScope()
-               .ServiceProvider.GetRequiredService<AppDbContext>();
+            using var serviceScope = app.ApplicationServices.CreateScope();
 
-            UserManager<User> userManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
-            RoleManager<IdentityRole> roleManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+            // Apply any pending migrations
             if (context.Database.GetPendingMigrations().Any())
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
 
-            if (await userManager.FindByNameAsync(Consultant.UserName) == null)
+            // Seed roles and users
+            await SeedRolesAndUsersAsync(userManager, roleManager);
+        }
+
+        private static async Task SeedRolesAndUsersAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            // Seed Admin role and user
+            await SeedUserAsync(Admin, userManager, roleManager);
+
+            // Seed Customer role and user
+            await SeedUserAsync(Customer, userManager, roleManager);
+
+            // Seed Consultant role and user
+            await SeedUserAsync(Consultant, userManager, roleManager);
+
+            // Seed Financial Advisor role and user
+            await SeedUserAsync(FinancialAdvisor, userManager, roleManager);
+        }
+
+        private static async Task SeedUserAsync(User user, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            // Check if the role exists; if not, create it
+            if (await roleManager.FindByNameAsync(user.UserRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(user.UserRole));
+
+            // Check if the user exists; if not, create it
+            if (await userManager.FindByEmailAsync(user.Email) == null)
             {
-
-                if (await roleManager.FindByNameAsync(Consultant.UserRole) == null)
-                    await roleManager.CreateAsync(new(Consultant.UserRole));
-
-                IdentityResult result = await CreateDefaultAppUser(Consultant, userManager);
+                var result = await CreateDefaultAppUser(user, userManager);
                 if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Consultant, "Consultant");
-                result = await CreateDefaultAppUser(Admin, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Admin, "Admin");
-            }
-            if(await userManager.FindByEmailAsync(FinancialAdvisor.UserName) == null)
-            {
-                if( await roleManager.FindByNameAsync(FinancialAdvisor.UserRole)== null)
-                    await roleManager.CreateAsync(new(FinancialAdvisor.UserRole));
-                IdentityResult result = await CreateDefaultAppUser(FinancialAdvisor, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(FinancialAdvisor, "FAdvisor");
-                result = await CreateDefaultAppUser(Admin, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Admin, "Admin");
+                {
+                    await userManager.AddToRoleAsync(user, user.UserRole);
+                }
+                else
+                {
+                    // Handle errors (e.g., log them)
+                    throw new Exception($"Failed to create user {user.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
             }
         }
+
         public static async Task<IdentityResult> CreateDefaultAppUser(User user, UserManager<User> userManager)
         {
-            User _user = new()
-            {
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                StudentStaffNumber = user.StudentStaffNumber,
-                AccountNumber = user.AccountNumber,
-                DateOfBirth = user.DateOfBirth,
-                IDnumber = user.IDnumber,
-                UserRole = user.UserRole,
-            };
             return await userManager.CreateAsync(user, password);
         }
     }
