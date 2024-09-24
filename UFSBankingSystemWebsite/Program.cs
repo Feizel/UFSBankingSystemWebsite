@@ -11,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var connString = builder.Configuration.GetConnectionString("Connection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(connString)); // Using SQLite instead of SQL Server below
+
 builder.Services.AddDbContext<AppDbContext>(opts =>
 opts.UseSqlServer(connString, opts =>
 {
