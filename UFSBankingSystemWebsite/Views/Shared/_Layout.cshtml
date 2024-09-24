@@ -3,47 +3,149 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - UFSBankingSystemWebsite</title>
+    <title>@ViewData["Title"] - UFS Banking System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/UFSBankingSystemWebsite.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">UFSBankingSystemWebsite</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+<body class="d-flex flex-column min-vh-100">
+    <div class="wrapper d-flex">
+        <nav id="sidebar" class="bg-primary text-white">
+            <div class="sidebar-header text-center p-3">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/ufs-logo2.png" alt="UFS Logo" class="img-fluid" style="max-height: 50px;" />
+                </a>
+                <h3 class="mt-2">Kovsie Fund Banking</h3>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+            <ul class="list-unstyled components">
+                <!-- Admin Navigation -->
+                <li>
+                    <h5>Admin</h5>
+                    <a asp-controller="Admin" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a asp-controller="AdminDashboard" asp-action="ManageUser">
+                        <i class="fas fa-users-cog"></i> Manage Users
+                    </a>
+                    <a asp-controller="AdminDashboard" asp-action="ManageConsultants">
+                        <i class="fas fa-user-tie"></i> Manage Consultants
+                    </a>
+                    <a asp-controller="AdminDashboard" asp-action="ViewCustomer">
+                        <i class="fas fa-chart-bar"></i> View Reports
+                    </a>
+                    <a asp-controller="AdminDashboard" asp-action="Users">
+                        <i class="fas fa-list-alt"></i> System Logs
+                    </a>
+                </li>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - UFSBankingSystemWebsite - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <!-- Consultant Navigation -->
+                <li>
+                    <h5>Consultant</h5>
+                    <a asp-controller="ConsultantDashboard" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a asp-controller="ConsultantDashboard" asp-action="ManageCustomers">
+                        <i class="fas fa-users"></i> Manage Customers
+                    </a>
+                    <a asp-controller="ConsultantDashboard" asp-action="Transactions">
+                        <i class="fas fa-exchange-alt"></i> Assist Transactions
+                    </a>
+                    <a asp-controller="ConsultantDashboard" asp-action="GenerateReports">
+                        <i class="fas fa-file-alt"></i> Generate Reports
+                    </a>
+                    <a asp-controller="ConsultantDashboard" asp-action="CustomerSupport">
+                        <i class="fas fa-headset"></i> Customer Support
+                    </a>
+                </li>
+
+                <!-- Financial Advisor Navigation -->
+                <li>
+                    <h5>Financial Advisor</h5>
+                    <a asp-controller="FinancialAdvisorDashboard" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a asp-controller="FinancialAdvisorDashboard" asp-action="ViewCustomerAccounts">
+                        <i class="fas fa-user-friends"></i> View Customer Accounts
+                    </a>
+                    <a asp-controller="FinancialAdvisorDashboard" asp-action="ProvideAdvice">
+                        <i class="fas fa-comments-dollar"></i> Provide Financial Advice
+                    </a>
+                    <a asp-controller="FinancialAdvisorDashboard" asp-action="FinancialReports">
+                        <i class="fas fa-chart-line"></i> Financial Reports
+                    </a>
+                    <a asp-controller="FinancialAdvisorDashboard" asp-action="ScheduleAppointments">
+                        <i class="fas fa-calendar-alt"></i> Schedule Appointments
+                    </a>
+                </li>
+
+                <!-- Customer (User) Navigation -->
+                <li>
+                    <h5>User Dashboard</h5>
+                    <a asp-controller="CustomerDashboard" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a asp-controller="CustomerDashboard" asp-action="MyAccount">
+                        <i class='fas fa-wallet'></i> Account Overview
+                    </a>
+                    <a asp-controller="CustomerDashboard" asp-action='Transfer'>
+                        <i class='fas fa-exchange-alt'></i> Transfer Funds
+                    </a>
+                    <a asp-controller='CustomerDashboard' asp-action='TransactionHistory'>
+                        <i class='fas fa-history'></i> Transaction History
+                    </a>
+                </li>
+
+                <!-- Common Links -->
+                <!-- These are accessible to all users -->
+                <!-- Example: Support and Privacy -->
+                <li><h5>General</h5></li>
+                <li><a href="@Url.Action("Support", "Home")"><i class='fas fa-question-circle'></i> Support</a></li>
+                <li><a href="@Url.Action("Privacy", "Home")"><i class='fas fa-shield-alt'></i> Privacy</a></li>
+
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div id="content" class="flex-grow-1 d-flex flex-column">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Log in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Register" class="nav-link"><i class="fas fa-user-plus"></i> Register</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <main role="main" class="flex-grow-1 p-4">
+                @RenderBody()
+            </main>
+
+            <footer class="footer mt-auto py-3 bg-light">
+                <div class="container text-center">
+                    <span class="text-muted">&copy; 2024 - UFS Banking System - Feizel Ze Maduna</span>
+                </div>
+            </footer>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        <!-- End of Content Area -->
+    </div><!-- End of Wrapper -->
+    <!-- Scripts -->
+    @section Scripts {
+    // Include any additional scripts here.
+    // Example: Bootstrap JS or custom scripts.
+    }
 </body>
 </html>

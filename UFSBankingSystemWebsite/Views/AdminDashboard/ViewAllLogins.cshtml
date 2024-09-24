@@ -1,0 +1,42 @@
+﻿@model IEnumerable<UFSBankingSystem.Models.LoginSessions>
+
+@{
+    ViewData["Title"] = "All Login Records";
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>Login Records for @Model.FirstOrDefault()?.UserEmail</h1>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Login Time</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var login in Model)
+                {
+                    <tr>
+                        <td>@login.TimeStamp.ToString("g")</td>
+                        <td>@login.UserEmail</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            No login records found for this user.
+        </div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="Index" asp-controller="Admin" class="btn btn-info">Go back</a>
+    </div>
+</div>

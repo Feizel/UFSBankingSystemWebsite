@@ -1,22 +1,83 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --primary-color: #1e3A8A; /* Dark Blue */
+    --secondary-color: #3B82F6; /* Light Blue */
+    --accent-color: #F59E0B; /* Yellow */
+    --text-color: #1F2937; /* Dark Gray */
+    --background-color: #F3F4F6; /* Light Gray */
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Roboto', sans-serif; /* Updated to use Roboto */
+    background-image: url('/images/Picture4.jpg');
+    background-size: cover;
+    color: white;
+}
+
+.wrapper {
+    display: flex;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+    #sidebar.active {
+        margin-left: -250px; /* Hide sidebar */
+    }
+
+    #sidebar .sidebar-header {
+        padding: 20px;
+        background: var(--primary-color);
+        text-align: center;
+    }
+
+    #sidebar ul.components {
+        padding: 20px 0;
+    }
+
+    #sidebar ul li a {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s;
+    }
+
+        #sidebar ul li a:hover {
+            background: var(--secondary-color); /* Change background on hover */
+        }
+
+#content {
+    width: 100%;
+    padding: 20px;
+}
+
+.navbar {
+    padding: 15px 10px;
+    background-color: #fff;
+}
+
+.footer {
+    background-color: #f8f9fa; /* Light footer background */
+}
+
+.card {
+    border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #sidebar {
+        min-width: 200px;
+        max-width: 200px;
+        transition: margin-left 0.3s ease; /* Smooth transition for sidebar */
+    }
+
+    #content {
+        padding: 10px; /* Adjust content padding for smaller screens */
+    }
 }

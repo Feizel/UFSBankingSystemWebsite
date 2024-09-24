@@ -1,8 +1,32 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to Kovsie Fund Banking";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container text-center text-white mt-5">
+    <h1 class="display-4">Welcome to Kovsie Fund Banking</h1>
+    <p class="lead">Experience seamless banking tailored for the University of the Free State community. Our platform provides you with the tools to manage your finances effectively and securely.</p>
+
+    @* <div class="hero-section mt-5">
+        <h2>What We Offer</h2>
+        <p>At Kovsie Fund Banking, we pride ourselves on delivering a range of services that include:</p>
+        <ul class="list-unstyled">
+            <li><i class="fas fa-check"></i> Easy account management for students and staff</li>
+            <li><i class="fas fa-check"></i> Fast, secure transactions at your fingertips</li>
+            <li><i class="fas fa-check"></i> Personalized financial advice from our experts</li>
+            <li><i class="fas fa-check"></i> 24/7 customer support to assist you anytime</li>
+            <li><i class="fas fa-check"></i> Notifications to keep you updated on your transactions</li>
+        </ul>
+    </div> *@
+
+    <div class="mt-5">
+        <h3>Join Us Today!</h3>
+        <p>Sign up now to unlock the full potential of your banking experience.</p>
+        <div class="mt-4">
+            <a asp-action="Register" asp-controller="Account" class="btn btn-primary btn-lg me-3">Register</a>
+            <a asp-action="Login" asp-controller="Account" class="btn btn-secondary btn-lg">Login</a>
+        </div>
+        <div class="animation-container">
+            <img src="~/images/card.gif" alt="Banking Animation" class="img-fluid" />
+        </div>
+    </div>
 </div>

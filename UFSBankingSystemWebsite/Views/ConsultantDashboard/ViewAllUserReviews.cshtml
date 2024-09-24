@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FeedBack>
+
+<h2>User Reviews</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User Email</th>
+                <th>Comment</th>
+                <th>Rating</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td>@review.UserEmail</td>
+                    <td>@review.Comment</td>
+                    @if (review.Rate >= 3)
+                    {
+                        <td class="text-success">@review.Rate</td>
+                    }
+                    else
+                    {
+                        <td class="text-danger">@review.Rate</td>
+                    }
+
+                    <td>@review.dateTime.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No reviews available.</p>
+}
+

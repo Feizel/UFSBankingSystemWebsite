@@ -53,7 +53,7 @@ namespace UFSBankingSystem.Data.SeedData
 
         private static readonly User FinancialAdvisor = new User
         {
-            UserName = "_Financial Advisor",
+            UserName = "_FinancialAdvisor",
             FirstName = "Millicent",
             LastName = "Kruger",
             Email = "millicent@ufs.ac.za",

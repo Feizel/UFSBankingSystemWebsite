@@ -1,0 +1,38 @@
+﻿@model IEnumerable<UFSBankingSystem.Models.Transactions>
+
+<h2>Transaction History</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Transaction Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>From Account</th>
+            <th>To Account</th>
+            <th>Reference</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model)
+        {
+            <tr>
+                <td>@transaction.TransactionDate.ToString("g")</td>
+                <td>@transaction.Amount.ToString("C")</td>
+                <td>
+                    @if (transaction.BankAccountIdSender.ToString() == transaction.UserEmail)
+                    {
+                        <span class="text-danger">Approved</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">Approved</span>
+                    }
+                </td>
+                <td>@transaction.BankAccountIdSender</td>
+                <td>@transaction.BankAccountIdReceiver</td>
+                <td>@transaction.Reference</td>
+            </tr>
+        }
+    </tbody>
+</table>
