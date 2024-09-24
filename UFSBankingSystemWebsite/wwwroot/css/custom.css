@@ -1,20 +1,36 @@
 :root {
-    --primary-color: #1e3A8A; /* Dark Blue */
-    --secondary-color: #3B82F6; /* Light Blue */
-    --accent-color: #F59E0B; /* Yellow */
-    --text-color: #1F2937; /* Dark Gray */
-    --background-color: #F3F4F6; /* Light Gray */
+    --primary-color: #1e3a8a; /* Dark Blue */
+    --secondary-color: #3b82f6; /* Light Blue */
+    --accent-color: #f59e0b; /* Yellow */
+    --text-color: #1f2937; /* Dark Gray */
+    --background-color: #f3f4f6; /* Light Gray */
 }
 
-body {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    body
+
+{
     font-family: 'Roboto', sans-serif; /* Updated to use Roboto */
     background-image: url('/images/Picture4.jpg');
     background-size: cover;
     color: white;
 }
+/*color: var(--text-color);*/
+}
 
-.wrapper {
-    display: flex;
+.hero-section {
+    background-size: cover; /* Cover the entire section */
+    background-position: center; /* Center the image */
+    height: 400px; /* Set a height for the hero section */
+    color: white; /* Change text color for better contrast */
+    display: flex; /* Use flexbox for centering content */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center children vertically */
+    align-items: center; /* Center children horizontally */
+    text-align: center; /* Center text */
 }
 
 #sidebar {
@@ -44,29 +60,112 @@ body {
         display: block;
         color: #fff;
         text-decoration: none;
-        transition: background 0.3s, color 0.3s;
+        transition: background 0.3s;
     }
 
         #sidebar ul li a:hover {
             background: var(--secondary-color); /* Change background on hover */
         }
 
+    #sidebar ul li.active > a {
+        background: var(--secondary-color); /* Active link color */
+    }
+
 #content {
     width: 100%;
     padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
 }
 
 .navbar {
     padding: 15px 10px;
-    background-color: #fff;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+    max-height: 50px;
+    width: auto;
+}
+
+.btn {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    .btn:hover {
+        transform: scale(1.05); /* Slightly enlarge the button */
+    }
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+.card-header {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .footer {
-    background-color: #f8f9fa; /* Light footer background */
+    background-color: #fff;
+    text-decoration-color: black;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.card {
-    border-radius: 10px;
+.animation-container {
+    margin-top: 20px;
+    animation: fadeIn 1s ease-in-out; /* Fade-in effect for the animation */
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.list-unstyled li {
+    margin: 10px 0; /* Space between list items */
 }
 
 /* Responsive Design */
@@ -74,10 +173,13 @@ body {
     #sidebar {
         min-width: 200px;
         max-width: 200px;
-        transition: margin-left 0.3s ease; /* Smooth transition for sidebar */
     }
 
     #content {
-        padding: 10px; /* Adjust content padding for smaller screens */
+        padding: 10px;
+    }
+
+    .navbar {
+        padding: 10px 5px;
     }
 }

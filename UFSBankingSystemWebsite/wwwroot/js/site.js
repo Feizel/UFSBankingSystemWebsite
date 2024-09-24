@@ -15,7 +15,7 @@
         // Optional animation effect for smooth transitions
         $('#content').fadeToggle(300);
 
-        // Add ripple effect to buttons (if desired)
+        // Add ripple effect to buttons 
         $('.btn').on('click', function (e) {
             let x = e.clientX - e.target.offsetLeft;
             let y = e.clientY - e.target.offsetTop;

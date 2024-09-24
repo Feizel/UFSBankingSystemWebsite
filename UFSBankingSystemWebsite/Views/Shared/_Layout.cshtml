@@ -61,7 +61,7 @@
         </nav>
 
         <!-- Main Content Area -->
-        <div id='content' class='flex-grow-1 d-flex flex-column'>
+        <div id="content" class="flex-grow-1 d-flex flex-column">
             <!-- Top Navbar -->
             <nav class='navbar navbar-expand-lg navbar-light bg-light shadow-sm'>
                 <div class='container-fluid'>
@@ -111,7 +111,7 @@
             @RenderBody()
 
             <!-- Footer -->
-            <footer class='footer mt-auto py-3 bg-light'>
+            <footer class="footer mt-auto py-3 bg-light text-white">
                 <div class='container text-center'>
                     &copy; 2024 - UFS Banking System - Feizel Ze Maduna
                 </div>
@@ -119,22 +119,12 @@
 
         </div><!-- End of Content Area -->
     </div><!-- End of Wrapper -->
-    <!-- Scripts -->
-    @section Scripts {
-        // Include any additional scripts here.
-        // Example: Bootstrap JS or custom scripts.
-        // Ensure jQuery and Bootstrap JS are included
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    // Custom script for sidebar toggle functionality
-    $(document).ready(function () {
-    $('#sidebarCollapse').on('click', function () {
-    $('#sidebar').toggleClass('active');
-    const isActive = $('#sidebar').hasClass('active');
-    $(this).attr('aria-expanded', isActive);
-    });
-    });
-    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

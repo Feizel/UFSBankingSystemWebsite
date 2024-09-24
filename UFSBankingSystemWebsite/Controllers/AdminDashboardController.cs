@@ -36,7 +36,7 @@ namespace UFSBankingSystem.Controllers
                 Transactions = transactions,
                 FinAdvisor = finadvisors,
                 Consultants = consultants,
-                Users = users
+                TotalUsers = users
             };
 
             return View(indexPageViewModel);

@@ -26,6 +26,59 @@ namespace UFSBankingSystem.Controllers
             roleManager = _roleManager;
             wrapper = _wrapper;
         }
+        [AllowAnonymous]
+        public IActionResult Login(string returnUrl)
+        {
+            return View(new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Find the user by email
+                User user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // Attempt to sign in the user
+                    var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                    if (result.Succeeded)
+                    {
+                        // Log the login session
+                        var newLogin = new LoginSessions
+                        {
+                            TimeStamp = DateTime.Now,
+                            UserEmail = user.Email,
+                        };
+                        await wrapper.Logins.AddAsync(newLogin);
+                        wrapper.SaveChanges(); // Ensure changes are saved
+
+                        // Redirect based on user role
+                        if (await userManager.IsInRoleAsync(user, "Admin"))
+                            return RedirectToAction("Index", "AdminDashboard");
+                        else if (await userManager.IsInRoleAsync(user, "Consultant"))
+                            return RedirectToAction("Index", "ConsultantDashboard");
+                        else if (await userManager.IsInRoleAsync(user, "FinancialAdvisor"))
+                            return RedirectToAction("Index", "FinancialAdvisorDashboard");
+                        else if (await userManager.IsInRoleAsync(user, "User"))
+                            return RedirectToAction("Index", "CustomerDashboard");
+
+                        // Default redirect
+                        return Redirect(model?.ReturnUrl ?? "/Home/Index");
+                    }
+                }
+            }
+
+            // Add an error message if login fails
+            ModelState.AddModelError("", "Invalid email or password");
+            return View(model);
+        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -221,46 +274,6 @@ namespace UFSBankingSystem.Controllers
             return View(model);
         }
 
-        [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
-        {
-            return View(new LoginViewModel
-            {
-                ReturnUrl = returnUrl,
-            });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                User user = await userManager.FindByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    var result = await signInManager.PasswordSignInAsync
-                        (user, model.Password, isPersistent: model.RememberMe, false);
-                    if (result.Succeeded)
-                    {
-                        var newLogin = new LoginSessions
-                        {
-                            TimeStamp = DateTime.Now,
-                            UserEmail = user.Email,
-                        };
-                        await wrapper.Logins.AddAsync(newLogin);
-                        wrapper.SaveChanges();
-
-                        if (await userManager.IsInRoleAsync(user, "Consultant"))
-                            return RedirectToAction("Index", "Consultant");
-                        return Redirect(model?.ReturnUrl ?? "/Home/Index");
-                    }
-                }
-            }
-            ModelState.AddModelError("", "Invalid email or password");
-            return View(model);
-        }
 
         [AllowAnonymous]
         public async Task<IActionResult> Logout()

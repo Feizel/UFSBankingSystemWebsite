@@ -2,7 +2,51 @@
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
-<h2>Admin Dashboard</h2>
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div>
+    <h4>Welcome, Admin @User.Identity.Name!</h4>
+    <p>You have the following options:</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-users mr-2"></i> Total Users</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="text-center">@Model.TotalUsers</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-chart-line mr-2"></i> Active Transactions</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="text-center">@Model.ActiveTransactions</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fas fa-bell mr-2"></i> Notifications</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @foreach (var notification in Model.Notifications)
+                    {
+                        <li class="list-group-item">@notification.Message</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h3>Transactions</h3>
 <table class="table">
     <thead>
@@ -23,6 +67,8 @@
         }
     </tbody>
 </table>
+
+
 
 <h3>Consultants</h3>
 <ul>
