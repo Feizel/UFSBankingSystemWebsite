@@ -2,7 +2,7 @@
 
 namespace UFSBankingSystem.Data.Interfaces
 {
-    public interface IBankAccountRepository : IRepositoryBase<BankAccount>
+    public interface IAccountRepository : IRepositoryBase<Account>
     {
 
     }

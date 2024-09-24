@@ -9,7 +9,7 @@ namespace UFSBankingSystem.Models.ViewModels
 {
     public class BankAccountViewModel
     {
-        public IEnumerable<BankAccount> BankAccount { get; set; }
+        public IEnumerable<Account> BankAccount { get; set; }
         public IEnumerable<Transactions> Transactions { get; set; }
     }
     public class CashSentViewModel

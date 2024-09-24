@@ -7,7 +7,7 @@
 
         IReviewRepository Review { get; }
         IChargesRepository Charges { get; }
-        IBankAccountRepository BankAccount { get; }
+        IAccountRepository BankAccount { get; }
         ILoginRepository Logins { get; }
         INotificationRepository Notification { get; }
         IUserRepository AppUser { get; }

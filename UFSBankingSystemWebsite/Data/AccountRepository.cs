@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UFSBankingSystem.Data
 {
-    public class BankAccountRepository : RepositoryBase<BankAccount>, IBankAccountRepository
+    public class AccountRepository : RepositoryBase<Account>, IAccountRepository
     {
         private readonly AppDbContext _context;
 
-        public BankAccountRepository(AppDbContext context) : base(context)
+        public AccountRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }

@@ -69,7 +69,7 @@ namespace UFSBankingSystem.Controllers
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, role);
-                    BankAccount bankAccountMain = new()
+                    Account bankAccountMain = new()
                     {
                         AccountNumber = _randomAccount,
                         Balance = 100m,

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UFSBankingSystem.Models
 {
-    public class BankAccount
+    public class Account
     {
         public int Id { get; set; }
         public string AccountNumber { get; set; }

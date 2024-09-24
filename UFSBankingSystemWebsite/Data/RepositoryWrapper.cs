@@ -12,7 +12,7 @@ namespace UFSBankingSystem.Data
         private ITransactionRepository _Transaction;
         private IReviewRepository _Review;
         private INotificationRepository _Notification;
-        private IBankAccountRepository _bankAccount;
+        private IAccountRepository _bankAccount;
         private IUserRepository _appUser;
         private ILoginRepository _logins;
         public RepositoryWrapper(AppDbContext appDbContext)
@@ -20,13 +20,13 @@ namespace UFSBankingSystem.Data
             _appDbContext = appDbContext;
         }
 
-        public IBankAccountRepository BankAccount
+        public IAccountRepository BankAccount
         {
             get
             {
                 if (_bankAccount == null)
                 {
-                    _bankAccount = new BankAccountRepository(_appDbContext);
+                    _bankAccount = new AccountRepository(_appDbContext);
                 }
 
                 return _bankAccount;
