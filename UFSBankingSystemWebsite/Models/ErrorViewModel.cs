@@ -1,4 +1,4 @@
-namespace UFSBankingSystemWebsite.Models
+namespace UFSBankingSystem.Models
 {
     public class ErrorViewModel
     {

@@ -2,8 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disballea</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Admin\" />
+    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\Consultant\" />
+    <Folder Include="Views\FinancialAdvisor\" />
+    <Folder Include="Views\UpdateProfile\" />
+  </ItemGroup>
 
 </Project>
