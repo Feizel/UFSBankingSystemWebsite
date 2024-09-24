@@ -10,18 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var connString = builder.Configuration.GetConnectionString("Connection");
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connString)); // Using SQLite instead of SQL Server below
 
-builder.Services.AddDbContext<AppDbContext>(opts =>
-opts.UseSqlServer(connString, opts =>
-{
-    opts.EnableRetryOnFailure();
-    opts.CommandTimeout(120);
-    opts.UseCompatibilityLevel(110);
-}));
+//builder.Services.AddDbContext<AppDbContext>(opts =>
+//opts.UseSqlServer(connString, opts =>
+//{
+//    opts.EnableRetryOnFailure();
+//    opts.CommandTimeout(120);
+//    opts.UseCompatibilityLevel(110);
+//}));
 
 builder.Services.AddIdentity<User, IdentityRole>(opts =>
 {
