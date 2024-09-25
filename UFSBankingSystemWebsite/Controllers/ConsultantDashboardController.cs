@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using UFS_Banking_System_Website.Models.ViewModels;
+using UFSBankingSystem.Models.ViewModels.Admin;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -16,6 +17,7 @@ namespace UFSBankingSystem.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IRepositoryWrapper _repository;
+        private readonly int currentConsultantId;
 
         public ConsultantDashboardController(UserManager<User> _userManager, IRepositoryWrapper _repository)
         {
@@ -29,8 +31,29 @@ namespace UFSBankingSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Fetch clients managed by the consultant
+            var clientsManaged = await _repository.AppUser.FindByConditionAsync(u => u.IsCustomer && u.ConsultantID == currentConsultantId);
+            var notifications = await _repository.Notification.FindAllAsync();
+
+            // Calculate client satisfaction percentage based on your criteria
+            decimal clientSatisfactionPercentage = CalculateClientSatisfaction(clientsManaged);
+
+            // Create the view model
+            var viewModel = new ConsultantViewModel
+            {
+                ClientsManaged = clientsManaged.Select(c => new EditUserViewModel
+                {
+                    IDNumber = c.IDnumber,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Email = c.Email
+                }).ToList(),
+                Notifications = notifications.ToList(),
+                ClientSatisfactionPercentage = clientSatisfactionPercentage // Set the calculated percentage
+            };
+
             List<User> lstUsers = new List<User>();
-            foreach (var user in _userManager.Users)
+            foreach (var user in _userManager.Users.ToList())
             {
                 if (await _userManager.IsInRoleAsync(user, "User"))
                     lstUsers.Add(user);
@@ -293,8 +316,8 @@ namespace UFSBankingSystem.Controllers
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,
-                StudentNumber = (int?)customer.StudentStaffNumber,
-                EmployeeNumber = (int?)customer.StudentStaffNumber,
+                StudentNumber = (int)customer.StudentStaffNumber,
+                EmployeeNumber = (int)customer.StudentStaffNumber,
                 IDNumber = customer.IDnumber
             };
 
@@ -316,7 +339,7 @@ namespace UFSBankingSystem.Controllers
                 customer.Email = model.Email;
                 customer.StudentStaffNumber = (int)model.StudentNumber;
                 customer.StudentStaffNumber = (int)model.EmployeeNumber;
-                customer.IDnumber = (int)model.IDNumber;
+                customer.IDnumber = model.IDNumber;
 
                 await _repository.AppUser.UpdateAsync(customer);
                 _repository.SaveChanges();
@@ -411,7 +434,11 @@ namespace UFSBankingSystem.Controllers
 
             return RedirectToAction("Transactions");
         }
-
+        private decimal CalculateClientSatisfaction(IEnumerable<User> clients)
+        {
+            // Implement your logic to calculate client satisfaction percentage here.
+            return 75.0m; // Replace with actual calculation logic.
+        }
 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace UFS_Banking_System_Website.Models
+namespace UFSBankingSystem.Models
 {
     public class Statement
     {

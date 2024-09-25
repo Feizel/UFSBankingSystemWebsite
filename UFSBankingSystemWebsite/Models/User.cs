@@ -5,6 +5,7 @@ namespace UFSBankingSystem.Models
 {
     public class User : IdentityUser
     {
+        public int ConsultantID { get; set; } // foreign key
         public DateTime DateOfBirth { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

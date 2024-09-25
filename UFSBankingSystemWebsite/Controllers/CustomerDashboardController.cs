@@ -4,6 +4,10 @@ using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using UFSBankingSystem.Models.ViewModels.Admin;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using UFSBankingSystem.Data;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -11,15 +15,17 @@ namespace UFSBankingSystem.Controllers
     {
         private readonly IRepositoryWrapper _repo;
         private readonly UserManager<User> _userManager;
+        private readonly AppDbContext _context;
 
-        public CustomerDashboardController(IRepositoryWrapper repo, UserManager<User> userManager)
+        public CustomerDashboardController(IRepositoryWrapper repo, UserManager<User> userManager, AppDbContext context)
         {
             _repo = repo;
             _userManager = userManager;
+            _context = context;
         }
         [TempData]
         public string Message { get; set; }
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index()
         {
             // Get the logged-in user's username
             var username = User.Identity.Name;
@@ -47,7 +53,62 @@ namespace UFSBankingSystem.Controllers
             // Return the view with the viewModel
             return View(viewModel);
         }
+        public async Task<IActionResult> ViewAccount(string id)
+        {
+            var account = await _context.BankAccounts.FindAsync(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
 
+            var transactions = await _context.Transactions.Where(t => t.AccountID == int.Parse(id)).ToListAsync();
+
+            var model = new BankAccountViewModel
+            {
+                BankAccount = (IEnumerable<Account>)account,
+                Transactions = transactions
+            };
+
+            return View(model);
+        }
+
+        public IActionResult EditProfile()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(UserProfileModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User) as User;
+
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.StudentStaffNumber = model.StudentNumber;
+                user.StudentStaffNumber = model.EmployeeNumber;
+                user.IDnumber = model.IDNumber;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+
+            return View(model);
+        }
         public async Task<IActionResult> NotificationMessage()
         {
             var username = User.Identity.Name;
@@ -129,11 +190,6 @@ namespace UFSBankingSystem.Controllers
             Message = "There was an error sending the review";
             return View(feedback);
         }
-
-
-
-
-
         public async Task<bool> TransferMoney(string senderAccountNumber, string receiverAccountNumber, decimal amount)
         {
 

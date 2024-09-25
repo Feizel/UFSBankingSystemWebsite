@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace UFSBankingSystem.Controllers
 {
     [Authorize(Roles = "FAdvisor")]
-    public class FinAdvisorController : Controller
+    public class FinancialAdvisorDashboardController : Controller
     {
         private readonly UserManager<User> userManager;
         private readonly IRepositoryWrapper wrapper;
 
-        public FinAdvisorController(UserManager<User> _userManager, IRepositoryWrapper wrapper)
+        public FinancialAdvisorDashboardController(UserManager<User> _userManager, IRepositoryWrapper wrapper)
         {
             userManager = _userManager;
             this.wrapper = wrapper;
@@ -59,7 +59,12 @@ namespace UFSBankingSystem.Controllers
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });
         }
-
+        // View Customer Accounts
+        public async Task<IActionResult> ViewCustomerAccounts()
+        {
+            var users = await wrapper.AppUser.FindAllAsync(); // Fetch all users
+            return View(users);
+        }
 
         [HttpPost]
         public async Task<IActionResult> ProvideAdvice(AdvisorViewModel model)

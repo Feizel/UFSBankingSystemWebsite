@@ -6,7 +6,11 @@ namespace UFSBankingSystem.Models.ViewModels.Admin
     {
         public User AppUser { get; set; }
         public Account BankAccount { get; set; }
-        public string _fullName { get; set; } = string.Empty;
+        public string IDNumber { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string fullName { get; set; }
+        public string Email { get; set; }
     }
 
     // Profile Management Model

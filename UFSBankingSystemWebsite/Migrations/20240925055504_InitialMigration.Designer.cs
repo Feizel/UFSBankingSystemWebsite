@@ -11,7 +11,7 @@ using UFSBankingSystem.Data;
 namespace UFSBankingSystemWebsite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240924121251_InitialMigration")]
+    [Migration("20240925055504_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -48,25 +48,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "404fd9e5-52e5-4ea1-ae5c-158e1bbf9ab7",
+                            Id = "980603fd-cd64-48a9-8a14-82d7557a6afd",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4ff8b77a-f71d-4832-83c6-1e0ee72e5b22",
+                            Id = "783e56c8-6f6f-4de6-91a9-f3357783498d",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "f21cb557-f460-43fb-bb71-c8f5033ac073",
+                            Id = "4d7cff62-45b0-4ea1-945b-cf314a76958a",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "030aaff2-5b15-45d1-b076-78fccc1f57e6",
+                            Id = "e570a6a7-c0e4-4b27-a7f8-09f706e207c6",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });
@@ -187,7 +187,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BankAccountType")
                         .HasColumnType("TEXT");
@@ -195,9 +195,14 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.ToTable("BankAccounts");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("UFSBankingSystem.Models.FeedBack", b =>
@@ -223,6 +228,59 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.ToTable("FeedBacks");
                 });
 
+            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvice", b =>
+                {
+                    b.Property<int>("FinancialAdviceID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Advice")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FinancialAdviceID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FinancialAdvices", (string)null);
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Investment", b =>
+                {
+                    b.Property<int>("InvestmentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("InitialValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("InvestmentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InvestmentType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("InvestmentID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Investments");
+                });
+
             modelBuilder.Entity("UFSBankingSystem.Models.LoginSessions", b =>
                 {
                     b.Property<int>("Id")
@@ -246,6 +304,9 @@ namespace UFSBankingSystemWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("INTEGER");
 
@@ -258,21 +319,79 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Transactions", b =>
+            modelBuilder.Entity("UFSBankingSystem.Models.Report", b =>
+                {
+                    b.Property<int>("ReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ReportID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Statement", b =>
+                {
+                    b.Property<int>("StatementID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("StatementID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Statements");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AccountId")
+                    b.Property<int>("AccountID")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfter")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("BankAccountIdReceiver")
@@ -281,7 +400,13 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<int>("BankAccountIdSender")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Reference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TransactionDate")
@@ -290,11 +415,14 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("transactionType")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountID");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("UFSBankingSystem.Models.User", b =>
@@ -312,6 +440,9 @@ namespace UFSBankingSystemWebsite.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ConsultantID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
@@ -325,8 +456,14 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IDnumber")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("IDnumber")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsConsultant")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCustomer")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
                         .HasColumnType("TEXT");
@@ -357,8 +494,8 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("StudentStaffNumber")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("StudentStaffNumber")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
@@ -379,7 +516,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -433,16 +570,85 @@ namespace UFSBankingSystemWebsite.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Transactions", b =>
+            modelBuilder.Entity("UFSBankingSystem.Models.Account", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.Account", null)
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany("Accounts")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvice", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany("FinancialAdvices")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Investment", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Notification", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Report", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Statement", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.Transaction", b =>
+                {
+                    b.HasOne("UFSBankingSystem.Models.Account", "Account")
                         .WithMany("Transactions")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("UFSBankingSystem.Models.Account", b =>
                 {
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("UFSBankingSystem.Models.User", b =>
+                {
+                    b.Navigation("Accounts");
+
+                    b.Navigation("FinancialAdvices");
+
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

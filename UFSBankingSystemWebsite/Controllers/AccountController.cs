@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
+using System.Data;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -16,7 +17,11 @@ namespace UFSBankingSystem.Controllers
         private readonly SignInManager<User> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IRepositoryWrapper wrapper;
-        private readonly string role = "User";
+        //private readonly string role = "User";
+        private readonly string _customerRole = "Customer";
+        private readonly string _consultantRole = "Consultant";
+        private readonly string _financialAdvisorRole = "FinancialAdvisor";
+        private readonly string _adminRole = "Admin";
 
         public AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager,
             RoleManager<IdentityRole> _roleManager, IRepositoryWrapper _wrapper)
@@ -60,14 +65,24 @@ namespace UFSBankingSystem.Controllers
                         wrapper.SaveChanges(); // Ensure changes are saved
 
                         // Redirect based on user role
-                        if (await userManager.IsInRoleAsync(user, "Admin"))
+                        if (await userManager.IsInRoleAsync(user, _adminRole))
                             return RedirectToAction("Index", "AdminDashboard");
-                        else if (await userManager.IsInRoleAsync(user, "Consultant"))
+                        else if (await userManager.IsInRoleAsync(user, _consultantRole))
                             return RedirectToAction("Index", "ConsultantDashboard");
-                        else if (await userManager.IsInRoleAsync(user, "FinancialAdvisor"))
+                        else if (await userManager.IsInRoleAsync(user, _financialAdvisorRole))
                             return RedirectToAction("Index", "FinancialAdvisorDashboard");
-                        else if (await userManager.IsInRoleAsync(user, "User"))
+                        else if (await userManager.IsInRoleAsync(user, _customerRole))
                             return RedirectToAction("Index", "CustomerDashboard");
+
+                        // Redirect based on user role
+                        //if (await userManager.IsInRoleAsync(user, "Admin"))
+                        //    return RedirectToAction("Index", "AdminDashboard");
+                        //else if (await userManager.IsInRoleAsync(user, "Consultant"))
+                        //    return RedirectToAction("Index", "ConsultantDashboard");
+                        //else if (await userManager.IsInRoleAsync(user, "FinancialAdvisor"))
+                        //    return RedirectToAction("Index", "FinancialAdvisorDashboard");
+                        //else if (await userManager.IsInRoleAsync(user, "User"))
+                        //    return RedirectToAction("Index", "CustomerDashboard");
 
                         // Default redirect
                         return Redirect(model?.ReturnUrl ?? "/Home/Index");
@@ -93,8 +108,14 @@ namespace UFSBankingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await roleManager.FindByNameAsync(role) == null)
-                    await roleManager.CreateAsync(new(role));
+                if (await roleManager.FindByNameAsync(_customerRole) == null)
+                    await roleManager.CreateAsync(new(_customerRole));
+                if (await roleManager.FindByNameAsync(_adminRole) == null)
+                    await roleManager.CreateAsync(new(_adminRole));
+                if (await roleManager.FindByNameAsync(_consultantRole) == null)
+                    await roleManager.CreateAsync(new(_consultantRole));
+                if (await roleManager.FindByNameAsync(_financialAdvisorRole) == null)
+                    await roleManager.CreateAsync(new(_financialAdvisorRole));
 
                 User user = new()
                 {
@@ -121,7 +142,10 @@ namespace UFSBankingSystem.Controllers
                 IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, role);
+                    await userManager.AddToRoleAsync(user, _customerRole);
+                    await userManager.AddToRoleAsync(user, _adminRole);
+                    await userManager.AddToRoleAsync(user, _consultantRole);
+                    await userManager.AddToRoleAsync(user, _financialAdvisorRole);
                     Account bankAccountMain = new()
                     {
                         AccountNumber = _randomAccount,

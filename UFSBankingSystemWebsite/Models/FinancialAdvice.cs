@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UFS_Banking_System_Website.Models
+namespace UFSBankingSystem.Models
 {
     public class FinancialAdvice
     {

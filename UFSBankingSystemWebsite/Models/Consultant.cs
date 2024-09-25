@@ -1,4 +1,6 @@
-﻿namespace UFS_Banking_System_Website.Models
+﻿using UFSBankingSystem.Models;
+
+namespace UFSBankingSystem.Models
 {
     public class Consultant
     {
