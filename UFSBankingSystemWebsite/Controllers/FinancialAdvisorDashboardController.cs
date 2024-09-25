@@ -37,14 +37,22 @@ namespace UFSBankingSystem.Controllers
             });
         }
 
+        // Provide advice
         [HttpGet]
         public async Task<IActionResult> ProvideAdvice(string email)
         {
+            // Check if email is null or empty
+            if (string.IsNullOrEmpty(email))
+            {
+                Message = "Email parameter is missing.";
+                return RedirectToAction("Index", "FinancialAdvisorDashboard");
+            }
+
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 Message = "Could not Find User, Please Try Again";
-                return RedirectToAction("Index", "FinAdvisor");
+                return RedirectToAction("Index", "FinancialAdvisorDashboard");
             }
 
             var allTransactions = (await wrapper.Transactions.GetAllAsync()).Where(t => t.UserEmail == email).ToList();
@@ -59,16 +67,17 @@ namespace UFSBankingSystem.Controllers
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });
         }
-        // View Customer Accounts
-        public async Task<IActionResult> ViewCustomerAccounts()
-        {
-            var users = await wrapper.AppUser.FindAllAsync(); // Fetch all users
-            return View(users);
-        }
 
+        // Provide advice
         [HttpPost]
         public async Task<IActionResult> ProvideAdvice(AdvisorViewModel model)
         {
+            // Validate model state first
+            if (!ModelState.IsValid)
+            {
+                Message = "Invalid data submitted.";
+                return RedirectToAction("Index", "FinancialAdvisorDashboard");
+            }
 
             var user = await userManager.FindByEmailAsync(model.UserEmail);
             if (user != null)
@@ -93,11 +102,18 @@ namespace UFSBankingSystem.Controllers
                 await wrapper.Notification.AddAsync(notify);
                 Message = "Successfully sent advice to user";
                  wrapper.SaveChanges(); // Ensure changes are saved asynchronously
-                return RedirectToAction("Index", "FinAdvisor");
+                return RedirectToAction("Index", "FinancialAdvisorDashboard");
             }
 
             Message = "Failed to send advice to user";
-            return RedirectToAction("Index", "FinAdvisor");
+            return RedirectToAction("Index", "FinancialAdvisorDashboard");
+        }
+
+        // View Customer Accounts
+        public async Task<IActionResult> ViewCustomerAccounts()
+        {
+            var users = await wrapper.AppUser.FindAllAsync(); // Fetch all users
+            return View(users);
         }
 
 

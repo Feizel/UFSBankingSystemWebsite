@@ -18,7 +18,7 @@
     <!-- Clients Table -->
     <div>
         <h4 class="mb-4">
-            <i class="fas fa-users"></i> Clients
+            <i class="fas fa-users"></i> Customers
         </h4>
 
         @if (Model.appUsers.Any())
@@ -42,8 +42,8 @@
                             <td>@user.Email</td>
                             <td>@user.StudentStaffNumber</td>
                             <td>
-                                <a class="btn btn-warning btn-sm" asp-action="Advice" asp-controller="FinAdvisor" asp-route-email="@user.Email">
-                                    <i class="fa-solid fa-comments"></i> Advice Client
+                                <a class="btn btn-warning btn-sm" asp-action="ProvideAdvice" asp-controller="FinancialAdvisorDashboard" asp-route-email="@user.Email">
+                                    <i class="fa-solid fa-comments"></i> Advise Client
                                 </a>
                             </td>
                         </tr>

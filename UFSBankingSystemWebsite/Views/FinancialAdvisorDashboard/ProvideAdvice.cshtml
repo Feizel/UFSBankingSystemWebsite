@@ -1,4 +1,4 @@
-﻿@model AdvisorViewModel
+﻿@model UFSBankingSystem.Models.ViewModels.AdvisorViewModel
 
 <h2>Advice to @Model.CurrentUser?.FirstName @Model.CurrentUser?.LastName</h2>
 
@@ -7,7 +7,7 @@
     <div class="alert alert-info">@ViewBag.Message</div>
 }
 
-<form asp-action="Advice" method="post">
+<form asp-action="ProvideAdvice" method="post">
     <div class="form-group">
         <label asp-for="Advise"></label>
         <textarea asp-for="Advise" class="form-control"></textarea>
@@ -57,3 +57,5 @@ else
 {
     <p>No bank account found for this user.</p>
 }
+
+<a href="@Url.Action("Index", "FinancialAdvisorDashboard")" class="btn btn-secondary">Back to Dashboard</a>
