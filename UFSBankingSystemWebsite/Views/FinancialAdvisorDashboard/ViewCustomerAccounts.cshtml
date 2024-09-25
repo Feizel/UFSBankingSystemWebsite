@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<UFSBankingSystem.Models.User>
 
-<h2>View Customer Accounts</h2>
+<h2>Customer Accounts</h2>
 
 <table class="table text-white">
     <thead>
@@ -19,7 +19,8 @@
                 <td>@customer.LastName</td>
                 <td>@customer.Email</td>
                 <td>
-                    <a asp-controller="FinancialAdvisorDashboard" asp-action="ProvideAdvice" asp-route-userId="@customer.Id" class="btn btn-primary">Provide Advice</a>
+                    @* <a asp-controller="FinancialAdvisorDashboard" asp-action="ProvideAdvice" asp-route-userId="@customer.Id" class="btn btn-primary">Provide Advice</a> *@
+                    <a class="btn btn-primary btn-sm" asp-action="ProvideAdvice" asp-controller="FinancialAdvisorDashboard" asp-route-email="@customer.Email">Provide Advice</a>
                 </td>
             </tr>
         }

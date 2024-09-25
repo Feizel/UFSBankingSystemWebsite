@@ -62,13 +62,21 @@ namespace UFSBankingSystem.Controllers
             {
                 UserEmail = user.Email,
                 CurrentUser = user,
-                Transactions = allTransactions,
-                CurrentUserBankAccount = currentUserBankAccount,
+                Transactions = allTransactions ?? new List<Transaction>(), // Initialize to an empty list if null
+                CurrentUserBankAccount = currentUserBankAccount ?? new Account(), // Initialize to a new Account object if null
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });
+
+            //return View(new AdvisorViewModel
+            //{
+            //    UserEmail = user.Email,
+            //    CurrentUser = user,
+            //    Transactions = allTransactions,
+            //    CurrentUserBankAccount = currentUserBankAccount,
+            //    Advise = string.Empty // Initialize Advise to avoid null values in the view
+            //});
         }
 
-        // Provide advice
         [HttpPost]
         public async Task<IActionResult> ProvideAdvice(AdvisorViewModel model)
         {
@@ -79,33 +87,32 @@ namespace UFSBankingSystem.Controllers
                 return RedirectToAction("Index", "FinancialAdvisorDashboard");
             }
 
+            // Find the user by email
             var user = await userManager.FindByEmailAsync(model.UserEmail);
-            if (user != null)
+            if (user == null)
             {
-                var allTransactions = (await wrapper.Transactions.GetAllAsync()).Where(t => t.UserEmail == model.UserEmail).ToList();
-                var currentUserBankAccount = (await wrapper.BankAccount.GetAllAsync()).FirstOrDefault(ba => ba.UserEmail == model.UserEmail);
-
-                model.CurrentUser = user;
-                model.Transactions = allTransactions;
-                model.CurrentUserBankAccount = currentUserBankAccount;
-            }
-
-            if (!ModelState.IsValid)
-            {
-                var notify = new Notification
-                {
-                    Message = " " + model.Advise,
-                    UserEmail = model.UserEmail,
-                    NotificationDate = DateTime.Now,
-                    IsRead = false
-                };
-                await wrapper.Notification.AddAsync(notify);
-                Message = "Successfully sent advice to user";
-                 wrapper.SaveChanges(); // Ensure changes are saved asynchronously
+                Message = "User not found.";
                 return RedirectToAction("Index", "FinancialAdvisorDashboard");
             }
 
-            Message = "Failed to send advice to user";
+            // Create a notification for the advice
+            var notify = new Notification
+            {
+                Message = model.Advise, // Use the advise from the model
+                UserEmail = model.UserEmail,
+                NotificationDate = DateTime.Now,
+                IsRead = false
+            };
+
+            // Add notification to the repository
+            await wrapper.Notification.AddAsync(notify);
+
+            // Save changes asynchronously
+            wrapper.SaveChanges();
+
+            // Set success message
+            Message = "Successfully sent advice to user";
+
             return RedirectToAction("Index", "FinancialAdvisorDashboard");
         }
 
