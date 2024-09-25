@@ -1,0 +1,28 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace UFS_Banking_System_Website.Models
+{
+    public class Statement
+    {
+        [Key]
+        public int StatementID { get; set; } // Primary key
+
+        [Required]
+        public DateTime Date { get; set; } // Date of the statement
+
+        [Required]
+        [DataType(DataType.Currency)]
+        public decimal Amount { get; set; } // Amount in the statement
+
+        [Required]
+        [StringLength(500)]
+        public string Description { get; set; } // Description of the statement
+
+        [Required]
+        public string UserId { get; set; } // Foreign key to User
+
+        // Navigation property (if needed)
+        public virtual User User { get; set; }
+    }
+}

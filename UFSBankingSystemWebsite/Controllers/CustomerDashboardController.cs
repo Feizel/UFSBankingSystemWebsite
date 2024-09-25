@@ -162,7 +162,7 @@ namespace UFSBankingSystem.Controllers
             await _repo.BankAccount.UpdateAsync(receiverBankAccount);
 
 
-            var transaction = new Transactions
+            var transaction = new Transaction
             {
                 BankAccountIdSender = int.Parse(senderBankAccount.AccountNumber), // Assuming this property exists
                 BankAccountIdReceiver = int.Parse(receiverBankAccount.AccountNumber), // Assuming this property exists

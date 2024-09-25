@@ -1,6 +1,9 @@
 ﻿namespace UFSBankingSystem.Models
 {
-    public class TransactionType
+    public enum TransactionType
     {
+        Deposit,
+        Withdrawal,
+        Transfer
     }
 }

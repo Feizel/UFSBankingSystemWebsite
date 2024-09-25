@@ -1,5 +1,6 @@
 ﻿using UFSBankingSystem.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace UFSBankingSystem.Data
 {
@@ -47,6 +48,31 @@ namespace UFSBankingSystem.Data
             _context.Set<T>().Update(entity);
             await _context.SaveChangesAsync();
 
+        }
+        public async Task<IEnumerable<T>> FindAllAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        public async Task<T> FindByIdAsync(int id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task CreateAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await FindByIdAsync(id);
+            _context.Set<T>().Remove(entity);
+        }
+
+        public async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _context.Set<T>().Where(expression).ToListAsync();
         }
 
     }

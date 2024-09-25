@@ -131,7 +131,7 @@ namespace UFSBankingSystem.Controllers
                         UserEmail = user.Email,
                     };
                     await wrapper.BankAccount.AddAsync(bankAccountMain);
-                    Transactions transaction = new()
+                    Models.Transaction transaction = new()
                     {
                         BankAccountIdReceiver = int.Parse(_randomAccount),
                         Amount = 100m,

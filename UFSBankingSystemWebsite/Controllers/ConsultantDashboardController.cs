@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
+using UFS_Banking_System_Website.Models.ViewModels;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -13,13 +14,13 @@ namespace UFSBankingSystem.Controllers
     [Authorize(Roles = "Consultant,Admin")]
     public class ConsultantDashboardController : Controller
     {
-        private readonly UserManager<User> userManager;
-        private readonly IRepositoryWrapper wrapper;
+        private readonly UserManager<User> _userManager;
+        private readonly IRepositoryWrapper _repository;
 
-        public ConsultantDashboardController(UserManager<User> _userManager, IRepositoryWrapper wrapper)
+        public ConsultantDashboardController(UserManager<User> _userManager, IRepositoryWrapper _repository)
         {
-            userManager = _userManager;
-            this.wrapper = wrapper;
+            _userManager = _userManager;
+            this._repository = _repository;
         }
 
 
@@ -29,9 +30,9 @@ namespace UFSBankingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             List<User> lstUsers = new List<User>();
-            foreach (var user in userManager.Users)
+            foreach (var user in _userManager.Users)
             {
-                if (await userManager.IsInRoleAsync(user, "User"))
+                if (await _userManager.IsInRoleAsync(user, "User"))
                     lstUsers.Add(user);
             }
             return View(new ConsultantViewModel
@@ -42,11 +43,11 @@ namespace UFSBankingSystem.Controllers
 
         public async Task<IActionResult> ViewAllLogins(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var allLogins = await wrapper.Logins.GetAllAsync();
-                var userBankAccount = (await wrapper.BankAccount.GetAllAsync()).FirstOrDefault(bc => bc.AccountNumber == user.AccountNumber);
+                var allLogins = await _repository.Logins.GetAllAsync();
+                var userBankAccount = (await _repository.BankAccount.GetAllAsync()).FirstOrDefault(bc => bc.AccountNumber == user.AccountNumber);
                 return View(new ConsultantViewModel
                 {
                     SelectedUser = user,
@@ -58,12 +59,12 @@ namespace UFSBankingSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewReviews()
         {
-            var allReviews = await wrapper.Review.GetAllAsync();
+            var allReviews = await _repository.Review.GetAllAsync();
             return View(allReviews);
         }
         public async Task<IActionResult> DepositWithdraw(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
 
             if (user != null)
             {
@@ -81,10 +82,10 @@ namespace UFSBankingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(model.UserEmail);
+                var user = await _userManager.FindByEmailAsync(model.UserEmail);
                 if (user != null)
                 {
-                    var AllBankAcc = await wrapper.BankAccount.GetAllAsync();
+                    var AllBankAcc = await _repository.BankAccount.GetAllAsync();
                     var userBankAcc = AllBankAcc.FirstOrDefault(bc => bc.UserEmail == user.Email);
                     if (userBankAcc != null)
                     {
@@ -101,8 +102,8 @@ namespace UFSBankingSystem.Controllers
                             }
                             userBankAcc.Balance -= model.Amount;
                         }
-                        await wrapper.BankAccount.UpdateAsync(userBankAcc);
-                        var transaction = new Transactions
+                        await _repository.BankAccount.UpdateAsync(userBankAcc);
+                        var transaction = new Transaction
                         {
                             Amount = model.Amount,
                             UserEmail = model.UserEmail,
@@ -111,8 +112,8 @@ namespace UFSBankingSystem.Controllers
                             BankAccountIdSender = 0,
                             TransactionDate = DateTime.Now
                         };
-                        await wrapper.Transactions.AddAsync(transaction);
-                        wrapper.SaveChanges();
+                        await _repository.Transactions.AddAsync(transaction);
+                        _repository.SaveChanges();
                         Message = $"Money Successfully {CultureInfo.CurrentCulture.TextInfo.ToTitleCase(action)} to account";
                         return RedirectToAction("Index", "Consultant");
                     }
@@ -133,10 +134,10 @@ namespace UFSBankingSystem.Controllers
 
         public async Task<IActionResult> ConsultantDeleteUser(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var results = await userManager.DeleteAsync(user);
+                var results = await _userManager.DeleteAsync(user);
                 if (results.Succeeded)
                 {
                     return RedirectToAction("Index", "Consultant");
@@ -147,7 +148,7 @@ namespace UFSBankingSystem.Controllers
         }
         public async Task<IActionResult> ConsultantUpdateUser(string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
                 return View(new ConsultantUpdateUserModel
@@ -168,23 +169,23 @@ namespace UFSBankingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
                     user.Email = model.Email;
                     user.PhoneNumber = model.PhoneNumber;
                     user.LastName = model.Lastname;
                     user.DateOfBirth = model.DateOfBirth;
-                    var result = await userManager.UpdateAsync(user);
+                    var result = await _userManager.UpdateAsync(user);
                     Message = "Updated User Details\n";
                     if (result.Succeeded)
                     {
                         if (model.Password != null && model.ConfirmPassword != null && model.Password == model.ConfirmPassword)
                         {
-                            var passResults = await userManager.RemovePasswordAsync(user);
+                            var passResults = await _userManager.RemovePasswordAsync(user);
                             if (passResults.Succeeded)
                             {
-                                if ((await userManager.AddPasswordAsync(user, model.Password)).Succeeded)
+                                if ((await _userManager.AddPasswordAsync(user, model.Password)).Succeeded)
                                 {
                                     Message += "Successfully updated password";
                                 }
@@ -217,7 +218,7 @@ namespace UFSBankingSystem.Controllers
 
         [HttpGet]
       
-        public async Task<IActionResult> GenerateReport()
+        public async Task<IActionResult> GenerateReports()
         {
             try
             {
@@ -226,10 +227,10 @@ namespace UFSBankingSystem.Controllers
                     $"***Users\\Clients***\n" +
                     $"=====================\n" +
                     $"Account No\tFirst Name\tLast Name\tEmail Address\tStudent Number\n\n";
-                var report = userManager.Users;
+                var report = _userManager.Users;
                 foreach (var u in report)
                 {
-                    if (await userManager.IsInRoleAsync(u, "User"))
+                    if (await _userManager.IsInRoleAsync(u, "User"))
                     {
                         data.Add($"{u.AccountNumber}\t{u.FirstName}\t{u.LastName}\t{u.Email}\t{u.StudentStaffNumber}\n");
                     }
@@ -240,7 +241,7 @@ namespace UFSBankingSystem.Controllers
                 reportContent += $"\n***All Transactions***\n" +
                                  $"==========================\n" +
                     $"Account No\tFirst Name\tLast Name\tEmail Address\tStudent Number\n\n";
-                var transactions = await wrapper.Transactions.GetAllAsync();
+                var transactions = await _repository.Transactions.GetAllAsync();
                 reportContent += string.Join('\n', transactions.Select(u => $"{u.UserEmail}\t{u.Amount}\t{u.BankAccountIdReceiver}\t{u.BankAccountIdSender}\n").ToArray());
 
                 var contentBytes = Encoding.UTF8.GetBytes(reportContent);
@@ -260,7 +261,7 @@ namespace UFSBankingSystem.Controllers
             try
             {
                 // Retrieve all reviews from the database
-                var allReviews = await wrapper.Review.GetAllAsync();
+                var allReviews = await _repository.Review.GetAllAsync();
 
                 // Pass the reviews to the view
                 return View(allReviews);
@@ -273,7 +274,143 @@ namespace UFSBankingSystem.Controllers
             }
         }
 
+        // Manage Customers
+        public async Task<IActionResult> ManageCustomers()
+        {
+            var customers = await _repository.AppUser.FindByConditionAsync(u => u.IsCustomer);
+            return View(customers);
+        }
 
+        // Edit Customer Profile (GET)
+        public async Task<IActionResult> EditCustomer(string id)
+        {
+            var customer = await _repository.AppUser.FindByIdAsync(int.Parse(id));
+            if (customer == null) return NotFound();
+
+            var model = new EditUserViewModel
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                StudentNumber = (int?)customer.StudentStaffNumber,
+                EmployeeNumber = (int?)customer.StudentStaffNumber,
+                IDNumber = customer.IDnumber
+            };
+
+            return View(model);
+        }
+
+        // Edit Customer Profile (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCustomer(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var customer = await _repository.AppUser.FindByIdAsync(int.Parse(model.Id));
+                if (customer == null) return NotFound();
+
+                customer.FirstName = model.FirstName;
+                customer.LastName = model.LastName;
+                customer.Email = model.Email;
+                customer.StudentStaffNumber = (int)model.StudentNumber;
+                customer.StudentStaffNumber = (int)model.EmployeeNumber;
+                customer.IDnumber = (int)model.IDNumber;
+
+                await _repository.AppUser.UpdateAsync(customer);
+                _repository.SaveChanges();
+
+                return RedirectToAction("ManageCustomers");
+            }
+
+            return View(model);
+        }
+
+        // Delete Customer (GET)
+        public async Task<IActionResult> DeleteCustomer(int id)
+        {
+            var user = await _repository.AppUser.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            return View(user);
+        }
+
+        // Delete Customer (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCustomerConfirmed(string id)
+        {
+            var user = await _repository.AppUser.FindByIdAsync(int.Parse(id));
+            if (user == null) return NotFound();
+
+            await _repository.AppUser.DeleteAsync(int.Parse(id));
+            _repository.SaveChanges();
+
+            return RedirectToAction("ManageCustomers");
+        }
+
+        // Change Password for a User
+        public IActionResult ChangePassword(string id)
+        {
+            var model = new ChangePasswordViewModel { UserId = id };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _repository.AppUser.FindByIdAsync(int.Parse(model.UserId));
+                if (user == null) return NotFound();
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (result.Succeeded)
+                    return RedirectToAction("ManageCustomers");
+
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
+        // Assist Transactions (GET)
+        public async Task<IActionResult> Transactions()
+        {
+            var customersWithAccounts = await _repository.AppUser.GetAllUsersAndBankAccount();
+            return View(customersWithAccounts);
+        }
+
+        // Assist Transactions (POST) - Example for deposit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deposit(int accountId, decimal amount)
+        {
+            var account = await _repository.BankAccount.FindByIdAsync(accountId);
+            if (account == null) return NotFound();
+
+            account.Balance += amount; // Update balance logic
+            await _repository.BankAccount.UpdateAsync(account);
+
+            var transaction = new Transaction
+            {
+                AccountID = account.Id,
+                Amount = amount,
+                transactionType = TransactionType.Deposit,
+                TransactionDate = DateTime.Now,
+                Description = "Deposit",
+                BalanceAfter = account.Balance
+            };
+
+            await _repository.Transactions.AddAsync(transaction);
+            _repository.SaveChanges();
+
+            return RedirectToAction("Transactions");
+        }
 
 
     }

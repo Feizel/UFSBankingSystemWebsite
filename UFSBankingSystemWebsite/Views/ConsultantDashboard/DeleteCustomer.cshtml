@@ -1,0 +1,14 @@
+﻿@model UFS_Banking_System_Website.Models.User
+
+<h2>Delete Customer</h2>
+
+<div class="alert alert-warning">
+    Are you sure you want to delete the customer:
+    <strong>@Model.FirstName @Model.LastName</strong>?
+</div>
+
+<form asp-action="DeleteCustomerConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("ManageCustomers", "ConsultantDashboard")" class="btn btn-secondary">Cancel</a>
+</form>

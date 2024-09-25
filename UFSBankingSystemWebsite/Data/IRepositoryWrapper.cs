@@ -3,8 +3,6 @@
     public interface IRepositoryWrapper
     {
         ITransactionRepository Transactions { get; }
-        
-
         IReviewRepository Review { get; }
         IChargesRepository Charges { get; }
         IAccountRepository BankAccount { get; }

@@ -1,9 +1,50 @@
-﻿namespace UFSBankingSystem.Models.ViewModels.Admin
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UFSBankingSystem.Models.ViewModels.Admin
 {
     public class UserViewModel
     {
         public User AppUser { get; set; }
         public Account BankAccount { get; set; }
         public string _fullName { get; set; } = string.Empty;
+    }
+
+    // Profile Management Model
+    public class UserProfileModel
+    {
+        public string UserName { get; set; }
+
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "First name is required.")]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required.")]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        public int StudentNumber { get; set; }
+        public int EmployeeNumber { get; set; }
+        public int IDNumber { get; set; }
+    }
+
+    // Change Password Model
+    public class ChangePasswordModel
+    {
+        [Required(ErrorMessage = "Current password is required.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current Password")]
+        public string CurrentPassword { get; set; }
+
+        [Required(ErrorMessage = "New password is required.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+
+        [Required(ErrorMessage = "Please confirm your new password.")]
+        [DataType(DataType.Password)]
+        [Compare("NewPassword", ErrorMessage = "Passwords must match.")]
+        [Display(Name = "Confirm New Password")]
+        public string ConfirmNewPassword { get; set; }
     }
 }

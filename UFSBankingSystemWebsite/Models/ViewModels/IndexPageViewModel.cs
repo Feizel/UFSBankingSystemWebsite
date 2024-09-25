@@ -3,8 +3,8 @@
     public class IndexPageViewModel
     {
         public string CurrentPage { get; set; }
-        public List<Transactions> Transactions { get; set; } = new List<Transactions>();
-        public List<Transactions> ActiveTransactions { get; set; } = new List<Transactions>();
+        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public List<Transaction> ActiveTransactions { get; set; } = new List<Transaction>();
         public List<User> Consultants { get; set; } = new List<User>();
         public List<User> FinAdvisor { get; set; } = new List<User>();
         public List<User> TotalUsers { get; set; } = new List<User>();

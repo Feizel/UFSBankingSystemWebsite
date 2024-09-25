@@ -10,7 +10,7 @@ namespace UFSBankingSystem.Models.ViewModels
     public class BankAccountViewModel
     {
         public IEnumerable<Account> BankAccount { get; set; }
-        public IEnumerable<Transactions> Transactions { get; set; }
+        public IEnumerable<Transaction> Transactions { get; set; }
     }
     public class CashSentViewModel
     {
@@ -21,7 +21,7 @@ namespace UFSBankingSystem.Models.ViewModels
     }
     public class BankAccountViewModela
     {
-        public string AccountNumber { get; set; }
+        public int AccountNumber { get; set; }
         public decimal Balance { get; set; }
         public string BankAccountType { get; set; }
     }

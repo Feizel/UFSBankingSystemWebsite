@@ -19,8 +19,8 @@ namespace UFSBankingSystem.Data.SeedData
             LastName = "Meyers",
             Email = "jonathan@ufs.ac.za",
             DateOfBirth = DateTime.Now,
-            IDnumber = "8876543210123",
-            StudentStaffNumber = "9876543210",
+            IDnumber = 8876543210123,
+            StudentStaffNumber = 9876543210,
             AccountNumber = "0000000001",
             UserRole = "Admin"
         };
@@ -32,10 +32,10 @@ namespace UFSBankingSystem.Data.SeedData
             LastName = "Zungu",
             Email = "thabo@ufs.ac.za",
             DateOfBirth = DateTime.Now,
-            IDnumber = "0206151810182",
-            StudentStaffNumber = "7432108965",
+            IDnumber = 0206151810182,
+            StudentStaffNumber = 7432108965,
             AccountNumber = "0000000002",
-            UserRole = "Customer"
+            UserRole = "User"
         };
 
         private static readonly User Consultant = new User
@@ -45,8 +45,8 @@ namespace UFSBankingSystem.Data.SeedData
             LastName = "Ndlela",
             Email = "thando@ufs.ac.za",
             DateOfBirth = DateTime.Now,
-            IDnumber = "9209151587083",
-            StudentStaffNumber = "9158974481",
+            IDnumber = 9209151587083,
+            StudentStaffNumber = 9158974481,
             AccountNumber = "0000000003",
             UserRole = "Consultant"
         };
@@ -58,8 +58,8 @@ namespace UFSBankingSystem.Data.SeedData
             LastName = "Kruger",
             Email = "millicent@ufs.ac.za",
             DateOfBirth = DateTime.Now,
-            IDnumber = "9204247204082",
-            StudentStaffNumber = "9876543210",
+            IDnumber = 9204247204082,
+            StudentStaffNumber = 9876543210,
             AccountNumber = "0000000004",
             UserRole = "FinancialAdvisor"
         };

@@ -2,7 +2,7 @@
 
 namespace UFSBankingSystem.Data.Interfaces
 {
-    public interface ITransactionRepository : IRepositoryBase<Transactions>
+    public interface ITransactionRepository : IRepositoryBase<Transaction>
     {
 
     }

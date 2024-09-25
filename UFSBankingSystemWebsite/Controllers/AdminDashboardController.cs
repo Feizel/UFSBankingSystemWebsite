@@ -165,7 +165,7 @@ namespace UFSBankingSystem.Controllers
                             userBankAcc.Balance -= model.Amount;
                         }
                         await _wrapper.BankAccount.UpdateAsync(userBankAcc);
-                        var transaction = new Transactions
+                        var transaction = new Transaction
                         {
                             Amount = model.Amount,
                             UserEmail = model.UserEmail,
@@ -405,7 +405,7 @@ namespace UFSBankingSystem.Controllers
                     await _wrapper.BankAccount.AddAsync(bankAccountMain);
 
                     // Log initial transaction
-                    Transactions transaction = new()
+                    Transaction transaction = new()
                     {
                         BankAccountIdReceiver = int.Parse(_randomAccount),
                         Amount = 100m,

@@ -28,10 +28,10 @@ namespace UFSBankingSystem.Models.ViewModels
 
         [Required(ErrorMessage = "Please enter ID or passport number.")]
         [DisplayName("ID or Passport number")]
-        public string IdPassportNumber { get; set; }
+        public long IdPassportNumber { get; set; }
 
         [DisplayName("Student or Staff number")]
-        public string StudentStaffNumber { get; set; }
+        public long StudentStaffNumber { get; set; }
 
 
         [Required(ErrorMessage = "Please enter first name")]
@@ -62,7 +62,7 @@ namespace UFSBankingSystem.Models.ViewModels
         public DateTime DateOfBirth { get; set; }
         public string AccountNumber { get; set; }
        
-        public string IDNumber { get; set; }
+        public long IDNumber { get; set; }
         public string Lastname { get; set; }
 
         public string Firstname { get; set; }

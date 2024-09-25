@@ -4,7 +4,7 @@ using UFSBankingSystem.Models;
 namespace UFSBankingSystem.Data
 {
   
-    public class TransactionRepository : RepositoryBase<Transactions>, ITransactionRepository
+    public class TransactionRepository : RepositoryBase<Transaction>, ITransactionRepository
 
     {
         public TransactionRepository(AppDbContext appDbContext) : base(appDbContext)
