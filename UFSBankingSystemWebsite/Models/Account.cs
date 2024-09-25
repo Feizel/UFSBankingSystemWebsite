@@ -10,6 +10,7 @@ namespace UFSBankingSystem.Models
         public string AccountNumber { get; set; }
         public decimal Balance { get; set; }
         public string BankAccountType { get; set; }
+        public string AccountName { get; set; } // Account name
         public int AccountOrder { get; set; } // control if main account or savings
 
         public string UserEmail { get; set; }

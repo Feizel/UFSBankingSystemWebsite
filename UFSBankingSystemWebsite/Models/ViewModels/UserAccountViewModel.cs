@@ -20,6 +20,17 @@ namespace UFSBankingSystem.Models.ViewModels
     public class RegisterViewModel
     {
         public string RegisterAs { get; set; } = "studentstaff";
+        [Required(ErrorMessage = "Role is required.")]
+        public required string Role { get; set; }
+        public required string UserType { get; set; }
+        [Required(ErrorMessage = "Please enter first name")]
+        [DisplayName("First name")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Please enter last name")]
+        [DisplayName("Last name")]
+        [DataType(DataType.Text)]
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "Please enter a unique email address")]
         [DisplayName("Email address")]
@@ -32,16 +43,6 @@ namespace UFSBankingSystem.Models.ViewModels
 
         [DisplayName("Student or Staff number")]
         public long StudentStaffNumber { get; set; }
-
-
-        [Required(ErrorMessage = "Please enter first name")]
-        [DisplayName("First name")]
-        public string FirstName { get; set; }
-
-        [Required(ErrorMessage = "Please enter last name")]
-        [DisplayName("Last name")]
-        [DataType(DataType.Text)]
-        public string LastName { get; set; }
 
         [Required(ErrorMessage = "Please enter password")]
         [DisplayName("Password")]
@@ -63,9 +64,9 @@ namespace UFSBankingSystem.Models.ViewModels
         public string AccountNumber { get; set; }
        
         public long IDNumber { get; set; }
-        public string Lastname { get; set; }
+        public string LastName { get; set; }
 
-        public string Firstname { get; set; }
+        public string FirstName { get; set; }
 
         public string Userrole { get; set; }
     }
@@ -88,5 +89,24 @@ namespace UFSBankingSystem.Models.ViewModels
         public decimal Amount { get; set; }
         public string ReceiverAccount { get; set; }
     }
+    public class ChangePasswordViewModel
+    {
+        [Required]
+        public string UserId { get; set; }
 
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current Password")]
+        public string CurrentPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm New Password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
 }

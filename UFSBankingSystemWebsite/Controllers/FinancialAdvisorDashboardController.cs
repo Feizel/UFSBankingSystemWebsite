@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UFSBankingSystem.Controllers
 {
-    [Authorize(Roles = "FAdvisor")]
+    [Authorize(Roles = "FinancialAdvisor, Admin")]
     public class FinancialAdvisorDashboardController : Controller
     {
         private readonly UserManager<User> userManager;

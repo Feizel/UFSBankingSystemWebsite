@@ -179,7 +179,7 @@ namespace UFSBankingSystem.Controllers
                     DateOfBirth = user.DateOfBirth,
                     Email = user.Email,
                     IDNumber = user.IDnumber,
-                    Lastname = user.LastName,
+                    LastName = user.LastName,
                     PhoneNumber = user.PhoneNumber,
                 });
             }
@@ -196,7 +196,7 @@ namespace UFSBankingSystem.Controllers
                 {
                     user.Email = model.Email;
                     user.PhoneNumber = model.PhoneNumber;
-                    user.LastName = model.Lastname;
+                    user.LastName = model.LastName;
                     user.DateOfBirth = model.DateOfBirth;
                     var result = await _userManager.UpdateAsync(user);
                     Message = "Updated User Details\n";
@@ -432,6 +432,11 @@ namespace UFSBankingSystem.Controllers
             _repository.SaveChanges();
 
             return RedirectToAction("Transactions");
+        }
+        public IActionResult CustomerSupport()
+        {
+            // Logic to handle customer support inquiries can be implemented here.
+            return View();
         }
         private decimal CalculateClientSatisfaction(IEnumerable<User> clients)
         {

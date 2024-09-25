@@ -1,0 +1,110 @@
+======
+GENERAL:
+======
+- Welcome message must include the users name
+- Dropdown must include "Hi, Thabo"
+
+
+======
+ADMIN:
+======
+- Dashboard should be populated 
+- Manage Users 
+- Manage Consultants actions don't do anything
+- View Reports (currently downloading, display the reports with an oprion to donwload it)
+- View Advices (Populate with dummy data)
+- View Logins
+An unhandled exception occurred while processing the request.
+ArgumentNullException: Value cannot be null. (Parameter 'email')
+System.ArgumentNullException.Throw(string paramName)
+
+UFSBankingSystem.Controllers.AdminDashboardController.ViewAllLogins(string email) in AdminDashboardController.cs
++
+   121         var user = await _userManager.FindByEmailAsync(email);
+
+- View User Reviews (Populate with dummy data)
+
+
+=========
+CUSTOMER:
+=========
+- View Accounts (404 Error: This localhost page can’t be found
+No webpage was found for the web address: http://localhost:5215/CustomerDashboard/ViewAccount
+HTTP ERROR 404)
+- Transfer Funds (System.NullReferenceException: 'Object reference not set to an instance of an object.'
+
+mainBankAccount was null.)
+------------------------------
+THE ENTIRE TRANSFER MONEY VIEW:
+------------------------------
+public async Task<IActionResult> TransferMoneyView()
+{
+    var username = User.Identity.Name;
+    var user = await _userManager.FindByNameAsync(username);
+
+    var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+    var mainBankAccount = allBankAccounts.FirstOrDefault(b => b.UserEmail == user.Email && b.AccountOrder == 1);
+
+    var viewModel = new MoneyTransferViewModel
+    {
+        SenderBankAccountNumber = mainBankAccount.AccountNumber,
+        AvailableBalance = mainBankAccount.Balance,
+    };
+
+    return View(viewModel);
+}
+
+- Dashboard create account works, account is created and success message show. However, the account does not show up on Dashboard under "Your Acoounts", still says "You currently have no bank accounts.
+Please create an account to access banking services."
+- View Accounts
+- Transaction History (Populate with dummy data)
+- Notifications (Populate with dummy data)
+- Edit Profile error
+
+==========
+CONSULTANT:
+==========
+- Dashboard shows differentt cards with the different customers. However, the actions for 'Edit', 'Delete', and 'View Logins' throw this error "This localhost page can’t be found
+No webpage was found for the web address: http://localhost:5215/Consultant/DepositWithdraw?email=thabo@ufs.ac.za
+HTTP ERROR 404". Also improve the UI of the cards action buttons seem large.
+- Manage Customer (Populate with dummy data)
+- Assist Transactions (Complete the logic and implement it)
+
+============
+FIN ADVISOR:
+============
+- Dashboard looks awesome, I like this table design consider using it or other similar ones on other tables. Advise client throws error "This localhost page can’t be found
+No webpage was found for the web address: http://localhost:5215/FinAdvisor/Advice?email=thabo@ufs.ac.za
+HTTP ERROR 404"
+- View Customer Accounts also looks awesome, the Admin Dashboard should look something like this with actions to edit every customer, fin advisor and consultant. The table should also show their role. Pressing [Provide Advice] throws the error "An unhandled exception occurred while processing the request.
+ArgumentNullException: Value cannot be null. (Parameter 'email')
+System.ArgumentNullException.Throw(string paramName)
+
+Stack Query Cookies Headers Routing
+ArgumentNullException: Value cannot be null. (Parameter 'email')
+System.ArgumentNullException.Throw(string paramName)
+System.ArgumentNullException.ThrowIfNull(object argument, string paramName)
+Microsoft.AspNetCore.Identity.UserManager<TUser>.FindByEmailAsync(string email)
+UFSBankingSystem.Controllers.FinancialAdvisorDashboardController.ProvideAdvice(string email) in FinancialAdvisorDashboardController.cs
++
+            var user = await userManager.FindByEmailAsync(email);" 
+- Provide Advice error "An unhandled exception occurred while processing the request.
+ArgumentNullException: Value cannot be null. (Parameter 'email')
+System.ArgumentNullException.Throw(string paramName)
+
+Stack Query Cookies Headers Routing
+ArgumentNullException: Value cannot be null. (Parameter 'email')
+System.ArgumentNullException.Throw(string paramName)
+System.ArgumentNullException.ThrowIfNull(object argument, string paramName)
+Microsoft.AspNetCore.Identity.UserManager<TUser>.FindByEmailAsync(string email)
+UFSBankingSystem.Controllers.FinancialAdvisorDashboardController.ProvideAdvice(string email) in FinancialAdvisorDashboardController.cs
++
+            var user = await userManager.FindByEmailAsync(email);"
+
+
+
+
+
+
+
+

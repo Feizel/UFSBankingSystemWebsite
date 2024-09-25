@@ -1,0 +1,43 @@
+﻿@model UFSBankingSystem.Models.ViewModels.CreateAccountViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<h2>Create New Bank Account</h2>
+
+<form asp-action="CreateAccount" method="post">
+    <div class="mb-3">
+        <label asp-for="AccountName" class="form-label">Account Name</label>
+        <input asp-for="AccountName" class="form-control" required />
+        <span asp-validation-for="AccountName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AccountType" class="form-label">Account Type</label>
+        <select asp-for="AccountType" class="form-select" required>
+            <option value="">Select Account Type</option>
+            <option value="Savings">Savings</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Business">Business</option>
+            <!-- Add more account types as needed -->
+        </select>
+        <span asp-validation-for="AccountType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InitialDeposit" class="form-label">Initial Deposit</label>
+        <input asp-for="InitialDeposit" class="form-control" required />
+        <span asp-validation-for="InitialDeposit" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Account</button>
+</form>
+
+<a asp-action="Index" asp-controller="CustomerDashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

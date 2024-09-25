@@ -216,6 +216,12 @@ namespace UFSBankingSystem.Controllers
         }
         public async Task<IActionResult> ManageUser(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                // Handle the case where email is null or empty
+                return BadRequest("Email cannot be null or empty.");
+            }
+
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
@@ -225,7 +231,7 @@ namespace UFSBankingSystem.Controllers
                     DateOfBirth = user.DateOfBirth,
                     Email = user.Email,
                     IDNumber = user.IDnumber,
-                    Lastname = user.LastName,
+                    LastName = user.LastName,
                     PhoneNumber = user.PhoneNumber,
                 });
             }
@@ -280,7 +286,7 @@ namespace UFSBankingSystem.Controllers
                 {
                     user.Email = model.Email;
                     user.PhoneNumber = model.PhoneNumber;
-                    user.LastName = model.Lastname;
+                    user.LastName = model.LastName;
                     user.DateOfBirth = model.DateOfBirth;
                     var result = await _userManager.UpdateAsync(user);
                     Message = "Updated User Details\n";
@@ -354,9 +360,9 @@ namespace UFSBankingSystem.Controllers
 
 
         [HttpGet]
-        public IActionResult CreateUser(string registerAs = "student")
+        public IActionResult CreateUser()
         {
-            return View(new RegisterViewModel() { RegisterAs = registerAs });
+            return View();
         }
 
         [HttpPost]

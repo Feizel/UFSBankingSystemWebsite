@@ -18,7 +18,7 @@ namespace UFSBankingSystem.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IRepositoryWrapper wrapper;
         //private readonly string role = "User";
-        private readonly string _customerRole = "Customer";
+        private readonly string _customerRole = "User";
         private readonly string _consultantRole = "Consultant";
         private readonly string _financialAdvisorRole = "FinancialAdvisor";
         private readonly string _adminRole = "Admin";
@@ -101,9 +101,9 @@ namespace UFSBankingSystem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register(string registerAs = "student")
+        public IActionResult Register()
         {
-            return View(new RegisterViewModel() { RegisterAs = registerAs });
+            return View();
         }
 
         [AllowAnonymous]
@@ -261,7 +261,7 @@ namespace UFSBankingSystem.Controllers
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IDNumber = user.IDnumber,
-                Lastname = user.LastName + " " + user.FirstName,
+                LastName = user.LastName + " " + user.FirstName,
                 Userrole = user.UserRole,
                 AccountNumber = user.AccountNumber // Add the AccountNumber to the model
             };

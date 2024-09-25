@@ -45,25 +45,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "980603fd-cd64-48a9-8a14-82d7557a6afd",
+                            Id = "a1f2606a-e8a3-47af-a771-2d28b9d79b4b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "783e56c8-6f6f-4de6-91a9-f3357783498d",
+                            Id = "ef402ee4-0330-4fb8-be44-155b05bb5a4c",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "4d7cff62-45b0-4ea1-945b-cf314a76958a",
+                            Id = "20344cdc-152c-4a8d-811b-75eca39ed5f2",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "e570a6a7-c0e4-4b27-a7f8-09f706e207c6",
+                            Id = "c1e414fb-7c91-4748-b239-9f335cd2fc5e",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });
@@ -176,6 +176,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AccountName")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AccountNumber")
                         .HasColumnType("TEXT");

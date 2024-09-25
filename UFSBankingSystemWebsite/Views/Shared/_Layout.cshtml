@@ -35,7 +35,7 @@
                     }
                     else if (User.IsInRole("User"))
                     {
-                        <partial name="_UserNavPartial" />
+                        <partial name="_CustomerNavPartial" />
                     }
                     <li>
                         <a asp-controller="Account" asp-action="ChangePassword">
@@ -80,8 +80,8 @@
                                     <i class="fas fa-user-circle"></i> Hi, @ViewBag.FirstName
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="fas fa-id-card"></i> Profile</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index"><i class="fas fa-id-card"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Profile" asp-action="ChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post">

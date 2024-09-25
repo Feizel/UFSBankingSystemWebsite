@@ -2,7 +2,7 @@
 
 namespace UFS_Banking_System_Website.Models.ViewModels
 {
-    public class ChangePasswordViewModel
+    public class ChangePasswordViewModel2
     {
         [Required]
         public string UserId { get; set; }

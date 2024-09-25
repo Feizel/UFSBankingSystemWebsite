@@ -1,0 +1,30 @@
+﻿@model UFSBankingSystem.Models.ViewModels.BankAccountViewModel
+
+<h2>Account Details</h2>
+
+<h4>@Model.BankAccount.BankAccountType - Balance: @Model.BankAccount.Balance</h4>
+
+<h5>Transactions:</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Balance After</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model.Transactions)
+        {
+            <tr>
+                <td>@transaction.TransactionDate.ToShortDateString()</td>
+                <td>@transaction.Description</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.BalanceAfter</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Index", "CustomerDashboard")" class="btn btn-secondary">Back to Dashboard</a>

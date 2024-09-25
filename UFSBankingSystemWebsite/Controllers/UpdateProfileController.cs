@@ -30,7 +30,7 @@ public class UpdateProfileController : Controller
             PhoneNumber = user.PhoneNumber,
             IDNumber = int.Parse(user.Id), // Assuming ID is stored in the user object
             Userrole = user.UserRole, // Assuming you have a UserRole property
-            Lastname = user.LastName
+            LastName = user.LastName
             
         };
 

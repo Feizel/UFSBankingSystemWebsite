@@ -3,14 +3,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UFSBankingSystem.Models.ViewModels
 
-
-
-
 {
     public class BankAccountViewModel
     {
-        public IEnumerable<Account> BankAccount { get; set; }
+        public Account BankAccount { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
+    }
+    public class CreateAccountViewModel
+    {
+        [Required]
+        public string AccountType { get; set; } // e.g., Savings, Checking
+
+        [Required]
+        [Range(0, double.MaxValue, ErrorMessage = "Initial deposit must be a positive amount.")]
+        public decimal InitialDeposit { get; set; }
+        [Required(ErrorMessage = "Please provide an account name.")]
+        public string AccountName { get; set; } // Account name
     }
     public class CashSentViewModel
     {
@@ -25,10 +33,7 @@ namespace UFSBankingSystem.Models.ViewModels
         public decimal Balance { get; set; }
         public string BankAccountType { get; set; }
     }
-
-
-
-public class MoneyTransferViewModel
+    public class MoneyTransferViewModel
     {
         [Required]
         public int SenderBankAccountId { get; set; }
@@ -46,7 +51,6 @@ public class MoneyTransferViewModel
         [Required(ErrorMessage = "The receiver's bank account number is required.")]
       
         public string ReceiverBankAccountNumber { get; set; }
-
       
         public decimal AvailableBalance { get; set; }
     }

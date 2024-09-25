@@ -1,6 +1,5 @@
 ﻿using UFSBankingSystem.Data.Interfaces;
 using UFSBankingSystem.Models;
-
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using UFSBankingSystem.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using UFSBankingSystem.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UFSBankingSystem.Controllers
 {
+    [Authorize(Roles = "User")]
     public class CustomerDashboardController : Controller
     {
         private readonly IRepositoryWrapper _repo;
@@ -44,15 +45,19 @@ namespace UFSBankingSystem.Controllers
             var userTransactions = transactions.Where(t => userBankAccounts.Any(b => b.UserEmail == user.Email)).ToList();
 
 
-            var viewModel = new BankAccountViewModel
+            var viewModel = new CustomerViewModel
             {
-                BankAccount = userBankAccounts,
+                BankAccounts = userBankAccounts,
                 Transactions = userTransactions
             };
 
             // Return the view with the viewModel
             return View(viewModel);
         }
+        //public IActionResult ViewAccount()
+        //{
+        //    return View();
+        //}
         public async Task<IActionResult> ViewAccount(string id)
         {
             var account = await _context.BankAccounts.FindAsync(id);
@@ -65,11 +70,51 @@ namespace UFSBankingSystem.Controllers
 
             var model = new BankAccountViewModel
             {
-                BankAccount = (IEnumerable<Account>)account,
+                BankAccount = account,
                 Transactions = transactions
             };
 
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CreateAccount()
+        {
+            return View();
+        }
+
+        //Create Account
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Create a new bank account
+                var newAccount = new Account
+                {
+                    AccountNumber = GenerateAccountNumber(), // Implement this method to generate a unique account number
+                    Balance = model.InitialDeposit,
+                    BankAccountType = model.AccountType,
+                    AccountName = model.AccountName, // Set the account name from the view model
+                    UserEmail = User.Identity.Name // Assuming the user is logged in and their email is their username
+                };
+
+                // Save the new account to the database
+                await _repo.BankAccount.CreateAsync(newAccount);
+                _repo.SaveChanges(); // Ensure changes are saved
+
+                TempData["Message"] = "Your account has been created successfully!";
+                return RedirectToAction("Index", "CustomerDashboard");
+            }
+
+            return View(model);
+        }
+
+        private string GenerateAccountNumber()
+        {
+            // Logic to generate a unique account number
+            return "ACCT" + new Random().Next(100000, 999999).ToString();
         }
 
         public IActionResult EditProfile()

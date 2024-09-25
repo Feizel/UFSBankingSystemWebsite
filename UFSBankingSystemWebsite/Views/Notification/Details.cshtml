@@ -1,0 +1,15 @@
+﻿@model UFSBankingSystem.Models.Notification
+@{
+    ViewData["Title"] = "Notification Details";
+}
+
+<h2>Notification Details</h2>
+
+<div>
+    <h4>Message: @Model.Message</h4>
+    <p><strong>Date:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to Notifications</a>
+</div>
