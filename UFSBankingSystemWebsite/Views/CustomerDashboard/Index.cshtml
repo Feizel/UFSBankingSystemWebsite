@@ -1,75 +1,70 @@
-﻿@model BankAccountViewModel
+﻿@model UFSBankingSystem.Models.ViewModels.CustomerViewModel
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account</title>
+<h2>Customer Dashboard</h2>
 
-    <style>
-        .account-balance-card {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-top: 30px;
-            text-align: center;
+<h4>Your Accounts</h4>
+<table class="table text-white">
+    <thead>
+        <tr>
+            <th>Account Type</th>
+            <th>Balance</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var account in Model.Accounts)
+        {
+            <tr>
+                <td>@account.BankAccountType</td>
+                <td>@account.Balance</td>
+                <td>
+                    <a asp-controller="UserDashboard" asp-action="ViewAccount" asp-route-id="@account.Id" class="btn btn-info">View Details</a>
+                    <a asp-controller="UserDashboard" asp-action="Withdraw" asp-route-id="@account.Id" class="btn btn-warning">Withdraw</a>
+                    <a asp-controller="UserDashboard" asp-action="Transfer" class="btn btn-success">Transfer</a>
+                </td>
+            </tr>
         }
+    </tbody>
+</table>
 
-        .account-balance {
-            font-size: 2.5em;
-            color: #28a745;
+<div>
+    <a asp-action="Withdraw" asp-controller="UserDashboard" class="btn btn-danger">Withdraw Funds</a>
+    <a asp-action="Transfer" asp-controller="UserDashboard" class="btn btn-primary">Transfer Funds</a>
+    <a asp-action="EditProfile" asp-controller="UserDashboard" class="btn btn-warning">Edit Profile</a>
+    <a asp-action="ChangePassword" asp-controller="UserDashboard" class="btn btn-secondary">Change Password</a>
+</div>
+
+<a href="@Url.Action("EditProfile", "UserDashboard")" class="btn btn-secondary">Edit Profile</a>
+<a href="@Url.Action("ChangePassword", "UserDashboard")" class="btn btn-secondary">Change Password</a>
+
+
+
+
+@* @model UFS_Banking_System_Website.Models.ViewModels.UserDashboardViewModel
+@{
+    ViewData["Title"] = "User Dashboard";
+}
+
+<h2>User Dashboard</h2>
+
+<div>
+    <h4>Welcome, @User.Identity.Name!</h4>
+    <p>Your accounts:</p>
+    <ul>
+        @foreach (var account in Model.Accounts)
+        {
+            <li>
+                <a asp-action="ViewAccount" asp-controller="UserDashboard" asp-route-id="@account.AccountID">
+                    @account.AccountName - Balance: @account.Balance.ToString("C")
+                </a>
+            </li>
         }
+    </ul>
+</div>
 
-        .transaction-list-card {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
-        }
-
-        .transaction-item {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-
-            .transaction-item:last-child {
-                border-bottom: none;
-            }
-
-            .transaction-item .date {
-                font-size: 0.9em;
-                color: #6c757d;
-            }
-
-            .transaction-item .amount {
-                font-size: 1.2em;
-            }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="row justify-content-center">
-            <!-- Bank Account Balance Section -->
-            <div class="col-md-8">
-                @foreach (var Account in Model.BankAccount)
-                {
-                    <div class="account-balance-card">
-                        <h2>@Account.BankAccountType</h2>
-                        <p><strong>Account Number:</strong> @Account.AccountNumber</p>
-                        <p><strong>Balance:</strong> <span class="account-balance">R @Account.Balance</span></p>
-                    </div>
-                }
-
-            </div>
-
-        
-        </div>
-    </div>
-
-
-</body>
-</html>
+<div>
+    <a asp-action="Withdraw" asp-controller="UserDashboard" class="btn btn-danger">Withdraw Funds</a>
+    <a asp-action="Transfer" asp-controller="UserDashboard" class="btn btn-primary">Transfer Funds</a>
+    <a asp-action="EditProfile" asp-controller="UserDashboard" class="btn btn-warning">Edit Profile</a>
+    <a asp-action="ChangePassword" asp-controller="UserDashboard" class="btn btn-secondary">Change Password</a>
+</div> *@

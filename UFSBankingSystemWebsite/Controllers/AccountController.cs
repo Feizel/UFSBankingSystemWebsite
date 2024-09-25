@@ -55,6 +55,10 @@ namespace UFSBankingSystem.Controllers
                     var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                     if (result.Succeeded)
                     {
+                        // Set ViewBag.FirstName for use in the layout
+                        ViewBag.FirstName = user.FirstName;
+                        //ViewBag.LastName = user.LastName;
+
                         // Log the login session
                         var newLogin = new LoginSessions
                         {

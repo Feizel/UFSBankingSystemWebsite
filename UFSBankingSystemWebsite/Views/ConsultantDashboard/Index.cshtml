@@ -12,17 +12,22 @@
         </div>
     }
 
-    <h3 class="mb-5">Consultant Control Panel</h3>
+    <h3 class="mb-5">Consultant Dashboard</h3>
+
+    <div class="text-center">
+        <h1>Welcome back @ViewBag.FirstName</h1>
+    </div>
 
     <div class="row">
-        <div class="col-md-2">
+        @* <div class="col-md-2">
             <div class="list-group">
-                Welcome back
+                Welcome back @ViewBag.
             </div>
-        </div>
+        </div> *@
+        <br />
 
         <div class="col-md-10">
-            <h3>Clients</h3>
+            <h2>Customers</h2>
             @if (Model.appUsers.Any())
             {
                 <div class="row">

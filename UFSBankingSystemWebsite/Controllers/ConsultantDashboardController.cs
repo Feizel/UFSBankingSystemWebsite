@@ -17,17 +17,16 @@ namespace UFSBankingSystem.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IRepositoryWrapper _repository;
-        private readonly int currentConsultantId;
-
-        public ConsultantDashboardController(UserManager<User> _userManager, IRepositoryWrapper _repository)
-        {
-            _userManager = _userManager;
-            this._repository = _repository;
-        }
-
 
         [TempData]
         public string Message { get; set; }
+        private readonly int currentConsultantId;
+
+        public ConsultantDashboardController(UserManager<User> userManager, IRepositoryWrapper _repository)
+        {
+            _userManager = userManager;
+            this._repository = _repository;
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -58,12 +57,12 @@ namespace UFSBankingSystem.Controllers
                 if (await _userManager.IsInRoleAsync(user, "User"))
                     lstUsers.Add(user);
             }
+
             return View(new ConsultantViewModel
             {
                 appUsers = lstUsers.AsQueryable()
             });
         }
-
         public async Task<IActionResult> ViewAllLogins(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
