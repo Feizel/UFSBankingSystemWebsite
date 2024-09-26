@@ -1,0 +1,132 @@
+[AllowAnonymous]
+[HttpPost]
+//public async Task<IActionResult> Register(RegisterViewModel registerModel)
+//{
+//    if (ModelState.IsValid)
+//    {
+//        // Ensure roles exist
+//        await EnsureRolesExist();
+
+//        // Create a new user
+//        User user = new()
+//        {
+//            UserName = registerModel.EmailAddress, // Use email as username for better clarity
+//            IDnumber = registerModel.IdPassportNumber,
+//            Email = registerModel.EmailAddress,
+//            FirstName = registerModel.FirstName,
+//            LastName = registerModel.LastName,
+//            StudentStaffNumber = registerModel.StudentStaffNumber,
+//            UserRole = registerModel.RegisterAs
+//        };
+
+//        // Create the user
+//        IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+//        if (result.Succeeded)
+//        {
+//            // Assign role to user
+//            await userManager.AddToRoleAsync(user, _customerRole);
+
+//            // Create a bank account for the user
+//            Account bankAccountMain = new()
+//            {
+//                AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
+//                Balance = 100m, // Initial balance
+//                BankAccountType = "Savings",
+//                AccountOrder = 1,
+//                UserEmail = user.Email, // Associate with the registered user's email
+//                UserId = user.Id // Use Id from IdentityUser as foreign key
+//            };
+
+//            // Save the bank account to the database
+//            await wrapper.BankAccount.AddAsync(bankAccountMain);
+
+//            // Create a transaction for initial deposit
+//            Models.Transaction transaction = new()
+//            {
+//                BankAccountIdReceiver = bankAccountMain.Id, // Assuming this is how you reference accounts
+//                Amount = 100m,
+//                Reference = "Initial deposit",
+//                UserEmail = user.Email,
+//                TransactionDate = DateTime.Now,
+//            };
+
+//            await wrapper.Transactions.AddAsync(transaction);
+
+//            // Sign in the user after successful registration
+//            var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password, isPersistent: false, lockoutOnFailure: false);
+//            if (signin_result.Succeeded)
+//            {
+//                var newLogin = new LoginSessions
+//                {
+//                    TimeStamp = DateTime.Now,
+//                    UserEmail = user.Email,
+//                };
+
+//                await wrapper.Logins.AddAsync(newLogin);
+//                wrapper.SaveChanges(); // Ensure changes are saved
+
+//                return RedirectToAction("Index", "CustomerDashboard");
+//            }
+//        }
+//        else
+//        {
+//            foreach (var error in result.Errors.Select(e => e.Description))
+//                ModelState.AddModelError("", error);
+//        }
+//    }
+//    return View(registerModel);
+//}
+
+
+UPDATE PROFILE
+//[HttpGet]
+//public async Task<IActionResult> UpdateProfile()
+//{
+//    var username = User.Identity.Name;
+
+//    var user = await userManager.FindByNameAsync(username);
+//    var model = new UpdateProfileViewModel
+//    {
+//        Email = user.Email,
+//        PhoneNumber = user.PhoneNumber,
+
+//        IDNumber = user.IDnumber,
+
+//        Userrole = user.UserRole,
+//        Lastname = user.LastName + " " + user.FirstName,
+
+//    };
+//    return View(model);
+//}
+
+//[HttpPost]
+//public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+//{
+//    if (ModelState.IsValid)
+//    {
+//        var user = await userManager.FindByNameAsync(User.Identity.Name);
+//        if (user != null)
+//        {
+//            user.Email = model.Email;
+//            user.PhoneNumber = model.PhoneNumber;
+//            var result = await userManager.UpdateAsync(user);
+//            if (result.Succeeded)
+//            {
+//                return RedirectToAction("Index", "Home");
+//            }
+//            else
+//            {
+//                foreach (var error in result.Errors)
+//                {
+//                    ModelState.AddModelError("", error.Description);
+//                }
+//            }
+//        }
+//        else
+//        {
+//            ModelState.AddModelError("", "Could not find user, please contact system admin");
+//            return View(model);
+//        }
+//    }
+//    return View(model);
+//}

@@ -1,0 +1,141 @@
+﻿@model UserPageViewModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<h2>All Users</h2>
+
+<!-- Search Bar -->
+<div class="mb-3">
+    <input type="text" id="searchInput" placeholder="Search by email or name..." class="form-control" onkeyup="filterUsers()" />
+</div>
+
+<!-- User Table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Account Number</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody">
+        @foreach (var user in Model.AppUsers)
+        {
+            <tr data-id="@user.Id">
+                <td>@user.BankAccount.AccountNumber</td>
+                <td>@user.fullName</td>
+                <td>@user.Email</td>
+                <td>@user.BankAccount.Balance.ToString("C")</td> <!-- Format as currency -->
+                <td>
+                    <span class="badge @(user.IsActive ? "badge-success" : "badge-secondary")">@(user.IsActive ? "Active" : "Inactive")</span>
+                </td>
+                <td>
+                    <button class="btn btn-warning btn-sm edit-btn" data-id="@user.Id">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-btn" data-id="@user.Id">Delete</button>
+                    <button class="btn btn-info btn-sm view-btn" data-id="@user.Id">View</button>
+                    <button class="btn btn-secondary btn-sm toggle-status-btn" data-id="@user.Id" data-status="@user.IsActive">
+                        @(user.IsActive ? "Deactivate" : "Activate")
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Pagination Controls (Optional) -->
+@* <nav>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" href="javascript:void(0);" onclick="loadPage(@i)">@i</a>
+            </li>
+        }
+    </ul>
+</nav> *@
+
+<script>
+    // User Filtering Function
+    function filterUsers() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#userTableBody tr");
+
+        rows.forEach(row => {
+            const email = row.cells[2].innerText.toLowerCase(); // Email column
+            const name = row.cells[1].innerText.toLowerCase(); // Full Name column
+            if (email.includes(input) || name.includes(input)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    // AJAX-based Pagination
+    function loadPage(pageNumber) {
+        $.ajax({
+            url: '/Admin/LoadUsersPage',
+            method: 'GET',
+            data: { page: pageNumber },
+            success: function (data) {
+                $('#userTableBody').html(data);
+            },
+            error: function (error) {
+                alert('Error loading page. Please try again.');
+            }
+        });
+    }
+
+    // Toggle User Status
+    $(document).on('click', '.toggle-status-btn', function () {
+        const userId = $(this).data('id');
+        const currentStatus = $(this).data('status');
+        const newStatus = !currentStatus; // Toggle status
+
+        $.ajax({
+            url: `/Admin/ToggleUserStatus/${userId}`,
+            method: 'POST',
+            data: { isActive: newStatus },
+            success: function (response) {
+                location.reload(); // Reload to reflect the status change
+            },
+            error: function (error) {
+                alert('Error toggling user status. Please try again.');
+            }
+        });
+    });
+
+    // Edit User Functionality (AJAX)
+    $(document).on('click', '.edit-btn', function () {
+        const userId = $(this).data('id');
+        window.location.href = `/Admin/EditUser/${userId}`;
+    });
+
+    // View User Functionality (AJAX)
+    $(document).on('click', '.view-btn', function () {
+        const userId = $(this).data('id');
+        window.location.href = `/Admin/ViewUser/${userId}`;
+    });
+
+    // Delete User Functionality (AJAX)
+    $(document).on('click', '.delete-btn', function () {
+        const userId = $(this).data('id');
+        if (confirm('Are you sure you want to delete this user?')) {
+            $.ajax({
+                url: `/Admin/DeleteUser/${userId}`,
+                method: 'DELETE',
+                success: function (response) {
+                    alert('User deleted successfully.');
+                    location.reload(); // Reload the page after deletion
+                },
+                error: function (error) {
+                    alert('Error deleting user. Please try again.');
+                }
+            });
+        }
+    });
+</script>

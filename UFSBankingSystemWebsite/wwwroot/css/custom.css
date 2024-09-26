@@ -14,7 +14,7 @@
 
 body
 {
-    font-family: 'Roboto', sans-serif; /* Updated to use Roboto */
+    font-family: 'Poppins', sans-serif; /* Updated to use Roboto */
     background-image: url('/images/Picture4.jpg');
     background-size: cover;
     color: white;
@@ -88,7 +88,11 @@ body
 .navbar-brand img {
     max-height: 50px;
     width: auto;
+    transition: transform 0.3s ease;
 }
+    .navbar-brand img:hover {
+        transform: scale(1.1);
+    }
 
 .btn {
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -112,7 +116,7 @@ body
     border: none;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
     .card:hover {
@@ -125,6 +129,52 @@ body
     color: #fff;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+}
+
+/* General Table Styles */
+.table {
+    margin-top: 20px; /* Space above tables */
+}
+
+/* Specific styles for transactions table */
+#transactionsTable {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background */
+}
+
+/* Specific styles for consultants table */
+#consultantsTable {
+    background-color: rgba(240, 240, 240, 0.9); /* Slightly darker background */
+}
+
+/* Specific styles for financial advisors table */
+#financialAdvisorsTable {
+    background-color: rgba(220, 220, 220, 0.9); /* Darker background */
+}
+
+/* Table Headings */
+.table th {
+    background-color: var(--primary-color); /* Use primary color for headings */
+    color: white; /* White text color */
+}
+
+/* Spacing between headings and rows */
+.table th,
+.table td {
+    padding: 15px; /* Add padding for better spacing */
+}
+
+/* Hover Effect on Rows */
+.table tbody tr:hover {
+    background-color: var(--secondary-color); /* Change background on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        font-size: 0.9em; /* Smaller font size on mobile devices */
+        padding: 10px; /* Adjust padding on mobile devices */
+    }
 }
 
 .footer {

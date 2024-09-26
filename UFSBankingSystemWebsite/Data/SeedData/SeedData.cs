@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,36 +20,6 @@ namespace UFSBankingSystem.Data.SeedData
             LastName = "Meyers",
             Email = "jonathan@ufs.ac.za",
             IDnumber = 8876543210123,
-            StudentStaffNumber = 9876543210,
-        };
-
-        private static readonly User Customer = new User
-        {
-            UserName = "thabo@ufs.ac.za",
-            FirstName = "Thabo",
-            LastName = "Zungu",
-            Email = "thabo@ufs.ac.za",
-            IDnumber = 0206151810182,
-            StudentStaffNumber = 7432108965,
-        };
-
-        private static readonly User Consultant = new User
-        {
-            UserName = "thando@ufs.ac.za",
-            FirstName = "Thando",
-            LastName = "Ndlela",
-            Email = "thando@ufs.ac.za",
-            IDnumber = 9209151587083,
-            StudentStaffNumber = 9158974481,
-        };
-
-        private static readonly User FinancialAdvisor = new User
-        {
-            UserName = "millicent@ufs.ac.za",
-            FirstName = "Millicent",
-            LastName = "Kruger",
-            Email = "millicent@ufs.ac.za",
-            IDnumber = 9204247204082,
             StudentStaffNumber = 9876543210,
         };
 
@@ -84,14 +55,16 @@ namespace UFSBankingSystem.Data.SeedData
             // Seed Admin user
             await SeedUserAsync(Admin, userManager);
 
-            // Seed Customer user
-            await SeedUserAsync(Customer, userManager);
+            // Seed sample customers and staff
+            foreach (var customer in SampleData.SampleCustomers)
+            {
+                await SeedUserAsync(customer, userManager);
+            }
 
-            // Seed Consultant user
-            await SeedUserAsync(Consultant, userManager);
-
-            // Seed Financial Advisor user
-            await SeedUserAsync(FinancialAdvisor, userManager);
+            foreach (var staff in SampleData.SampleStaff)
+            {
+                await SeedUserAsync(staff, userManager);
+            }
         }
 
         private static async Task SeedUserAsync(User user, UserManager<User> userManager)
@@ -102,25 +75,10 @@ namespace UFSBankingSystem.Data.SeedData
                 var result = await CreateDefaultAppUser(user, userManager);
                 if (result.Succeeded)
                 {
-                    // Assign the appropriate role to the user based on their properties
-                    string roleToAssign;
-
-                    if (user.Email.Contains("jonathan"))
-                        roleToAssign = "Admin";
-                    else if (user.Email.Contains("thabo"))
-                        roleToAssign = "User";
-                    else if (user.Email.Contains("thando"))
-                        roleToAssign = "Consultant";
-                    else if (user.Email.Contains("millicent"))
-                        roleToAssign = "FinancialAdvisor";
-                    else
-                        return;
-
-                    await userManager.AddToRoleAsync(user, roleToAssign);
+                    await userManager.AddToRoleAsync(user, "User");
                 }
                 else
                 {
-                    // Handle errors (e.g., log them)
                     throw new Exception($"Failed to create user {user.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                 }
             }

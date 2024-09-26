@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using Microsoft.IdentityModel.Abstractions;
+using UFSBankingSystem.Data.SeedData;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -23,20 +24,70 @@ namespace UFSBankingSystem.Controllers
             _wrapper = wrapper;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index(string currentPage = "index")
-        {
-            var transactions = await _wrapper.Transactions.GetAllAsync();
-            var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
-            var finadvisors = (await _userManager.GetUsersInRoleAsync("FAdvisor")).ToList();
-            var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
 
-            var indexPageViewModel = new IndexPageViewModel()
+        //public async Task<IActionResult> Index()
+        //{
+        //    // Retrieve transactions and add sample transactions for demonstration
+        //    var transactions = await _wrapper.Transactions.GetAllAsync();
+        //    transactions.AddRange(SampleData.SampleTransactions); // Add sample transactions
+
+        //    // Retrieve users by role
+        //    var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
+        //    var finAdvisors = (await _userManager.GetUsersInRoleAsync("FinancialAdvisor")).ToList();
+        //    var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
+
+        //    // Combine actual users with sample customers and staff for demonstration
+        //    users.AddRange(SampleData.SampleCustomers); // Add sample customers
+        //    users.AddRange(SampleData.SampleStaff); // Add sample staff
+
+        //    // Create the view model with all necessary data
+        //    var indexPageViewModel = new AdminViewModel()
+        //    {
+        //        CurrentPage = "index",
+        //        Transactions = transactions,
+        //        FinancialAdvisors = finAdvisors,
+        //        Consultants = consultants,
+        //        TotalUsers = users.Count, // Count all users including samples
+        //        Notifications = SampleData.SampleNotifications, // Use sample notifications
+        //        Users = users // Include all users in the view model if needed
+        //    };
+
+        //    return View(indexPageViewModel);
+        //}
+        public async Task<IActionResult> Index()
+        {
+            // Retrieve all transactions from the repository
+            var transactions = await _wrapper.Transactions.GetAllAsync();
+
+            // Add sample transactions for demonstration
+            transactions.AddRange(SampleData.SampleTransactions);
+
+            // Retrieve users by role
+            var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
+            var finAdvisors = (await _userManager.GetUsersInRoleAsync("FinancialAdvisor")).ToList();
+
+            // Combine actual users with sample customers and staff for demonstration
+            var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
+            users.AddRange(SampleData.SampleCustomers); // Add sample customers
+            users.AddRange(SampleData.SampleStaff); // Add sample staff
+
+            // Calculate total users
+            int totalUsersCount = users.Count;
+
+            // Determine active transactions (you can define what "active" means)
+            var activeTransactions = transactions.Where(t => t.TransactionDate >= DateTime.Now.AddDays(-6100)).ToList(); // Example: last 30 days
+
+            // Create the view model with all necessary data
+            var indexPageViewModel = new AdminViewModel()
             {
-                CurrentPage = currentPage,
+                CurrentPage = "index",
                 Transactions = transactions,
-                FinancialAdvisor = finadvisors,
+                FinancialAdvisors = finAdvisors,
                 Consultants = consultants,
-                TotalUsers = users
+
+                TotalUsers = totalUsersCount, // Count all users including samples
+                Notifications = SampleData.SampleNotifications, // Use sample notifications
+                ActiveTransactions = activeTransactions // Set active transactions here
             };
 
             return View(indexPageViewModel);
@@ -56,7 +107,7 @@ namespace UFSBankingSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Users()
+        public async Task<IActionResult> UserManagement()
         {
 
 
@@ -92,7 +143,7 @@ namespace UFSBankingSystem.Controllers
                 if (await _userManager.IsInRoleAsync(user, "User"))
                     await _userManager.RemoveFromRoleAsync(user, "User");
 
-                string Role = (role == "c") ? "Consultant" : "FinAdvisor";
+                string Role = (role == "c") ? "Consultant" : "FinancialAdvisor";
                 var result = await _userManager.AddToRoleAsync(user, Role);
                 if (result.Succeeded)
                 {

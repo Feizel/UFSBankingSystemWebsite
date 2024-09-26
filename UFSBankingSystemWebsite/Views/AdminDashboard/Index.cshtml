@@ -1,7 +1,8 @@
-﻿@model IndexPageViewModel
+﻿@model AdminViewModel
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
+
 <h2 class="mb-4">Admin Dashboard</h2>
 
 <div>
@@ -9,10 +10,22 @@
     <p>You have the following options:</p>
 </div>
 
+<!-- Navigation Links for Quick Access -->
+<div class="mb-4">
+    <a asp-action="UserManagement" class="btn btn-primary">Manage Users</a>
+    <a asp-action="ManageConsultants" class="btn btn-primary">Manage Consultants</a>
+    <a asp-action="ViewAdvices" class="btn btn-primary">View Advice</a>
+    <a asp-action="GenerateReport" class="btn btn-primary">Generate Report</a>
+    <a asp-action="AdminCreateUser" class="btn btn-success">Create User</a>
+    <a asp-action="AdminCreateUser" class="btn btn-success">Create Consultant</a>
+</div>
+
+<!-- Cards for Key Metrics -->
 <div class="row">
+    <!-- Total Users Card -->
     <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
                 <h5 class="card-title mb-0"><i class="fas fa-users mr-2"></i> Total Users</h5>
             </div>
             <div class="card-body">
@@ -20,19 +33,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Active Transactions Card -->
     <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
                 <h5 class="card-title mb-0"><i class="fas fa-chart-line mr-2"></i> Active Transactions</h5>
             </div>
             <div class="card-body">
-                <h3 class="text-center">@Model.ActiveTransactions</h3>
+                <h3 class="text-center">@Model.ActiveTransactions.Count</h3> <!-- Display count of active transactions -->
             </div>
         </div>
     </div>
+
+    <!-- Notifications Card -->
     <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
                 <h5 class="card-title mb-0"><i class="fas fa-bell mr-2"></i> Notifications</h5>
             </div>
             <div class="card-body">
@@ -47,8 +64,18 @@
     </div>
 </div>
 
-<h3>Transactions</h3>
-<table class="table text-white">
+<!-- Notifications Section -->
+<h3>Notifications</h3>
+<ul class="list-group">
+    @foreach (var notification in Model.Notifications)
+    {
+        <li class="list-group-item">@notification.Message</li>
+    }
+</ul>
+
+<!-- Recent Transactions Table -->
+<h3>Recent Transactions</h3>
+<table id="transactionsTable" class="table table-striped table-bordered text-dark">
     <thead>
         <tr>
             <th>User Email</th>
@@ -61,27 +88,76 @@
         {
             <tr>
                 <td>@transaction.UserEmail</td>
-                <td>@transaction.Amount</td>
+                <td>@transaction.Amount.ToString("C")</td>
                 <td>@transaction.TransactionDate.ToShortDateString()</td>
             </tr>
         }
     </tbody>
 </table>
 
-
-
+<!-- Consultants Table -->
 <h3>Consultants</h3>
-<ul>
-    @foreach (var consultant in Model.Consultants)
-    {
-        <li>@consultant.Email - @consultant.LastName</li>
-    }
-</ul>
+<table id="consultantsTable" class="table table-striped table-bordered text-dark">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Consultants.Count == 0)
+        {
+            <tr>
+                <td colspan="3" class="text-center">
+                    <i class="fas fa-exclamation-triangle red-icon"></i> No consultants found
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var consultant in Model.Consultants)
+            {
+                <tr>
+                    <td>@consultant.EmployeeNumber</td>
+                    <td>@consultant.Email</td>
+                    <td>@consultant.FirstName</td>
+                    <td>@consultant.LastName</td>
+                    <td>
+                        <a asp-action="AssignRole" asp-route-email="@consultant.Email" asp-route-role="c" class="btn btn-warning btn-sm">Assign Consultant</a>
+                        <a asp-action="DeleteUser" asp-route-email="@consultant.Email" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
+<!-- Financial Advisors Table -->
 <h3>Financial Advisors</h3>
-<ul>
-    @foreach (var finAdvisor in Model.FinancialAdvisor)
-    {
-        <li>@finAdvisor.Email - @finAdvisor.LastName</li>
-    }
-</ul>
+<table id="financialAdvisorsTable" class="table table-striped table-bordered text-dark">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var finAdvisor in Model.FinancialAdvisors)
+        {
+            <tr>
+                <td>@finAdvisor.Email</td>
+                <td>@finAdvisor.LastName</td>
+                <td>
+                    <a asp-action="AssignRole" asp-route-email="@finAdvisor.Email" asp-route-role="f" class="btn btn-warning btn-sm">Assign Financial Advisor</a>
+                    <a asp-action="DeleteUser" asp-route-email="@finAdvisor.Email" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // Optional: Add any necessary JavaScript for interactivity
+</script>

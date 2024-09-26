@@ -108,3 +108,192 @@ UFSBankingSystem.Controllers.FinancialAdvisorDashboardController.ProvideAdvice(s
 
 
 
+
+
+
+
+
+
+
+Thank you I have fixed the issues in finacial advisor and am satisfied with it for now. Now I want us to handle the customer role. Remember the customer should:
+ Register: User can register and get login
+• Login: User can login using credentials.
+• Profile: User can set their profile.
+• Change Password: User can change their password which used to access their accounts
+through web and mobile application.
+• Menu: Facility to view balance, personal information, account information, transfer
+funds between their accounts.
+• Notification - Notifications when any of the menu items are done.
+
+Here are the issues I encounter:
+- Dashboard create account works, account is created and success message show. However, the account does not show up on Dashboard under "Your Acoounts", still says "You currently have no bank accounts.
+Please create an account to access banking services."
+- View Accounts
+- Transaction History (Populate with dummy data)
+- Notifications (Populate with dummy data)
+- Edit Profile error
+- View Accounts (404 Error: This localhost page can’t be found
+No webpage was found for the web address: http://localhost:5215/CustomerDashboard/ViewAccount
+HTTP ERROR 404)
+- Transfer Funds (System.NullReferenceException: 'Object reference not set to an instance of an object.'
+
+mainBankAccount was null.)
+------------------------------
+THE ENTIRE TRANSFER MONEY VIEW:
+------------------------------
+public async Task<IActionResult> TransferMoneyView()
+{
+    var username = User.Identity.Name;
+    var user = await _userManager.FindByNameAsync(username);
+
+    var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+    var mainBankAccount = allBankAccounts.FirstOrDefault(b => b.UserEmail == user.Email && b.AccountOrder == 1);
+
+    var viewModel = new MoneyTransferViewModel
+    {
+        SenderBankAccountNumber = mainBankAccount.AccountNumber,
+        AvailableBalance = mainBankAccount.Balance,
+    };
+
+    return View(viewModel);
+}
+
+Let us handle the errors 1 at a time, staring with:
+- Dashboard create account works, account is created and success message show. However, the account does not show up on Dashboard under "Your Acoounts", still says "You currently have no bank accounts.
+Please create an account to access banking services."
+
+Here is my customer associated code:
+@model UFSBankingSystem.Models.ViewModels.CustomerViewModel
+
+<!-- Include Font Awesome for icons if not already included -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @TempData["Message"]
+        </div>
+    }
+
+    <h2 class="mb-4">Customer Dashboard</h2>
+
+    <div class="text-center mb-4">
+        <h4>Welcome back, @User.Identity.Name!</h4>
+    </div>
+
+    <h4>Your Accounts</h4>
+
+    @if (Model.BankAccounts != null && Model.BankAccounts.Any())
+    {
+        <table class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th>Account Type</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var account in Model.BankAccounts)
+                {
+                    <tr>
+                        <td>@account.BankAccountType</td>
+                        <td>@account.Balance.ToString("C")</td> <!-- Format balance as Rand currency -->
+                        <td>
+                            <a asp-controller="CustomerDashboard" asp-action="ViewAccount" asp-route-id="@account.Id" class="btn btn-info">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <a asp-controller="CustomerDashboard" asp-action="Withdraw" asp-route-id="@account.Id" class="btn btn-warning">
+                                <i class="fas fa-money-bill-wave"></i> Withdraw
+                            </a>
+                            <a asp-controller="CustomerDashboard" asp-action="Transfer" asp-route-id="@account.Id" class="btn btn-success">
+                                <i class="fas fa-exchange-alt"></i> Transfer
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Action buttons for additional functionalities -->
+        <div class="mb-3">
+            <a asp-action="Withdraw" asp-controller="CustomerDashboard" class="btn btn-danger">
+                <i class="fas fa-money-bill-wave"></i> Withdraw Funds
+            </a>
+            <a asp-action="Transfer" asp-controller="CustomerDashboard" class="btn btn-primary">
+                <i class="fas fa-exchange-alt"></i> Transfer Funds
+            </a>
+            <a asp-action="EditProfile" asp-controller="CustomerDashboard" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+            <a asp-action="ChangePassword" asp-controller="CustomerDashboard" class="btn btn-secondary">
+                <i class="fas fa-lock"></i> Change Password
+            </a>
+        </div>
+
+    }
+    else
+    {
+        // Option to create a new account if no accounts exist
+        <div class="alert alert-warning text-center">
+            <h5>You currently have no bank accounts.</h5>
+            <p>Please create an account to access banking services.</p>
+            <a asp-action="CreateAccount" asp-controller="CustomerDashboard" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Create Account
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Ensure Bootstrap JavaScript is included -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+@model UFSBankingSystem.Models.ViewModels.CreateAccountViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<h2>Create New Bank Account</h2>
+
+<form asp-action="CreateAccount" method="post">
+    <div class="mb-3">
+        <label asp-for="AccountName" class="form-label">Account Name</label>
+        <input asp-for="AccountName" class="form-control" required />
+        <span asp-validation-for="AccountName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AccountType" class="form-label">Account Type</label>
+        <select asp-for="AccountType" class="form-select" required>
+            <option value="">Select Account Type</option>
+            <option value="Savings">Savings</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Business">Business</option>
+            <!-- Add more account types as needed -->
+        </select>
+        <span asp-validation-for="AccountType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InitialDeposit" class="form-label">Initial Deposit</label>
+        <input asp-for="InitialDeposit" class="form-control" required />
+        <span asp-validation-for="InitialDeposit" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Account</button>
+</form>
+
+<a asp-action="Index" asp-controller="CustomerDashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+
+

@@ -4,13 +4,15 @@ namespace UFSBankingSystem.Models.ViewModels.Admin
 {
     public class UserViewModel
     {
+        public string Id { get; set; }
         public User AppUser { get; set; }
         public Account BankAccount { get; set; }
         public string IDNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string fullName { get; set; }
+        public string fullName => $"{FirstName} {LastName}";
         public string Email { get; set; }
+        public bool IsActive { get; set; }
     }
     public class UserPageViewModel 
     {
