@@ -221,7 +221,7 @@ namespace UFSBankingSystem.Controllers
             if (currentLoginUser != null)
             {
                 feedback.UserEmail = currentLoginUser.Email; // Ensure email is set here
-                feedback.dateTime = DateTime.Now;
+                feedback.FeedbackDate = DateTime.Now;
 
                 if (ModelState.IsValid)
                 {

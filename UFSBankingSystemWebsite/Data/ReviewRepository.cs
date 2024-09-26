@@ -17,23 +17,23 @@ namespace UFSBankingSystem.Data
 
         public async Task<List<FeedBack>> GetAllReviewsAsync()
         {
-            return await _context.Feedback.ToListAsync();
+            return await _context.FeedBacks.ToListAsync();
         }
 
         public async Task<FeedBack> GetReviewByIdAsync(int id)
         {
-            return await _context.Feedback.FindAsync(id);
+            return await _context.FeedBacks.FindAsync(id);
         }
 
         public async Task AddReviewAsync(FeedBack review)
         {
-            await _context.Feedback.AddAsync(review);
+            await _context.FeedBacks.AddAsync(review);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateReviewAsync(FeedBack review)
         {
-            _context.Feedback.Update(review);
+            _context.FeedBacks.Update(review);
             await _context.SaveChangesAsync();
         }
 
@@ -42,7 +42,7 @@ namespace UFSBankingSystem.Data
             var review = await GetReviewByIdAsync(id);
             if (review != null)
             {
-                _context.Feedback.Remove(review);
+                _context.FeedBacks.Remove(review);
                 await _context.SaveChangesAsync();
             }
         }

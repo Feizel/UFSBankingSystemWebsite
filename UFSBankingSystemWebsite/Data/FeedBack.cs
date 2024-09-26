@@ -17,23 +17,23 @@ namespace UFSBankingSystem.Data
 
         public async Task<List<FeedBack>> GetAllFeedbackAsync()
         {
-            return await _context.Feedback.ToListAsync();
+            return await _context.FeedBacks.ToListAsync();
         }
 
         public async Task<FeedBack> GetFeedbackByIdAsync(int id)
         {
-            return await _context.Feedback.FindAsync(id);
+            return await _context.FeedBacks.FindAsync(id);
         }
 
         public async Task CreateFeedbackAsync(FeedBack feedback)
         {
-            await _context.Feedback.AddAsync(feedback);
+            await _context.FeedBacks.AddAsync(feedback);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateFeedbackAsync(FeedBack feedback)
         {
-            _context.Feedback.Update(feedback);
+            _context.FeedBacks.Update(feedback);
             await _context.SaveChangesAsync();
         }
 
@@ -42,7 +42,7 @@ namespace UFSBankingSystem.Data
             var feedback = await GetFeedbackByIdAsync(id);
             if (feedback != null)
             {
-                _context.Feedback.Remove(feedback);
+                _context.FeedBacks.Remove(feedback);
                 await _context.SaveChangesAsync();
             }
         }

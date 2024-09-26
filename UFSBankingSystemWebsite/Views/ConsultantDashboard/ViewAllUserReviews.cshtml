@@ -18,17 +18,17 @@
             {
                 <tr>
                     <td>@review.UserEmail</td>
-                    <td>@review.Comment</td>
-                    @if (review.Rate >= 3)
+                    <td>@review.Message</td>
+                    @if (review.Rating >= 3)
                     {
-                        <td class="text-success">@review.Rate</td>
+                        <td class="text-success">@review.Rating</td>
                     }
                     else
                     {
-                        <td class="text-danger">@review.Rate</td>
+                        <td class="text-danger">@review.Rating</td>
                     }
 
-                    <td>@review.dateTime.ToString("g")</td>
+                    <td>@review.FeedbackDate.ToString("g")</td>
                 </tr>
             }
         </tbody>
