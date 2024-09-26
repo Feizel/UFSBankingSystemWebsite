@@ -15,7 +15,7 @@ namespace UFSBankingSystem.Models
         public string UserRole { get; set; }
 
         // Navigation properties
-        public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+        public virtual ICollection<BankAccount> Accounts { get; set; } = new List<BankAccount>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; } = new List<FinancialAdvice>();
         public bool IsConsultant { get; set; }

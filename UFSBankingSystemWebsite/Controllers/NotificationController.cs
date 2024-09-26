@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UFS_Banking_System_Website.Models;
 using System.Threading.Tasks;
-using UFSBankingSystem.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {

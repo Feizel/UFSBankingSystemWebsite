@@ -10,5 +10,6 @@ namespace UFSBankingSystem.Models
         public int Id { get; set; }
         public string UserEmail { get; set; }
         public DateTime TimeStamp { get; set; }
+        public string UserId { get; internal set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using UFSBankingSystem.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using System.Globalization;
 using System.Text;
 using Microsoft.IdentityModel.Abstractions;
 using UFSBankingSystem.Data.SeedData;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -111,7 +111,7 @@ namespace UFSBankingSystem.Controllers
         {
 
 
-            var users = await _wrapper.AppUser.GetAllUsersAndBankAccount();
+            var users = await _wrapper.AppUser.GetAllUsersAndBankAccountAsync();
             var userPageViewModel = new UserPageViewModel()
             {
                 AppUsers = users
@@ -451,7 +451,7 @@ namespace UFSBankingSystem.Controllers
                     await _userManager.AddToRoleAsync(user, role);
 
                     // Create and add bank account
-                    Account bankAccountMain = new()
+                    BankAccount bankAccountMain = new()
                     {
                         AccountNumber = _randomAccount,
                         Balance = 100m,

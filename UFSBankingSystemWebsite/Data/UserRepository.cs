@@ -1,8 +1,10 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Data
 {
@@ -15,18 +17,40 @@ namespace UFSBankingSystem.Data
             _context = context;
         }
 
-        public async Task<List<UserViewModel>> GetAllUsersAndBankAccount()
+        public async Task<List<UserViewModel>> GetAllUsersAndBankAccountAsync()
         {
-            return await (from user in _context.Users
-                                  join account in _context.BankAccounts
-                                  on user.Email equals account.UserEmail
-                                  where user.UserRole == "Student" || user.UserRole == "Staff"
-                                  select new UserViewModel
-                                  {
-                                      AppUser = user,
-                                      BankAccount = account,
+            return await _context.Users
+                .Include(u => u.Accounts) 
+                .Select(u => new UserViewModel
+                {
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    AccountNumber = u.Accounts.Select(b => b.AccountNumber).FirstOrDefault(), // Get first account number
+                    Balance = u.Accounts.Sum(b => b.Balance) // Total balance across all accounts
+                })
+                .ToListAsync();
+        }
 
-                                  }).ToListAsync();
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(string userId)
+        {
+            var user = await GetUserByIdAsync(userId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

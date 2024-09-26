@@ -6,7 +6,7 @@ namespace UFSBankingSystem.Models.ViewModels
 {
     public class BankAccountViewModel
     {
-        public Account BankAccount { get; set; }
+        public BankAccount BankAccount { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
     }
     public class CreateAccountViewModel

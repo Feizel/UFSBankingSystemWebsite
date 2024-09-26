@@ -16,7 +16,7 @@
         public string Status { get; set; }  // e.g., Active, Completed, Canceled 
 
         // Navigation property to the associated account 
-        public virtual Account Account { get; set; }
+        public virtual BankAccount Account { get; set; }
 
     }
 

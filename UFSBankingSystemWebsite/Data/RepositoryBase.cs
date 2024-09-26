@@ -1,6 +1,6 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Data
 {

@@ -1,5 +1,4 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using UFSBankingSystem.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using UFSBankingSystem.Data;
 using Microsoft.AspNetCore.Authorization;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -90,7 +90,7 @@ namespace UFSBankingSystem.Controllers
             if (ModelState.IsValid)
             {
                 // Create a new bank account
-                var newAccount = new Account
+                var newAccount = new BankAccount
                 {
                     AccountNumber = GenerateAccountNumber(), // Method to generate a unique account number
                     Balance = model.InitialDeposit,

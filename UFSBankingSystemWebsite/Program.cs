@@ -3,12 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using UFSBankingSystem.Data;
 using UFSBankingSystem.Models;
 using UFSBankingSystem.Data.SeedData;
-using UFSBankingSystem.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -58,6 +63,6 @@ app.MapControllerRoute(
 
 
 
-await SeedData2.EnsurePopulatedAsync(app);
+await SeedData.EnsurePopulatedAsync(app);
 
 app.Run();

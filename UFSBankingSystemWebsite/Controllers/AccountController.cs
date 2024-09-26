@@ -1,11 +1,11 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
 using System.Data;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -132,7 +132,7 @@ namespace UFSBankingSystem.Controllers
                     await userManager.AddToRoleAsync(user, _customerRole);
 
                     // Create a bank account for the user
-                    Account bankAccountMain = new()
+                    BankAccount bankAccountMain = new()
                     {
                         AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
                         Balance = 100m, // Initial balance

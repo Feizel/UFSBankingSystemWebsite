@@ -1,9 +1,9 @@
-using UFSBankingSystem.Data.Interfaces;
 using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {
@@ -63,7 +63,7 @@ namespace UFSBankingSystem.Controllers
                 UserEmail = user.Email,
                 CurrentUser = user,
                 Transactions = allTransactions ?? new List<Transaction>(), // Initialize to an empty list if null
-                CurrentUserBankAccount = currentUserBankAccount ?? new Account(), // Initialize to a new Account object if null
+                CurrentUserBankAccount = currentUserBankAccount ?? new BankAccount(), // Initialize to a new Account object if null
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });
 

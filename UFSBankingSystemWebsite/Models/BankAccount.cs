@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UFSBankingSystem.Models
 {
-    public class Account
+    public class BankAccount
     {
         public int Id { get; set; }
         public string UserId { get; set; } // Foreign key to User

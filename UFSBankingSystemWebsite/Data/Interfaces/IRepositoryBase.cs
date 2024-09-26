@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace UFSBankingSystem.Data.Interfaces
+namespace UFSBankingSystemWebsite.Data.Interfaces
 {
     public interface IRepositoryBase<T> where T : class
     {
@@ -8,7 +8,7 @@ namespace UFSBankingSystem.Data.Interfaces
         Task<List<T>> GetAllAsync();
         Task<T> GetByIdAsync(int? id);
         Task RemoveAsync(int? id);
-        Task UpdateAsync(T? entity);
+        Task UpdateAsync(T entity);
         Task<IEnumerable<T>> FindAllAsync();
         Task<T> FindByIdAsync(int id);
         Task CreateAsync(T entity);

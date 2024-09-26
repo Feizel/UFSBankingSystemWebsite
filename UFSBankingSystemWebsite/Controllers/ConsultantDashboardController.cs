@@ -1,4 +1,3 @@
-using UFSBankingSystem.Data.Interfaces;
 using UFSBankingSystem.Models;
 using UFSBankingSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -8,10 +7,11 @@ using System.Globalization;
 using System.Text;
 using UFS_Banking_System_Website.Models.ViewModels;
 using UFSBankingSystem.Models.ViewModels.Admin;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Controllers
 {
-   
+
     [Authorize(Roles = "Consultant,Admin")]
     public class ConsultantDashboardController : Controller
     {
@@ -403,7 +403,7 @@ namespace UFSBankingSystem.Controllers
         // Assist Transactions (GET)
         public async Task<IActionResult> Transactions()
         {
-            var customersWithAccounts = await _repository.AppUser.GetAllUsersAndBankAccount();
+            var customersWithAccounts = await _repository.AppUser.GetAllUsersAndBankAccountAsync();
             return View(customersWithAccounts);
         }
 

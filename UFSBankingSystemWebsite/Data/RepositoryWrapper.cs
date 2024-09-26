@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UFSBankingSystem.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 
 namespace UFSBankingSystem.Data
@@ -7,12 +7,10 @@ namespace UFSBankingSystem.Data
     public class RepositoryWrapper : IRepositoryWrapper
     {
         private readonly AppDbContext _appDbContext;
-      
-        private IChargesRepository _chargesRepository;
         private ITransactionRepository _Transaction;
         private IReviewRepository _Review;
         private INotificationRepository _Notification;
-        private IAccountRepository _bankAccount;
+        private IBankAccountRepository _bankAccount;
         private IUserRepository _appUser;
         private ILoginRepository _logins;
         public RepositoryWrapper(AppDbContext appDbContext)
@@ -20,13 +18,13 @@ namespace UFSBankingSystem.Data
             _appDbContext = appDbContext;
         }
 
-        public IAccountRepository BankAccount
+        public IBankAccountRepository BankAccount
         {
             get
             {
                 if (_bankAccount == null)
                 {
-                    _bankAccount = new AccountRepository(_appDbContext);
+                    _bankAccount = new BankAccountRepository(_appDbContext);
                 }
 
                 return _bankAccount;
@@ -69,19 +67,6 @@ namespace UFSBankingSystem.Data
                 }
 
                 return _Notification;
-            }
-        }
-
-        public IChargesRepository Charges
-        {
-            get
-            {
-                if (_chargesRepository == null)
-                {
-                    _chargesRepository = new ChargesRepository(_appDbContext);
-                }
-
-                return _chargesRepository;
             }
         }
 
