@@ -30,21 +30,20 @@ namespace UFSBankingSystem.Controllers
         {
             // Get the logged-in user's username
             var username = User.Identity.Name;
-
-
             var user = await _userManager.FindByNameAsync(username);
+
+            // Set ViewBag.FirstName for use in the layout
+            ViewBag.FirstName = user.FirstName;
 
             // Get all bank accounts for the user
             var allBankAccounts = await _repo.BankAccount.GetAllAsync();
-
-
             var userBankAccounts = allBankAccounts.Where(b => b.UserEmail == user.Email).ToList();
 
 
             var transactions = await _repo.Transactions.GetAllAsync();
             var userTransactions = transactions.Where(t => userBankAccounts.Any(b => b.UserEmail == user.Email)).ToList();
 
-
+            // View model to pass to the view
             var viewModel = new CustomerViewModel
             {
                 BankAccounts = userBankAccounts,
@@ -93,7 +92,7 @@ namespace UFSBankingSystem.Controllers
                 // Create a new bank account
                 var newAccount = new Account
                 {
-                    AccountNumber = GenerateAccountNumber(), // Implement this method to generate a unique account number
+                    AccountNumber = GenerateAccountNumber(), // Method to generate a unique account number
                     Balance = model.InitialDeposit,
                     BankAccountType = model.AccountType,
                     AccountName = model.AccountName, // Set the account name from the view model
@@ -141,7 +140,7 @@ namespace UFSBankingSystem.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "CustomerDashboard");
                 }
                 else
                 {
@@ -186,7 +185,7 @@ namespace UFSBankingSystem.Controllers
             if (currentUser == null)
             {
                 Message = "User not found.";
-                return RedirectToAction("Index", "Client");
+                return RedirectToAction("Index", "CustomerDashboard");
             }
 
             // Retrieve advice notifications for the current user
@@ -213,7 +212,7 @@ namespace UFSBankingSystem.Controllers
 
             // Handle case where the user is not logged in or not found
             Message = "User not found or not logged in";
-            return RedirectToAction("Index", "Client");
+            return RedirectToAction("Index", "CustomerDashboard");
         }
         [HttpPost]
         public async Task<IActionResult> AddRating(FeedBack feedback)
@@ -228,14 +227,14 @@ namespace UFSBankingSystem.Controllers
                 {
                     await _repo.Review.AddAsync(feedback);
                     Message = "Review sent successfully";
-                    return RedirectToAction("Index", "Client");
+                    return RedirectToAction("Index", "CustomerDashboard");
                 }
             }
 
             Message = "There was an error sending the review";
             return View(feedback);
         }
-        public async Task<bool> TransferMoney(string senderAccountNumber, string receiverAccountNumber, decimal amount)
+        public async Task<bool> Transfer(string senderAccountNumber, string receiverAccountNumber, decimal amount)
         {
 
             var allBankAccounts = await _repo.BankAccount.GetAllAsync();
@@ -295,7 +294,7 @@ namespace UFSBankingSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TransferMoneyView()
+        public async Task<IActionResult> Transfer()
         {
             var username = User.Identity.Name;
             var user = await _userManager.FindByNameAsync(username);
@@ -325,7 +324,7 @@ namespace UFSBankingSystem.Controllers
             decimal amount = model.Amount;
 
 
-            bool transferSuccess = await TransferMoney(senderAccountNumber, receiverAccountNumber, amount);
+            bool transferSuccess = await Transfer(senderAccountNumber, receiverAccountNumber, amount);
 
             if (transferSuccess)
             {

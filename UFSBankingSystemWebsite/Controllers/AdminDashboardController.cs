@@ -34,7 +34,7 @@ namespace UFSBankingSystem.Controllers
             {
                 CurrentPage = currentPage,
                 Transactions = transactions,
-                FinAdvisor = finadvisors,
+                FinancialAdvisor = finadvisors,
                 Consultants = consultants,
                 TotalUsers = users
             };

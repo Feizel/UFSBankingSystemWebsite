@@ -1,4 +1,4 @@
-﻿using UFSBankingSystem.Models;
+using UFSBankingSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -8,48 +8,60 @@ using System.Threading.Tasks;
 
 namespace UFSBankingSystem.Data.SeedData
 {
-    public static class SeedData
+    public static class SeedData2
     {
         private static readonly string password = "@TestApp123";
 
         private static readonly User Admin = new User
         {
-            UserName = "jonathan@ufs.ac.za",
+            UserName = "Master Admin",
             FirstName = "Jonathan",
             LastName = "Meyers",
             Email = "jonathan@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
             IDnumber = 8876543210123,
             StudentStaffNumber = 9876543210,
+            AccountNumber = "0000000001",
+            UserRole = "Admin"
         };
 
         private static readonly User Customer = new User
         {
-            UserName = "thabo@ufs.ac.za",
+            UserName = "_Customer",
             FirstName = "Thabo",
             LastName = "Zungu",
             Email = "thabo@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
             IDnumber = 0206151810182,
             StudentStaffNumber = 7432108965,
+            AccountNumber = "0000000002",
+            UserRole = "User"
         };
 
         private static readonly User Consultant = new User
         {
-            UserName = "thando@ufs.ac.za",
+            UserName = "Master Consultant",
             FirstName = "Thando",
             LastName = "Ndlela",
             Email = "thando@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
             IDnumber = 9209151587083,
             StudentStaffNumber = 9158974481,
+            AccountNumber = "0000000003",
+            UserRole = "Consultant"
         };
 
         private static readonly User FinancialAdvisor = new User
         {
-            UserName = "millicent@ufs.ac.za",
+            UserName = "Master FinancialAdvisor",
             FirstName = "Millicent",
             LastName = "Kruger",
             Email = "millicent@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
             IDnumber = 9204247204082,
             StudentStaffNumber = 9876543210,
+            AccountNumber = "0000000004",
+            UserRole = "FinancialAdvisor"
         };
 
         public static async Task EnsurePopulatedAsync(IApplicationBuilder app)
@@ -70,53 +82,32 @@ namespace UFSBankingSystem.Data.SeedData
 
         private static async Task SeedRolesAndUsersAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            // Seed roles
-            string[] roles = { "Admin", "Consultant", "FinancialAdvisor", "User" };
+            // Seed Admin role and user
+            await SeedUserAsync(Admin, userManager, roleManager);
 
-            foreach (var role in roles)
-            {
-                if (await roleManager.FindByNameAsync(role) == null)
-                {
-                    await roleManager.CreateAsync(new IdentityRole(role));
-                }
-            }
+            // Seed Customer role and user
+            await SeedUserAsync(Customer, userManager, roleManager);
 
-            // Seed Admin user
-            await SeedUserAsync(Admin, userManager);
+            // Seed Consultant role and user
+            await SeedUserAsync(Consultant, userManager, roleManager);
 
-            // Seed Customer user
-            await SeedUserAsync(Customer, userManager);
-
-            // Seed Consultant user
-            await SeedUserAsync(Consultant, userManager);
-
-            // Seed Financial Advisor user
-            await SeedUserAsync(FinancialAdvisor, userManager);
+            // Seed Financial Advisor role and user
+            await SeedUserAsync(FinancialAdvisor, userManager, roleManager);
         }
 
-        private static async Task SeedUserAsync(User user, UserManager<User> userManager)
+        private static async Task SeedUserAsync(User user, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            // Check if the role exists; if not, create it
+            if (await roleManager.FindByNameAsync(user.UserRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(user.UserRole));
+
             // Check if the user exists; if not, create it
             if (await userManager.FindByEmailAsync(user.Email) == null)
             {
                 var result = await CreateDefaultAppUser(user, userManager);
                 if (result.Succeeded)
                 {
-                    // Assign the appropriate role to the user based on their properties
-                    string roleToAssign;
-
-                    if (user.Email.Contains("jonathan"))
-                        roleToAssign = "Admin";
-                    else if (user.Email.Contains("thabo"))
-                        roleToAssign = "User";
-                    else if (user.Email.Contains("thando"))
-                        roleToAssign = "Consultant";
-                    else if (user.Email.Contains("millicent"))
-                        roleToAssign = "FinancialAdvisor";
-                    else
-                        return;
-
-                    await userManager.AddToRoleAsync(user, roleToAssign);
+                    await userManager.AddToRoleAsync(user, user.UserRole);
                 }
                 else
                 {

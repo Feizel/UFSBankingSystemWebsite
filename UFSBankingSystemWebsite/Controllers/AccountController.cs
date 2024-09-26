@@ -16,8 +16,7 @@ namespace UFSBankingSystem.Controllers
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IRepositoryWrapper wrapper;
-        //private readonly string role = "User";
+        private readonly IRepositoryWrapper _repoWrapper;
         private readonly string _customerRole = "User";
         private readonly string _consultantRole = "Consultant";
         private readonly string _financialAdvisorRole = "FinancialAdvisor";
@@ -29,7 +28,7 @@ namespace UFSBankingSystem.Controllers
             userManager = _userManager;
             signInManager = _signInManager;
             roleManager = _roleManager;
-            wrapper = _wrapper;
+            _repoWrapper = _wrapper;
         }
         [AllowAnonymous]
         public IActionResult Login(string returnUrl)
@@ -65,8 +64,8 @@ namespace UFSBankingSystem.Controllers
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,
                         };
-                        await wrapper.Logins.AddAsync(newLogin);
-                        wrapper.SaveChanges(); // Ensure changes are saved
+                        await _repoWrapper.Logins.AddAsync(newLogin);
+                        _repoWrapper.SaveChanges(); // Ensure changes are saved
 
                         // Redirect based on user role
                         if (await userManager.IsInRoleAsync(user, _adminRole))
@@ -78,18 +77,8 @@ namespace UFSBankingSystem.Controllers
                         else if (await userManager.IsInRoleAsync(user, _customerRole))
                             return RedirectToAction("Index", "CustomerDashboard");
 
-                        // Redirect based on user role
-                        //if (await userManager.IsInRoleAsync(user, "Admin"))
-                        //    return RedirectToAction("Index", "AdminDashboard");
-                        //else if (await userManager.IsInRoleAsync(user, "Consultant"))
-                        //    return RedirectToAction("Index", "ConsultantDashboard");
-                        //else if (await userManager.IsInRoleAsync(user, "FinancialAdvisor"))
-                        //    return RedirectToAction("Index", "FinancialAdvisorDashboard");
-                        //else if (await userManager.IsInRoleAsync(user, "User"))
-                        //    return RedirectToAction("Index", "CustomerDashboard");
-
                         // Default redirect
-                        return Redirect(model?.ReturnUrl ?? "/Home/Index");
+                        //return Redirect(model?.ReturnUrl ?? "/Home/Index");
                     }
                 }
             }
@@ -101,76 +90,76 @@ namespace UFSBankingSystem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string registerAs/*, string userType, string userRole*/)
         {
-            return View();
+            return View(new RegisterViewModel() 
+            { 
+                RegisterAs = registerAs,
+                //UserType = userType,
+                //Role = userRole
+            });
         }
 
         [AllowAnonymous]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                if (await roleManager.FindByNameAsync(_customerRole) == null)
-                    await roleManager.CreateAsync(new(_customerRole));
-                if (await roleManager.FindByNameAsync(_adminRole) == null)
-                    await roleManager.CreateAsync(new(_adminRole));
-                if (await roleManager.FindByNameAsync(_consultantRole) == null)
-                    await roleManager.CreateAsync(new(_consultantRole));
-                if (await roleManager.FindByNameAsync(_financialAdvisorRole) == null)
-                    await roleManager.CreateAsync(new(_financialAdvisorRole));
+                // Ensure roles exist
+                await EnsureRolesExist();
 
+                // Create a new user
                 User user = new()
                 {
-                    UserName = (registerModel.LastName + registerModel.FirstName).Substring(0, 10),
+                    UserName = registerModel.EmailAddress, // Use email as username for clarity
                     IDnumber = registerModel.IdPassportNumber,
                     Email = registerModel.EmailAddress,
                     FirstName = registerModel.FirstName,
                     LastName = registerModel.LastName,
-                    StudentStaffNumber = registerModel.StudentStaffNumber,
-                    UserRole = registerModel.RegisterAs
+                    StudentStaffNumber = registerModel.StudentStaffNumber
+                    //UserRole = registerModel.Role,
+                    //UserType = registerModel.UserType
                 };
 
-                Random rndAccount = new Random();
-                string _randomAccount = string.Empty;
-                do
-                {
-                    _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
-                }
-                while (userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
-                user.AccountNumber = _randomAccount;
-
-
-
+                // Create the user
                 IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+
                 if (result.Succeeded)
                 {
+                    // Assign role to user as Customer
                     await userManager.AddToRoleAsync(user, _customerRole);
-                    await userManager.AddToRoleAsync(user, _adminRole);
-                    await userManager.AddToRoleAsync(user, _consultantRole);
-                    await userManager.AddToRoleAsync(user, _financialAdvisorRole);
+
+                    // Create a bank account for the user
                     Account bankAccountMain = new()
                     {
-                        AccountNumber = _randomAccount,
-                        Balance = 100m,
+                        AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
+                        Balance = 100m, // Initial balance
                         BankAccountType = "Savings",
                         AccountOrder = 1,
-                        UserEmail = user.Email,
+                        UserEmail = user.Email, // Associate with the registered user's email
+                        UserId = user.Id // Use Id from IdentityUser as foreign key
                     };
-                    await wrapper.BankAccount.AddAsync(bankAccountMain);
+
+                    // Save the bank account to the database
+                    await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
+
+                    // Create a transaction for initial deposit
                     Models.Transaction transaction = new()
                     {
-                        BankAccountIdReceiver = int.Parse(_randomAccount),
+                        BankAccountIdReceiver = bankAccountMain.Id, // Assuming this is how you reference accounts
                         Amount = 100m,
-                        Reference = "fee Open new account ",
+                        Reference = "Initial deposit",
                         UserEmail = user.Email,
                         TransactionDate = DateTime.Now,
-
                     };
-                    await wrapper.Transactions.AddAsync(transaction);
-                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password,
-                        isPersistent: false, lockoutOnFailure: false);
+
+                    await _repoWrapper.Transactions.AddAsync(transaction);
+
+                    // Sign in the user after successful registration
+                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password, isPersistent: false, lockoutOnFailure: false);
+
                     if (signin_result.Succeeded)
                     {
                         var newLogin = new LoginSessions
@@ -178,72 +167,39 @@ namespace UFSBankingSystem.Controllers
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,
                         };
-                        await wrapper.Logins.AddAsync(newLogin);
-                        wrapper.SaveChanges();
 
-                        if (await userManager.IsInRoleAsync(user, "Consultant"))
-                            return RedirectToAction("Index", "Consultant");
-                        return RedirectToAction("Index", "Home");
+                        await _repoWrapper.Logins.AddAsync(newLogin);
+                        _repoWrapper.SaveChanges(); // Ensure changes are saved
+
+                        return RedirectToAction("Index", "CustomerDashboard");
                     }
                 }
                 else
+                {
                     foreach (var error in result.Errors.Select(e => e.Description))
                         ModelState.AddModelError("", error);
+                }
             }
             return View(registerModel);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> UpdateProfile()
-        //{
-        //    var username = User.Identity.Name;
-
-        //    var user = await userManager.FindByNameAsync(username);
-        //    var model = new UpdateProfileViewModel
-        //    {
-        //        Email = user.Email,
-        //        PhoneNumber = user.PhoneNumber,
-
-        //        IDNumber = user.IDnumber,
-
-        //        Userrole = user.UserRole,
-        //        Lastname = user.LastName + " " + user.FirstName,
-
-        //    };
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await userManager.FindByNameAsync(User.Identity.Name);
-        //        if (user != null)
-        //        {
-        //            user.Email = model.Email;
-        //            user.PhoneNumber = model.PhoneNumber;
-        //            var result = await userManager.UpdateAsync(user);
-        //            if (result.Succeeded)
-        //            {
-        //                return RedirectToAction("Index", "Home");
-        //            }
-        //            else
-        //            {
-        //                foreach (var error in result.Errors)
-        //                {
-        //                    ModelState.AddModelError("", error.Description);
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("", "Could not find user, please contact system admin");
-        //            return View(model);
-        //        }
-        //    }
-        //    return View(model);
-        //}
+        // Helper method to ensure roles exist
+        private async Task EnsureRolesExist()
+        {
+            if (await roleManager.FindByNameAsync(_customerRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_customerRole));
+            if (await roleManager.FindByNameAsync(_adminRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_adminRole));
+            if (await roleManager.FindByNameAsync(_consultantRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_consultantRole));
+            if (await roleManager.FindByNameAsync(_financialAdvisorRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_financialAdvisorRole));
+        }
+        private string GenerateAccountNumber()
+        {
+            // Logic to generate a unique account number
+            return "ACCT" + new Random().Next(100000, 999999).ToString();
+        }
 
         [HttpGet]
         public async Task<IActionResult> UpdateProfile()
@@ -268,7 +224,6 @@ namespace UFSBankingSystem.Controllers
 
             return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
@@ -301,7 +256,6 @@ namespace UFSBankingSystem.Controllers
             }
             return View(model);
         }
-
 
         [AllowAnonymous]
         public async Task<IActionResult> Logout()

@@ -58,6 +58,6 @@ app.MapControllerRoute(
 
 
 
-await SeedData.EnsurePopulatedAsync(app);
+await SeedData2.EnsurePopulatedAsync(app);
 
 app.Run();

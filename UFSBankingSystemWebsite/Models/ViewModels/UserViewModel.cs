@@ -12,6 +12,10 @@ namespace UFSBankingSystem.Models.ViewModels.Admin
         public string fullName { get; set; }
         public string Email { get; set; }
     }
+    public class UserPageViewModel 
+    {
+        public List<UserViewModel> AppUsers { get; set; }
+    }
 
     // Profile Management Model
     public class UserProfileModel

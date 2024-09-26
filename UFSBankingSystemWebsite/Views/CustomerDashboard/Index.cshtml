@@ -15,10 +15,10 @@
     <h2 class="mb-4">Customer Dashboard</h2>
 
     <div class="text-center mb-4">
-        <h4>Welcome back, @User.Identity.Name!</h4>
+        <h4>Welcome back, @ViewBag.FirstName!</h4>
     </div>
 
-    <h4>Your Accounts</h4>
+    <h4 class="mb-4">Your Accounts</h4>
 
     @if (Model.BankAccounts != null && Model.BankAccounts.Any())
     {
