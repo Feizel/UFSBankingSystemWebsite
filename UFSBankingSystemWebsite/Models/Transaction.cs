@@ -3,7 +3,7 @@
     public class Transaction
     {
         public int TransactionID { get; set; }
-        public int AccountID { get; set; }  // Foreign key to Account 
+        public int BankAccountID { get; set; }  // Foreign key to Account 
         public int BankAccountIdSender { get; set; }
         public int BankAccountIdReceiver { get; set; }
         public decimal Amount { get; set; }

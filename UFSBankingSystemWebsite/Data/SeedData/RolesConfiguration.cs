@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace UFSBankingSystem.Data.SeedData
+namespace UFSBankingSystemWebsite.Data.SeedData
 {
     public class RolesConfiguration : IEntityTypeConfiguration<IdentityRole>
     {

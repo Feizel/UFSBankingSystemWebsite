@@ -37,13 +37,13 @@
                         <td>@account.BankAccountType</td>
                         <td>@account.Balance.ToString("C")</td> <!-- Format balance as Rand currency -->
                         <td>
-                            <a asp-controller="CustomerDashboard" asp-action="ViewAccount" asp-route-id="@account.Id" class="btn btn-info">
+                            <a asp-controller="CustomerDashboard" asp-action="ViewAccount" asp-route-id="@account.BankAccountID" class="btn btn-info">
                                 <i class="fas fa-eye"></i> View Details
                             </a>
-                            <a asp-controller="CustomerDashboard" asp-action="Withdraw" asp-route-id="@account.Id" class="btn btn-warning">
+                            <a asp-controller="CustomerDashboard" asp-action="Withdraw" asp-route-id="@account.BankAccountID" class="btn btn-warning">
                                 <i class="fas fa-money-bill-wave"></i> Withdraw
                             </a>
-                            <a asp-controller="CustomerDashboard" asp-action="Transfer" asp-route-id="@account.Id" class="btn btn-success">
+                            <a asp-controller="CustomerDashboard" asp-action="Transfer" asp-route-id="@account.BankAccountID" class="btn btn-success">
                                 <i class="fas fa-exchange-alt"></i> Transfer
                             </a>
                         </td>

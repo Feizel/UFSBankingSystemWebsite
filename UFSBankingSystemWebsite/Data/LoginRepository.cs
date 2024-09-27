@@ -4,7 +4,7 @@ using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystem.Data
 {
-    public class LoginRepository : RepositoryBase<LoginSessions>, ILoginRepository
+    public class LoginRepository : RepositoryBase<LoginSession>, ILoginRepository
     {
         private readonly AppDbContext _context;
 
@@ -13,12 +13,12 @@ namespace UFSBankingSystem.Data
             _context = context;
         }
 
-        public async Task<LoginSessions> GetSessionByUserIdAsync(string userId)
+        public async Task<LoginSession> GetSessionByUserIdAsync(string userId)
         {
-            return await _context.LoginSessions.FirstOrDefaultAsync(ls => ls.Id == userId);
+            return await _context.LoginSessions.FirstOrDefaultAsync(ls => ls.UserId == userId);
         }
 
-        public async Task<List<LoginSessions>> GetAllSessionsAsync()
+        public async Task<List<LoginSession>> GetAllSessionsAsync()
         {
             return await _context.LoginSessions.ToListAsync();
         }

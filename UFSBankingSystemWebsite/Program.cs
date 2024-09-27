@@ -5,6 +5,7 @@ using UFSBankingSystem.Models;
 using UFSBankingSystem.Data.SeedData;
 using UFSBankingSystem.Data.Interfaces;
 using UFSBankingSystemWebsite.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
 

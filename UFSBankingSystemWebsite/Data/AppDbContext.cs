@@ -2,6 +2,7 @@
 using UFSBankingSystem.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using UFSBankingSystemWebsite.Data.SeedData;
 
 namespace UFSBankingSystem.Data
 {
@@ -13,7 +14,7 @@ namespace UFSBankingSystem.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<FeedBack> FeedBacks { get; set; }
-        public DbSet<LoginSessions> LoginSessions { get; set; }
+        public DbSet<LoginSession> LoginSessions { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
         public DbSet<FinancialAdvisor> FinancialAdvisors { get; set; }
         public DbSet<FinancialAdvice> FinancialAdvices { get; set; }
@@ -34,6 +35,7 @@ namespace UFSBankingSystem.Data
             modelBuilder.Entity<FeedBack>().ToTable("Feedbacks");
             modelBuilder.Entity<Consultant>().ToTable("Consultants");
             modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");
+            modelBuilder.Entity<LoginSession>().ToTable("LoginSessions");
 
             // Configure decimal precision
             modelBuilder.Entity<BankAccount>()
@@ -44,32 +46,33 @@ namespace UFSBankingSystem.Data
                 .Property(t => t.Amount)
                 .HasColumnType("decimal(18,2)");
 
-            // Configure relationships 
+            // Configure relationships
             modelBuilder.Entity<BankAccount>()
                 .HasOne(a => a.User)
                 .WithMany(u => u.Accounts)
-                .HasForeignKey(a => a.Id);
+                .HasForeignKey(a => a.UserId);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Account)
                 .WithMany(a => a.Transactions)
-                .HasForeignKey(t => t.AccountID);
+                .HasForeignKey(t => t.BankAccountID);
 
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.Id);
+                .HasForeignKey(n => n.UserId);
 
-            modelBuilder.Entity<FinancialAdvice>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.FinancialAdvices)
-                .HasForeignKey(f => f.Id);
-
-            // Feedback relationships
             modelBuilder.Entity<FeedBack>()
                 .HasOne<User>()
                 .WithMany()
                 .HasForeignKey(f => f.UserEmail); // Assuming UserEmail is used as a foreign key
+
+            modelBuilder.Entity<LoginSession>()
+                .HasOne(l => l.User)
+                .WithMany()
+                .HasForeignKey(l => l.UserId); // Assuming UserEmail is used as a foreign key
+
+            // Additional configurations for other entities...
         }
     }
 }

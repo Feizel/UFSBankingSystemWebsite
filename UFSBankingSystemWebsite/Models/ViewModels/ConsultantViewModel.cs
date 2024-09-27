@@ -8,7 +8,7 @@ namespace UFSBankingSystem.Models.ViewModels
         public List<Notification> Notifications { get; set; }  // List of notifications for the consultant
         public decimal ClientSatisfactionPercentage { get; set; } //Percentage indicating client satisafction
         public IQueryable<User> appUsers { get; set; }
-        public IEnumerable<LoginSessions> loginSessions { get; set; }
+        public IEnumerable<LoginSession> loginSessions { get; set; }
         public User SelectedUser { get; set; }
 
     }

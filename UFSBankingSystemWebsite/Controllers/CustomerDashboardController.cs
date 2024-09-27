@@ -65,7 +65,7 @@ namespace UFSBankingSystem.Controllers
                 return NotFound();
             }
 
-            var transactions = await _context.Transactions.Where(t => t.AccountID == int.Parse(id)).ToListAsync();
+            var transactions = await _context.Transactions.Where(t => t.BankAccountID == int.Parse(id)).ToListAsync();
 
             var model = new BankAccountViewModel
             {

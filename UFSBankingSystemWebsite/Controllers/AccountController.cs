@@ -59,7 +59,7 @@ namespace UFSBankingSystem.Controllers
                         //ViewBag.LastName = user.LastName;
 
                         // Log the login session
-                        var newLogin = new LoginSessions
+                        var newLogin = new LoginSession
                         {
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,
@@ -139,7 +139,7 @@ namespace UFSBankingSystem.Controllers
                         BankAccountType = "Savings",
                         AccountOrder = 1,
                         UserEmail = user.Email, // Associate with the registered user's email
-                        Id = user.Id // Use Id from IdentityUser as foreign key
+                        UserId = user.Id // Use Id from IdentityUser as foreign key
                     };
 
                     // Save the bank account to the database
@@ -162,7 +162,7 @@ namespace UFSBankingSystem.Controllers
 
                     if (signin_result.Succeeded)
                     {
-                        var newLogin = new LoginSessions
+                        var newLogin = new LoginSession
                         {
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,

@@ -22,7 +22,7 @@ namespace UFSBankingSystem.Data
 
         public async Task<BankAccount> GetAccountByIdAsync(int id)
         {
-            return await _context.BankAccounts.Include(b => b.User).FirstOrDefaultAsync(b => b.Id == id.ToString());
+            return await _context.BankAccounts.Include(b => b.User).FirstOrDefaultAsync(b => b.BankAccountID == id);
         }
 
         public async Task CreateAccountAsync(BankAccount account)

@@ -5,7 +5,7 @@ namespace UFSBankingSystem.Models
     public class Investment
     {
         public int InvestmentID { get; set; } // Primary key
-        public string Id { get; set; } // Foreign key to User
+        public string UserId { get; set; } // Foreign key to User
         public decimal Value { get; set; } // Current value of the investment
         public decimal InitialValue { get; set; } // Initial investment amount
         public DateTime InvestmentDate { get; set; } // Date of the investment

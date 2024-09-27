@@ -9,7 +9,7 @@ namespace UFSBankingSystem.Models
         public int StatementID { get; set; } // Primary key
 
         [Required]
-        public string Id { get; set; } // Foreign key to User
+        public string UserId { get; set; } // Foreign key to User
 
         [Required]
         public DateTime Date { get; set; } // Date of the statement
