@@ -34,7 +34,7 @@
             @foreach (var transaction in Model.Transactions)
             {
                 <tr>
-                    <td>@transaction.Id</td>
+                    <td>@transaction.TransactionID</td>
                     <td>@transaction.Amount</td>
                     <td>@transaction.TransactionDate.ToShortDateString()</td>
                 </tr>

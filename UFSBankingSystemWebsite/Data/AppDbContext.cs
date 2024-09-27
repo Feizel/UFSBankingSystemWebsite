@@ -48,7 +48,7 @@ namespace UFSBankingSystem.Data
             modelBuilder.Entity<BankAccount>()
                 .HasOne(a => a.User)
                 .WithMany(u => u.Accounts)
-                .HasForeignKey(a => a.UserId);
+                .HasForeignKey(a => a.Id);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Account)
@@ -58,12 +58,12 @@ namespace UFSBankingSystem.Data
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.UserId);
+                .HasForeignKey(n => n.Id);
 
             modelBuilder.Entity<FinancialAdvice>()
                 .HasOne(f => f.User)
                 .WithMany(u => u.FinancialAdvices)
-                .HasForeignKey(f => f.UserId);
+                .HasForeignKey(f => f.Id);
 
             // Feedback relationships
             modelBuilder.Entity<FeedBack>()

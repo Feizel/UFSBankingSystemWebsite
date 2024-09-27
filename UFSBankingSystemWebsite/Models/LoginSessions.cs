@@ -7,9 +7,9 @@ namespace UFSBankingSystem.Models
 {
     public class LoginSessions
     {
-        public int Id { get; set; }
+        public int LoginSessionID { get; set; }
         public string UserEmail { get; set; }
         public DateTime TimeStamp { get; set; }
-        public string UserId { get; internal set; }
+        public string Id { get; internal set; }
     }
 }

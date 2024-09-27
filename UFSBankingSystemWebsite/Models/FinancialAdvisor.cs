@@ -4,7 +4,7 @@ namespace UFSBankingSystem.Models
 {
     public class FinancialAdvisor
     {
-        public int Id { get; set; } // Unique identifier for the financial advisor
+        public int FinancialAdvisorID { get; set; } // Unique identifier for the financial advisor
         public string UserName { get; set; } // Username for login purposes
         public string FirstName { get; set; } // First name of the financial advisor
         public string LastName { get; set; } // Last name of the financial advisor

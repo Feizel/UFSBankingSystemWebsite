@@ -6,7 +6,7 @@ namespace UFSBankingSystem.Models
     public class Consultant
     {
         public int ConsultantID { get; set; } // Primary key
-        public string UserId { get; set; } // Foreign key to User
+        public string Id { get; set; } // Foreign key to User
 
        public string FirstName { get; set; }
        public string LastName { get; set; }

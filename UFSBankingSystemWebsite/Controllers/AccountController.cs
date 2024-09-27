@@ -139,7 +139,7 @@ namespace UFSBankingSystem.Controllers
                         BankAccountType = "Savings",
                         AccountOrder = 1,
                         UserEmail = user.Email, // Associate with the registered user's email
-                        UserId = user.Id // Use Id from IdentityUser as foreign key
+                        Id = user.Id // Use Id from IdentityUser as foreign key
                     };
 
                     // Save the bank account to the database
@@ -148,7 +148,7 @@ namespace UFSBankingSystem.Controllers
                     // Create a transaction for initial deposit
                     Models.Transaction transaction = new()
                     {
-                        BankAccountIdReceiver = bankAccountMain.Id, // Assuming this is how you reference accounts
+                        BankAccountIdReceiver = bankAccountMain.BankAccountID, // Assuming this is how you reference accounts
                         Amount = 100m,
                         Reference = "Initial deposit",
                         UserEmail = user.Email,

@@ -2,7 +2,7 @@
 {
     public class Transaction
     {
-        public int Id { get; set; }
+        public int TransactionID { get; set; }
         public int AccountID { get; set; }  // Foreign key to Account 
         public int BankAccountIdSender { get; set; }
         public int BankAccountIdReceiver { get; set; }

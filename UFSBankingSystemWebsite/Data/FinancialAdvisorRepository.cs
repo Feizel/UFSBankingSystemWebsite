@@ -22,7 +22,7 @@ namespace UFSBankingSystem.Data
 
         public async Task<FinancialAdvisor> GetAdvisorByIdAsync(int id)
         {
-            return await _context.FinancialAdvisors.FirstOrDefaultAsync(f => f.Id == id);
+            return await _context.FinancialAdvisors.FirstOrDefaultAsync(f => f.FinancialAdvisorID == id);
         }
 
         public async Task CreateAdvisorAsync(FinancialAdvisor advisor)

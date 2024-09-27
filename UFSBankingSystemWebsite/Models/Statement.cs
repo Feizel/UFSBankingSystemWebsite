@@ -9,6 +9,9 @@ namespace UFSBankingSystem.Models
         public int StatementID { get; set; } // Primary key
 
         [Required]
+        public string Id { get; set; } // Foreign key to User
+
+        [Required]
         public DateTime Date { get; set; } // Date of the statement
 
         [Required]
@@ -18,9 +21,6 @@ namespace UFSBankingSystem.Models
         [Required]
         [StringLength(500)]
         public string Description { get; set; } // Description of the statement
-
-        [Required]
-        public string UserId { get; set; } // Foreign key to User
 
         // Navigation property (if needed)
         public virtual User User { get; set; }

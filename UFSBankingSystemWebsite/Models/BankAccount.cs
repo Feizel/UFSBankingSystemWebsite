@@ -5,8 +5,8 @@ namespace UFSBankingSystem.Models
 {
     public class BankAccount
     {
-        public int Id { get; set; }
-        public string UserId { get; set; } // Foreign key to User
+        public int BankAccountID { get; set; }
+        public string Id { get; set; } // Foreign key to User
         public string AccountNumber { get; set; }
         public decimal Balance { get; set; }
         public string BankAccountType { get; set; }

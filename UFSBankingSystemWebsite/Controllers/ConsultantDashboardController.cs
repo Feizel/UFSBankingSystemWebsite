@@ -420,7 +420,7 @@ namespace UFSBankingSystem.Controllers
 
             var transaction = new Transaction
             {
-                AccountID = account.Id,
+                AccountID = account.BankAccountID,
                 Amount = amount,
                 transactionType = TransactionType.Deposit,
                 TransactionDate = DateTime.Now,
