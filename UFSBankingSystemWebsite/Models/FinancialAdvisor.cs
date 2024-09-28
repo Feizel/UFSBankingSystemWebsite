@@ -1,20 +1,20 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace UFSBankingSystem.Models
 {
     public class FinancialAdvisor
     {
-        public int FinancialAdvisorID { get; set; } // Unique identifier for the financial advisor
-        public string UserName { get; set; } // Username for login purposes
-        public string FirstName { get; set; } // First name of the financial advisor
-        public string LastName { get; set; } // Last name of the financial advisor
-        public string Email { get; set; } // Email address for communication
-        public string IDnumber { get; set; } // South African ID number
-        public string PhoneNumber { get; set; } // Contact number
-        public DateTime DateOfBirth { get; set; } // Date of birth for identification purposes
-        public string EmployeeNumber { get; set; } // Unique employee number for internal tracking
+        [Key]
+        public int FinancialAdvisorID { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string EmployeeNumber { get; set; }
 
-        // Navigation properties (if needed)
-        public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; } // List of advice given by this advisor
+        // Navigation property
+        public virtual User User { get; set; }
+        public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; }
     }
 }

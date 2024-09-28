@@ -45,25 +45,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5cf2c46f-8d69-49bd-aa25-07c2ab2f9c03",
+                            Id = "2b0e05d7-3da9-418c-adf7-2816c11c1b2b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7c62c936-50af-4623-b4e0-e9d90cb0e171",
+                            Id = "01b0677d-e3e9-4e06-ae4c-2ca1129ff187",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "d6d3dd09-2960-41c0-a97c-5e184fb3442e",
+                            Id = "d7087392-faf1-4ca5-b40a-98a8805747bb",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "1ef424ed-5376-424d-887a-1781baa00609",
+                            Id = "6b45bcfc-82bc-4fec-9f72-ee7e13b6b4e2",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });

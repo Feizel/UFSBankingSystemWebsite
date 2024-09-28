@@ -1,0 +1,326 @@
+HERE ARE NY NODELS:
+
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace UFSBankingSystem.Models
+{
+    public class BankAccount
+    {
+        public int BankAccountID { get; set; }
+        public string Id { get; set; } // Foreign key to User
+        public string AccountNumber { get; set; }
+        public decimal Balance { get; set; }
+        public string BankAccountType { get; set; }
+        public string AccountName { get; set; } // Account name
+        public int AccountOrder { get; set; } // control if main account or savings
+
+        public string UserEmail { get; set; }
+
+        //public ICollection<Transaction> Transactions { get; set; }
+
+        // Navigation property to the associated user
+        public virtual User User { get; set; }
+
+        // Navigation property to the associated transactions
+        public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+    }
+
+}
+
+using System;
+using System.Collections.Generic;
+
+namespace UFSBankingSystem.Models
+{
+    public class Consultant
+    {
+        public int ConsultantID { get; set; } // Primary key
+        public string Id { get; set; } // Foreign key to User
+
+       public string FirstName { get; set; }
+       public string LastName { get; set; }
+        public string Email { get; set; } // Email for the consultant
+        public string EmployeeNumber { get; set; } // Unique employee number for internal tracking
+
+        // Navigation property to the associated user
+        public virtual User User { get; set; }
+
+        // A collection of financial advice given by this consultant (if applicable)
+        public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; } = new List<FinancialAdvice>();
+    }
+}
+
+using System;
+
+namespace UFSBankingSystem.Models
+{
+    public class FeedBack
+    {
+        public int FeedBackID { get; set; } // Unique identifier for the feedback
+        public string UserEmail { get; set; } // Email of the user providing the feedback
+        public string Message { get; set; } // Feedback message
+        public int Rating { get; set; } // Rating given by the user (e.g., 1-5)
+        public DateTime FeedbackDate { get; set; } // Date when the feedback was provided
+    }
+}
+
+using System;
+
+namespace UFSBankingSystem.Models
+{
+    public class FinancialAdvice
+    {
+        public int FinancialAdviceID { get; set; } // Primary key
+        public string Id { get; set; } // Foreign key to User
+        public string Advice { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        // Navigation property
+        public virtual User User { get; set; }
+    }
+}
+
+using System;
+
+namespace UFSBankingSystem.Models
+{
+    public class FinancialAdvisor
+    {
+        public int FinancialAdvisorID { get; set; } // Unique identifier for the financial advisor
+        public string UserName { get; set; } // Username for login purposes
+        public string FirstName { get; set; } // First name of the financial advisor
+        public string LastName { get; set; } // Last name of the financial advisor
+        public string Email { get; set; } // Email address for communication
+        public string IDnumber { get; set; } // South African ID number
+        public string PhoneNumber { get; set; } // Contact number
+        public DateTime DateOfBirth { get; set; } // Date of birth for identification purposes
+        public string EmployeeNumber { get; set; } // Unique employee number for internal tracking
+
+        // Navigation properties (if needed)
+        public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; } // List of advice given by this advisor
+    }
+}
+
+using System;
+
+namespace UFSBankingSystem.Models
+{
+    public class Investment
+    {
+        public int InvestmentID { get; set; } // Primary key
+        public string Id { get; set; } // Foreign key to User
+        public decimal Value { get; set; } // Current value of the investment
+        public decimal InitialValue { get; set; } // Initial investment amount
+        public DateTime InvestmentDate { get; set; } // Date of the investment
+        public string InvestmentType { get; set; } // Type of investment (e.g., Stocks, Bonds, Real Estate)
+        public string Description { get; set; } // Description of the investment
+
+        // Navigation property
+        public virtual User User { get; set; }
+    }
+}
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace UFSBankingSystem.Models
+{
+    public class LoginSessions
+    {
+        public int LoginSessionID { get; set; }
+        public string UserEmail { get; set; }
+        public DateTime TimeStamp { get; set; }
+        public string Id { get; internal set; }
+    }
+}
+
+namespace UFSBankingSystem.Models
+{
+    public class Notification
+    {
+        public int NotificationID { get; set; }
+        public string Id { get; set; } // Foreign key to User
+        public string Message { get; set; }
+        public DateTime NotificationDate { get; set; }
+        public bool IsRead { get; set; }
+        public string UserEmail { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        // Navigation property
+        public virtual User User { get; set; }
+    }
+}
+
+using System;
+
+namespace UFSBankingSystem.Models
+{
+    public class Report
+    {
+        public int ReportID { get; set; } // Primary key for the report
+        public string Id { get; set; } // Foreign key to User table
+        public string Content { get; set; } // Content of the report
+        public DateTime CreatedAt { get; set; } = DateTime.Now; // Timestamp when the report was created
+
+        // Navigation property for related user (if needed)
+        public virtual User User { get; set; }
+    }
+}
+
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace UFSBankingSystem.Models
+{
+    public class Statement
+    {
+        [Key]
+        public int StatementID { get; set; } // Primary key
+
+        [Required]
+        public string Id { get; set; } // Foreign key to User
+
+        [Required]
+        public DateTime Date { get; set; } // Date of the statement
+
+        [Required]
+        [DataType(DataType.Currency)]
+        public decimal Amount { get; set; } // Amount in the statement
+
+        [Required]
+        [StringLength(500)]
+        public string Description { get; set; } // Description of the statement
+
+        // Navigation property (if needed)
+        public virtual User User { get; set; }
+    }
+}
+
+namespace UFSBankingSystem.Models
+{
+    public class Transaction
+    {
+        public int TransactionID { get; set; }
+        public int AccountID { get; set; }  // Foreign key to Account 
+        public int BankAccountIdSender { get; set; }
+        public int BankAccountIdReceiver { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public TransactionType transactionType { get; set; }  // e.g., Deposit, Withdrawal, Transfer 
+        public string Reference { get; set; }
+        public string UserEmail { get; set; }
+        public string Description { get; set; }  // Description of the transaction 
+        public decimal BalanceAfter { get; set; }  // Balance after the transaction 
+        public string Status { get; set; }  // e.g., Active, Completed, Canceled 
+
+        // Navigation property to the associated account 
+        public virtual BankAccount Account { get; set; }
+
+    }
+
+}
+
+using Microsoft.AspNetCore.Identity;
+using UFS_Banking_System_Website.Models;
+
+namespace UFSBankingSystem.Models
+{
+    public class User : IdentityUser
+    {
+        public int ConsultantID { get; set; } // foreign key
+        public DateTime DateOfBirth { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public long StudentStaffNumber { get; set; }
+        public long IDnumber { get; set; }
+        public string AccountNumber { get; set; }
+        public string UserRole { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<BankAccount> Accounts { get; set; } = new List<BankAccount>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public virtual ICollection<FinancialAdvice> FinancialAdvices { get; set; } = new List<FinancialAdvice>();
+        public bool IsConsultant { get; set; }
+        public bool IsCustomer { get; set; }
+    }
+}
+
+NOW HERE IS MY AppDbContext:
+using UFSBankingSystem.Data.SeedData;
+using UFSBankingSystem.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace UFSBankingSystem.Data
+{
+    public class AppDbContext : IdentityDbContext<User>
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<BankAccount> BankAccounts { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<LoginSessions> LoginSessions { get; set; }
+        public DbSet<Consultant> Consultants { get; set; }
+        public DbSet<FinancialAdvisor> FinancialAdvisors { get; set; }
+        public DbSet<FinancialAdvice> FinancialAdvices { get; set; }
+        public DbSet<Investment> Investments { get; set; }
+        public DbSet<Statement> Statements { get; set; }
+        public DbSet<Report> Reports { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RolesConfiguration());
+
+            // Configure table names
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<BankAccount>().ToTable("Accounts");
+            modelBuilder.Entity<Transaction>().ToTable("Transactions");
+            modelBuilder.Entity<Notification>().ToTable("Notifications");
+            modelBuilder.Entity<FeedBack>().ToTable("Feedbacks");
+            modelBuilder.Entity<Consultant>().ToTable("Consultants");
+            modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");
+
+            // Configure decimal precision
+            modelBuilder.Entity<BankAccount>()
+                .Property(a => a.Balance)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            // Configure relationships 
+            modelBuilder.Entity<BankAccount>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Accounts)
+                .HasForeignKey(a => a.Id);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Account)
+                .WithMany(a => a.Transactions)
+                .HasForeignKey(t => t.AccountID);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.Notifications)
+                .HasForeignKey(n => n.Id);
+
+            modelBuilder.Entity<FinancialAdvice>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.FinancialAdvices)
+                .HasForeignKey(f => f.Id);
+
+            // Feedback relationships
+            modelBuilder.Entity<FeedBack>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(f => f.UserEmail); // Assuming UserEmail is used as a foreign key
+        }
+    }
+}

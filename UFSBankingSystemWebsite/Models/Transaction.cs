@@ -1,22 +1,32 @@
-﻿namespace UFSBankingSystem.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace UFSBankingSystem.Models
 {
     public class Transaction
     {
+        [Key]
         public int TransactionID { get; set; }
-        public int BankAccountID { get; set; }  // Foreign key to Account 
+        [Required]
+        public int BankAccountID { get; set; }
         public int BankAccountIdSender { get; set; }
         public int BankAccountIdReceiver { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
+        [Required]
         public DateTime TransactionDate { get; set; }
-        public TransactionType transactionType { get; set; }  // e.g., Deposit, Withdrawal, Transfer 
+        [Required]
+        public TransactionType TransactionType { get; set; }
         public string Reference { get; set; }
+        public string Description { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal BalanceAfter { get; set; }
+        public string Status { get; set; }
         public string UserEmail { get; set; }
-        public string Description { get; set; }  // Description of the transaction 
-        public decimal BalanceAfter { get; set; }  // Balance after the transaction 
-        public string Status { get; set; }  // e.g., Active, Completed, Canceled 
 
-        // Navigation property to the associated account 
-        public virtual BankAccount Account { get; set; }
+        // Navigation property
+        public virtual BankAccount BankAccount { get; set; }
 
     }
 

@@ -36,10 +36,10 @@ namespace UFSBankingSystem.Models.ViewModels
         [Required]
         public string Email { get; set; }
 
-        public int StudentNumber { get; set; } // Nullable if not applicable
+        public string StudentNumber { get; set; } // Nullable if not applicable
 
-        public int EmployeeNumber { get; set; } // Nullable if not applicable
+        public string EmployeeNumber { get; set; } // Nullable if not applicable
 
-        public long IDNumber { get; set; } // Nullable if not applicable
+        public string IDNumber { get; set; } // Nullable if not applicable
     }
 }

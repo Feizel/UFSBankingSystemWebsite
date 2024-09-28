@@ -67,14 +67,14 @@ namespace UFSBankingSystem.Controllers
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });
 
-            //return View(new AdvisorViewModel
-            //{
-            //    UserEmail = user.Email,
-            //    CurrentUser = user,
-            //    Transactions = allTransactions,
-            //    CurrentUserBankAccount = currentUserBankAccount,
-            //    Advise = string.Empty // Initialize Advise to avoid null values in the view
-            //});
+            return View(new AdvisorViewModel
+            {
+                UserEmail = user.Email,
+                CurrentUser = user,
+                Transactions = allTransactions,
+                CurrentUserBankAccount = currentUserBankAccount,
+                Advise = string.Empty // Initialize Advise to avoid null values in the view
+            });
         }
 
         [HttpPost]

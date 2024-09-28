@@ -35,9 +35,9 @@ namespace UFSBankingSystem.Models.ViewModels.Admin
         [Required(ErrorMessage = "Last name is required.")]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
-        public int StudentNumber { get; set; }
-        public int EmployeeNumber { get; set; }
-        public int IDNumber { get; set; }
+        public string StudentNumber { get; set; }
+        public string EmployeeNumber { get; set; }
+        public string IDNumber { get; set; }
     }
 
     // Change Password Model

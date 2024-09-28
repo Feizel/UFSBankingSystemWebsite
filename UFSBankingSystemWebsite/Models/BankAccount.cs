@@ -1,27 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UFSBankingSystem.Models
 {
     public class BankAccount
     {
+        [Key]
         public int BankAccountID { get; set; }
-        public string UserId { get; set; } // Foreign key to User
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        [StringLength(20)]
         public string AccountNumber { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; }
+        [Required]
         public string BankAccountType { get; set; }
-        public string AccountName { get; set; } // Account name
-        public int AccountOrder { get; set; } // control if main account or savings
-
+        [Required]
+        public string AccountName { get; set; }
+        public int AccountOrder { get; set; }
         public string UserEmail { get; set; }
 
-        //public ICollection<Transaction> Transactions { get; set; }
-
-        // Navigation property to the associated user
+        // Navigation properties
         public virtual User User { get; set; }
-
-        // Navigation property to the associated transactions
-        public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 
 }

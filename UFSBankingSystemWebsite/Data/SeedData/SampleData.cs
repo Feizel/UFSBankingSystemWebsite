@@ -7,25 +7,25 @@ namespace UFSBankingSystem.Data.SeedData
     {
         public static List<User> SampleCustomers { get; } = new List<User>
         {
-            new User { UserName = "thabo@ufs.ac.za", FirstName = "Thabo", LastName = "Zungu", Email = "thabo@ufs.ac.za", IDnumber = 0206151810182, StudentStaffNumber = 7432108965, UserRole = "User" },
-            new User { UserName = "sipho@ufs.ac.za", FirstName = "Sipho", LastName = "Ndlovu", Email = "sipho@ufs.ac.za", IDnumber = 9312251234567, StudentStaffNumber = 1234567890, UserRole = "User" },
-            new User { UserName = "nomsa@ufs.ac.za", FirstName = "Nomsa", LastName = "Mkhize", Email = "nomsa@ufs.ac.za", IDnumber = 8506302345678, StudentStaffNumber = 0987654321, UserRole = "User" },
-            new User { UserName = "themba@ufs.ac.za", FirstName = "Themba", LastName = "Dlamini", Email = "themba@ufs.ac.za", IDnumber = 7809151234567, StudentStaffNumber = 1357924680, UserRole = "User" },
-            new User { UserName = "lerato@ufs.ac.za", FirstName = "Lerato", LastName = "Mokoena", Email = "lerato@ufs.ac.za", IDnumber = 9011021234567, StudentStaffNumber = 2468013579, UserRole = "User" },
-            new User { UserName = "thabiso@ufs.ac.za", FirstName = "Thabiso", LastName = "Khumalo", Email = "thabiso@ufs.ac.za", IDnumber = 8304151234567, StudentStaffNumber = 3698521470, UserRole = "User" },
-            new User { UserName = "mpho@ufs.ac.za", FirstName = "Mpho", LastName = "Mabuza", Email = "mpho@ufs.ac.za", IDnumber = 9107021234567, StudentStaffNumber = 7410258963, UserRole = "User" },
-            new User { UserName = "dineo@ufs.ac.za", FirstName = "Dineo", LastName = "Nkosi", Email = "dineo@ufs.ac.za", IDnumber = 9605151234567, StudentStaffNumber = 8520147963, UserRole = "User" },
-            new User { UserName = "tshepiso@ufs.ac.za", FirstName = "Tshepiso", LastName = "Maseko", Email = "tshepiso@ufs.ac.za", IDnumber = 9311021234567, StudentStaffNumber = 9632587410, UserRole = "User" },
-            new User { UserName = "thato@ufs.ac.za", FirstName = "Thato", LastName = "Moyo", Email = "thato@ufs.ac.za", IDnumber = 9802151234567, StudentStaffNumber = 7894561230, UserRole = "User" }
+            new User { UserName = "thabo@ufs.ac.za", FirstName = "Thabo", LastName = "Zungu", Email = "thabo@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "sipho@ufs.ac.za", FirstName = "Sipho", LastName = "Ndlovu", Email = "sipho@ufs.ac.za", IDnumber = "9312251234567", StudentStaffNumber = "1234567890", UserRole = "User" },
+            new User { UserName = "nomsa@ufs.ac.za", FirstName = "Nomsa", LastName = "Mkhize", Email = "nomsa@ufs.ac.za", IDnumber = "8506302345678", StudentStaffNumber = "0987654321", UserRole = "User" },
+            new User { UserName = "themba@ufs.ac.za", FirstName = "Themba", LastName = "Dlamini", Email = "themba@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "lerato@ufs.ac.za", FirstName = "Lerato", LastName = "Mokoena", Email = "lerato@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "thabiso@ufs.ac.za", FirstName = "Thabiso", LastName = "Khumalo", Email = "thabiso@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "mpho@ufs.ac.za", FirstName = "Mpho", LastName = "Mabuza", Email = "mpho@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "dineo@ufs.ac.za", FirstName = "Dineo", LastName = "Nkosi", Email = "dineo@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "tshepiso@ufs.ac.za", FirstName = "Tshepiso", LastName = "Maseko", Email = "tshepiso@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "thato@ufs.ac.za", FirstName = "Thato", LastName = "Moyo", Email = "thato@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" }
         };
 
         public static List<User> SampleStaff { get; } = new List<User>
         {
-            new User { UserName = "john@ufs.ac.za", FirstName = "John", LastName = "Doe", Email = "john@ufs.ac.za", IDnumber = 7801011234567, StudentStaffNumber = 1234567890, UserRole = "User" },
-            new User { UserName = "jane@ufs.ac.za", FirstName = "Jane", LastName = "Smith", Email = "jane@ufs.ac.za", IDnumber = 8506302345678, StudentStaffNumber = 0987654321, UserRole = "User" },
-            new User { UserName = "david@ufs.ac.za", FirstName = "David", LastName = "Johnson", Email = "david@ufs.ac.za", IDnumber = 7809151234567, StudentStaffNumber = 1357924680, UserRole = "User" },
-            new User { UserName = "sarah@ufs.ac.za", FirstName = "Sarah", LastName = "Williams", Email = "sarah@ufs.ac.za", IDnumber = 9011021234567, StudentStaffNumber = 2468013579, UserRole = "User" },
-            new User { UserName = "michael@ufs.ac.za", FirstName = "Michael", LastName = "Brown", Email = "michael@ufs.ac.za", IDnumber = 8304151234567, StudentStaffNumber = 3698521470, UserRole = "User" }
+            new User { UserName = "john@ufs.ac.za", FirstName = "John", LastName = "Doe", Email = "john@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "jane@ufs.ac.za", FirstName = "Jane", LastName = "Smith", Email = "jane@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "david@ufs.ac.za", FirstName = "David", LastName = "Johnson", Email = "david@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "sarah@ufs.ac.za", FirstName = "Sarah", LastName = "Williams", Email = "sarah@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "michael@ufs.ac.za", FirstName = "Michael", LastName = "Brown", Email = "michael@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" }
         };
 
         public static List<Transaction> SampleTransactions { get; } = new List<Transaction>

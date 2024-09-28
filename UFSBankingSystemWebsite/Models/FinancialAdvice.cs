@@ -1,15 +1,23 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace UFSBankingSystem.Models
 {
     public class FinancialAdvice
     {
-        public int FinancialAdviceID { get; set; } // Primary key
-        public string UserId { get; set; } // Foreign key to User
+        [Key]
+        public int FinancialAdviceID { get; set; }
+        [Required]
+        public int FinancialAdvisorID { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        [Required]
         public string Advice { get; set; }
+        [Required]
         public DateTime CreatedAt { get; set; }
 
-        // Navigation property
+        // Navigation properties
+        public virtual FinancialAdvisor FinancialAdvisor { get; set; }
         public virtual User User { get; set; }
     }
 }

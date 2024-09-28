@@ -20,14 +20,14 @@ namespace UFSBankingSystem.Data
         public async Task<List<UserViewModel>> GetAllUsersAndBankAccountAsync()
         {
             return await _context.Users
-                .Include(u => u.Accounts) 
+                .Include(u => u.BankAccounts) 
                 .Select(u => new UserViewModel
                 {
                     Email = u.Email,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
-                    AccountNumber = u.Accounts.Select(b => b.AccountNumber).FirstOrDefault(), // Get first account number
-                    Balance = u.Accounts.Sum(b => b.Balance) // Total balance across all accounts
+                    AccountNumber = u.BankAccounts.Select(b => b.AccountNumber).FirstOrDefault(), // Get first account number
+                    Balance = u.BankAccounts.Sum(b => b.Balance) // Total balance across all accounts
                 })
                 .ToListAsync();
         }

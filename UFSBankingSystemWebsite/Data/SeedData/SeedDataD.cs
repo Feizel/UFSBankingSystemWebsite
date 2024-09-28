@@ -19,8 +19,8 @@ namespace UFSBankingSystem.Data.SeedData
             FirstName = "Jonathan",
             LastName = "Meyers",
             Email = "jonathan@ufs.ac.za",
-            IDnumber = 8876543210123,
-            StudentStaffNumber = 9876543210,
+            IDnumber = "8876543210123",
+            StudentStaffNumber = "9876543210",
         };
 
         public static async Task EnsurePopulatedAsync(IApplicationBuilder app)

@@ -20,9 +20,9 @@ namespace UFSBankingSystem.Models.ViewModels
     public class RegisterViewModel
     {
         public string RegisterAs { get; set; } = "studentstaff";
-        //[Required(ErrorMessage = "Role is required.")]
-        //public required string Role { get; set; }
-        //public required string UserType { get; set; }
+        [Required(ErrorMessage = "Role is required.")]
+        public required string Role { get; set; }
+        public required string UserType { get; set; }
         [Required(ErrorMessage = "Please enter first name")]
         [DisplayName("First name")]
         public string FirstName { get; set; }
@@ -39,10 +39,10 @@ namespace UFSBankingSystem.Models.ViewModels
 
         [Required(ErrorMessage = "Please enter ID or passport number.")]
         [DisplayName("ID or Passport number")]
-        public long IdPassportNumber { get; set; }
+        public string IdPassportNumber { get; set; }
 
         [DisplayName("Student or Staff number")]
-        public long StudentStaffNumber { get; set; }
+        public string StudentStaffNumber { get; set; }
 
         [Required(ErrorMessage = "Please enter password")]
         [DisplayName("Password")]
@@ -63,7 +63,7 @@ namespace UFSBankingSystem.Models.ViewModels
         public DateTime DateOfBirth { get; set; }
         public string AccountNumber { get; set; }
        
-        public long IDNumber { get; set; }
+        public string IDNumber { get; set; }
         public string LastName { get; set; }
 
         public string FirstName { get; set; }

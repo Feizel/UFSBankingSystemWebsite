@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UFSBankingSystemWebsite.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -430,10 +430,10 @@ namespace UFSBankingSystemWebsite.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1ef424ed-5376-424d-887a-1781baa00609", null, "FinancialAdvisor", "FINANCIALADVISOR" },
-                    { "5cf2c46f-8d69-49bd-aa25-07c2ab2f9c03", null, "Admin", "ADMIN" },
-                    { "7c62c936-50af-4623-b4e0-e9d90cb0e171", null, "User", "USER" },
-                    { "d6d3dd09-2960-41c0-a97c-5e184fb3442e", null, "Consultant", "CONSULTANT" }
+                    { "01b0677d-e3e9-4e06-ae4c-2ca1129ff187", null, "User", "USER" },
+                    { "2b0e05d7-3da9-418c-adf7-2816c11c1b2b", null, "Admin", "ADMIN" },
+                    { "6b45bcfc-82bc-4fec-9f72-ee7e13b6b4e2", null, "FinancialAdvisor", "FINANCIALADVISOR" },
+                    { "d7087392-faf1-4ca5-b40a-98a8805747bb", null, "Consultant", "CONSULTANT" }
                 });
 
             migrationBuilder.CreateIndex(

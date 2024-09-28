@@ -28,7 +28,7 @@ public class UpdateProfileController : Controller
         {
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            IDNumber = int.Parse(user.Id), // Assuming ID is stored in the user object
+            IDNumber = user.Id, // Assuming ID is stored in the user object
             Userrole = user.UserRole, // Assuming you have a UserRole property
             LastName = user.LastName
             

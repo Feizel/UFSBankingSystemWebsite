@@ -90,13 +90,13 @@ namespace UFSBankingSystem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register(string registerAs/*, string userType, string userRole*/)
+        public IActionResult Register(string registerAs, string userType, string userRole)
         {
             return View(new RegisterViewModel() 
             { 
                 RegisterAs = registerAs,
-                //UserType = userType,
-                //Role = userRole
+                UserType = userType,
+                Role = userRole
             });
         }
 

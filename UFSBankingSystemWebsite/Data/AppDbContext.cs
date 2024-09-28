@@ -11,68 +11,85 @@ namespace UFSBankingSystem.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<FeedBack> FeedBacks { get; set; }
-        public DbSet<LoginSession> LoginSessions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
         public DbSet<FinancialAdvisor> FinancialAdvisors { get; set; }
         public DbSet<FinancialAdvice> FinancialAdvices { get; set; }
-        public DbSet<Investment> Investments { get; set; }
-        public DbSet<Statement> Statements { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<LoginSession> LoginSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfiguration(new RolesConfiguration());
-
-            // Configure table names
-            modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<BankAccount>().ToTable("Accounts");
-            modelBuilder.Entity<Transaction>().ToTable("Transactions");
-            modelBuilder.Entity<Notification>().ToTable("Notifications");
-            modelBuilder.Entity<FeedBack>().ToTable("Feedbacks");
-            modelBuilder.Entity<Consultant>().ToTable("Consultants");
-            modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");
-            modelBuilder.Entity<LoginSession>().ToTable("LoginSessions");
-
-            // Configure decimal precision
-            modelBuilder.Entity<BankAccount>()
-                .Property(a => a.Balance)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Transaction>()
-                .Property(t => t.Amount)
-                .HasColumnType("decimal(18,2)");
 
             // Configure relationships
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.BankAccounts)
+                .WithOne(a => a.User)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notifications)
+                .WithOne(n => n.User)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Consultant)
+                .WithOne(c => c.User)
+                .HasForeignKey<Consultant>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.FinancialAdvisor)
+                .WithOne(fa => fa.User)
+                .HasForeignKey<FinancialAdvisor>(fa => fa.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<BankAccount>()
-                .HasOne(a => a.User)
-                .WithMany(u => u.Accounts)
-                .HasForeignKey(a => a.UserId);
+                .HasMany(a => a.Transactions)
+                .WithOne(t => t.BankAccount)
+                .HasForeignKey(t => t.BankAccountID)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.Account)
-                .WithMany(a => a.Transactions)
-                .HasForeignKey(t => t.BankAccountID);
+            modelBuilder.Entity<FinancialAdvisor>()
+                .HasMany(fa => fa.FinancialAdvices)
+                .WithOne(a => a.FinancialAdvisor)
+                .HasForeignKey(a => a.FinancialAdvisorID)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.User)
-                .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.UserId);
+            modelBuilder.Entity<Consultant>()
+                .HasMany(c => c.Reports)
+                .WithOne(r => r.Consultant)
+                .HasForeignKey(r => r.ConsultantID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<FeedBack>()
-                .HasOne<User>()
+                .HasOne(f => f.User)
                 .WithMany()
-                .HasForeignKey(f => f.UserEmail); // Assuming UserEmail is used as a foreign key
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LoginSession>()
-                .HasOne(l => l.User)
+                .HasOne(ls => ls.User)
                 .WithMany()
-                .HasForeignKey(l => l.UserId); // Assuming UserEmail is used as a foreign key
+                .HasForeignKey(ls => ls.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Additional configurations for other entities...
+            // Configure table names (if needed)
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<BankAccount>().ToTable("BankAccounts");
+            modelBuilder.Entity<Transaction>().ToTable("Transactions");
+            modelBuilder.Entity<Notification>().ToTable("Notifications");
+            modelBuilder.Entity<Consultant>().ToTable("Consultants");
+            modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");
+            modelBuilder.Entity<FinancialAdvice>().ToTable("FinancialAdvices");
+            modelBuilder.Entity<Report>().ToTable("Reports");
+            modelBuilder.Entity<FeedBack>().ToTable("Feedbacks");
+            modelBuilder.Entity<LoginSession>().ToTable("LoginSessions");
         }
     }
 }

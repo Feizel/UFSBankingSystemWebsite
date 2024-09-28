@@ -31,7 +31,7 @@ namespace UFSBankingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             // Fetch clients managed by the consultant
-            var clientsManaged = await _repository.AppUser.FindByConditionAsync(u => u.IsCustomer && u.ConsultantID == currentConsultantId);
+            var clientsManaged = await _repository.AppUser.GetAllAsync();
             var notifications = await _repository.Notification.FindAllAsync();
 
             // Calculate client satisfaction percentage based on your criteria
@@ -315,8 +315,8 @@ namespace UFSBankingSystem.Controllers
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Email = customer.Email,
-                StudentNumber = (int)customer.StudentStaffNumber,
-                EmployeeNumber = (int)customer.StudentStaffNumber,
+                StudentNumber = customer.StudentStaffNumber,
+                EmployeeNumber = customer.StudentStaffNumber,
                 IDNumber = customer.IDnumber
             };
 
@@ -336,8 +336,8 @@ namespace UFSBankingSystem.Controllers
                 customer.FirstName = model.FirstName;
                 customer.LastName = model.LastName;
                 customer.Email = model.Email;
-                customer.StudentStaffNumber = (int)model.StudentNumber;
-                customer.StudentStaffNumber = (int)model.EmployeeNumber;
+                customer.StudentStaffNumber = model.StudentNumber;
+                customer.StudentStaffNumber = model.EmployeeNumber;
                 customer.IDnumber = model.IDNumber;
 
                 await _repository.AppUser.UpdateAsync(customer);
@@ -422,7 +422,7 @@ namespace UFSBankingSystem.Controllers
             {
                 BankAccountID = account.BankAccountID,
                 Amount = amount,
-                transactionType = TransactionType.Deposit,
+                TransactionType = TransactionType.Deposit,
                 TransactionDate = DateTime.Now,
                 Description = "Deposit",
                 BalanceAfter = account.Balance

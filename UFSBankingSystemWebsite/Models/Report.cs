@@ -1,15 +1,20 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace UFSBankingSystem.Models
 {
     public class Report
     {
-        public int ReportID { get; set; } // Primary key for the report
-        public string Id { get; set; } // Foreign key to User table
-        public string Content { get; set; } // Content of the report
-        public DateTime CreatedAt { get; set; } = DateTime.Now; // Timestamp when the report was created
+        [Key]
+        public int ReportID { get; set; }
+        [Required]
+        public int ConsultantID { get; set; }
+        [Required]
+        public string Content { get; set; }
+        [Required]
+        public DateTime CreatedAt { get; set; }
 
-        // Navigation property for related user (if needed)
-        public virtual User User { get; set; }
+        // Navigation property
+        public virtual Consultant Consultant { get; set; }
     }
 }
