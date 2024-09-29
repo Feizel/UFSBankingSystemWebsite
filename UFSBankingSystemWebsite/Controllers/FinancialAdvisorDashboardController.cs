@@ -25,8 +25,15 @@ namespace UFSBankingSystemWebsite.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Get the logged-in user's username
+            var username = User.Identity.Name;
+            var user = await userManager.FindByNameAsync(username);
+
+            // Set ViewBag.FirstName for use in the layout
+            ViewBag.FirstName = user.FirstName;
+
             List<User> lstUsers = new List<User>();
-            foreach (var user in userManager.Users)
+            foreach (var lstUser in userManager.Users)
             {
                 if (await userManager.IsInRoleAsync(user, "User"))
                     lstUsers.Add(user);
@@ -35,6 +42,7 @@ namespace UFSBankingSystemWebsite.Controllers
             {
                 appUsers = lstUsers.AsQueryable()
             });
+
         }
 
         // Provide advice

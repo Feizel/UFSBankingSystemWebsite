@@ -53,10 +53,8 @@ namespace UFSBankingSystemWebsite.Controllers
             // Return the view with the viewModel
             return View(viewModel);
         }
-        //public IActionResult ViewAccount()
-        //{
-        //    return View();
-        //}
+    
+        // View Account
         public async Task<IActionResult> ViewAccount(string id)
         {
             var account = await _context.BankAccounts.FindAsync(id);
@@ -116,43 +114,6 @@ namespace UFSBankingSystemWebsite.Controllers
             return "ACCT" + new Random().Next(100000, 999999).ToString();
         }
 
-        public IActionResult EditProfile()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(UserProfileModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.GetUserAsync(User) as User;
-
-                user.UserName = model.UserName;
-                user.Email = model.Email;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.StudentStaffNumber = model.StudentNumber;
-                user.StudentStaffNumber = model.EmployeeNumber;
-                user.IDnumber = model.IDNumber;
-
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "CustomerDashboard");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
-            }
-
-            return View(model);
-        }
         public async Task<IActionResult> NotificationMessage()
         {
             var username = User.Identity.Name;
@@ -178,7 +139,6 @@ namespace UFSBankingSystemWebsite.Controllers
             return View(userNotifications);
         }
 
-
         public async Task<IActionResult> ViewAdvice()
         {
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -194,8 +154,6 @@ namespace UFSBankingSystemWebsite.Controllers
 
             return View(userAdvice);
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> AddRating()
@@ -314,7 +272,7 @@ namespace UFSBankingSystemWebsite.Controllers
         [HttpPost]
         public async Task<IActionResult> TransferMoneyView(MoneyTransferViewModel model)
         {
-            var username = User.Identity.Name;
+            var username = ViewBag.FirstName;
             var user = await _userManager.FindByNameAsync(username);
             var allBankAccounts = await _repo.BankAccount.GetAllAsync();
             var mainBankAccount = allBankAccounts.FirstOrDefault(b => b.UserEmail == user.Email && b.AccountOrder == 1);

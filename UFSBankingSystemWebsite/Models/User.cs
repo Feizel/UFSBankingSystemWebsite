@@ -21,8 +21,10 @@ namespace UFSBankingSystemWebsite.Models
         // Navigation properties
         public virtual ICollection<BankAccount> BankAccounts { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual Consultant Consultant { get; set; }
-        public virtual FinancialAdvisor FinancialAdvisor { get; set; }
+        public virtual Consultant Consultants { get; set; }
+        public virtual FinancialAdvisor FinancialAdvisors { get; set; }
+        public virtual ICollection<Transactions> Transactions { get; set; } = new List<Transactions>();
+        public virtual ICollection<FeedBack> FeedBacks { get; set; } = new List<FeedBack>();
         public bool IsConsultant { get; set; }
         public bool IsCustomer { get; set; }
     }

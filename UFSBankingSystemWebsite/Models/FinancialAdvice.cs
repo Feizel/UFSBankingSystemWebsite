@@ -10,7 +10,7 @@ namespace UFSBankingSystemWebsite.Models
         [Required]
         public int FinancialAdvisorID { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string Id { get; set; } // Foreign key to User
         [Required]
         public string Advice { get; set; }
         [Required]

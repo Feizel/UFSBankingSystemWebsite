@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace UFSBankingSystemWebsite.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,7 +173,7 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     BankAccountID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     AccountNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BankAccountType = table.Column<string>(type: "TEXT", nullable: false),
@@ -183,8 +185,8 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     table.PrimaryKey("PK_BankAccounts", x => x.BankAccountID);
                     table.ForeignKey(
-                        name: "FK_BankAccounts_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_BankAccounts_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -196,15 +198,15 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     ConsultantID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     EmployeeNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Consultants", x => x.ConsultantID);
                     table.ForeignKey(
-                        name: "FK_Consultants_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Consultants_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -216,11 +218,12 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     FeedBackID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     UserEmail = table.Column<string>(type: "TEXT", nullable: true),
                     Message = table.Column<string>(type: "TEXT", nullable: false),
                     Rating = table.Column<int>(type: "INTEGER", nullable: false),
-                    FeedbackDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FeedbackDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,8 +232,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         name: "FK_Feedbacks_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -239,15 +241,15 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     FinancialAdvisorID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     EmployeeNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FinancialAdvisors", x => x.FinancialAdvisorID);
                     table.ForeignKey(
-                        name: "FK_FinancialAdvisors_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_FinancialAdvisors_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -259,9 +261,10 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     LoginSessionID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: true),
                     UserEmail = table.Column<string>(type: "TEXT", nullable: true),
-                    TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -270,8 +273,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         name: "FK_LoginSessions_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -280,7 +282,7 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     NotificationID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: true),
                     UserEmail = table.Column<string>(type: "TEXT", nullable: true),
                     Message = table.Column<string>(type: "TEXT", nullable: false),
                     NotificationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -291,8 +293,8 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     table.PrimaryKey("PK_Notifications", x => x.NotificationID);
                     table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Notifications_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -314,7 +316,8 @@ namespace UFSBankingSystemWebsite.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     BalanceAfter = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true),
-                    UserEmail = table.Column<string>(type: "TEXT", nullable: true)
+                    UserEmail = table.Column<string>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -324,6 +327,12 @@ namespace UFSBankingSystemWebsite.Migrations
                         column: x => x.BankAccountID,
                         principalTable: "BankAccounts",
                         principalColumn: "BankAccountID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -355,9 +364,10 @@ namespace UFSBankingSystemWebsite.Migrations
                     FinancialAdviceID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FinancialAdvisorID = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     Advice = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -367,13 +377,23 @@ namespace UFSBankingSystemWebsite.Migrations
                         column: x => x.FinancialAdvisorID,
                         principalTable: "FinancialAdvisors",
                         principalColumn: "FinancialAdvisorID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_FinancialAdvices_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "69415391-7f02-4578-9a8a-e0075d9e3bb1", null, "Admin", "ADMIN" },
+                    { "bba34598-8d6b-438f-96bb-ce28e5897e67", null, "User", "USER" },
+                    { "d0bc69c8-4319-4338-88e7-a6ca20548724", null, "FinancialAdvisor", "FINANCIALADVISOR" },
+                    { "ea402513-d6f7-4fc9-b767-c43ce611a080", null, "Consultant", "CONSULTANT" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -403,14 +423,14 @@ namespace UFSBankingSystemWebsite.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BankAccounts_UserId",
+                name: "IX_BankAccounts_Id",
                 table: "BankAccounts",
-                column: "UserId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Consultants_UserId",
+                name: "IX_Consultants_Id",
                 table: "Consultants",
-                column: "UserId",
+                column: "Id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -429,9 +449,9 @@ namespace UFSBankingSystemWebsite.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FinancialAdvisors_UserId",
+                name: "IX_FinancialAdvisors_Id",
                 table: "FinancialAdvisors",
-                column: "UserId",
+                column: "Id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -440,9 +460,9 @@ namespace UFSBankingSystemWebsite.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
+                name: "IX_Notifications_Id",
                 table: "Notifications",
-                column: "UserId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_ConsultantID",
@@ -453,6 +473,11 @@ namespace UFSBankingSystemWebsite.Migrations
                 name: "IX_Transactions_BankAccountID",
                 table: "Transactions",
                 column: "BankAccountID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",

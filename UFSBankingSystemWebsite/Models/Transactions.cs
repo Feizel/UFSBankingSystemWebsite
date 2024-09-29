@@ -25,8 +25,11 @@ namespace UFSBankingSystemWebsite.Models
         public string Status { get; set; }
         public string UserEmail { get; set; }
 
-        // Navigation property
+        public string UserId { get; set; }  // This is correct, as it references the Id of the User
+
+        // Navigation properties
         public virtual BankAccount BankAccount { get; set; }
+        public virtual User User { get; set; }
 
     }
 

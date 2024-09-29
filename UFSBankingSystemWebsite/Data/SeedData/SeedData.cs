@@ -16,10 +16,10 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         private static readonly User Admin = new User
         {
-            UserName = "Master Admin",
+            UserName = "admin@ufs.ac.za",
             FirstName = "Jonathan",
             LastName = "Meyers",
-            Email = "jonathan@ufs.ac.za",
+            Email = "admin@ufs.ac.za",
             DateOfBirth = DateTime.Now,
             IDnumber = "8876543210123",
             StudentStaffNumber = "9876543210",
@@ -29,10 +29,10 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         private static readonly User Customer = new User
         {
-            UserName = "Test Customer",
+            UserName = "testCustomero@ufs.ac.za",
             FirstName = "Thabo",
             LastName = "Zungu",
-            Email = "thabo@ufs.ac.za",
+            Email = "testCustomero@ufs.ac.za",
             DateOfBirth = DateTime.Now,
             IDnumber = "0206151810182",
             StudentStaffNumber = "7432108965",
@@ -42,10 +42,10 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         private static readonly User Consultant = new User
         {
-            UserName = "Master Consultant",
+            UserName = "consultant@ufs.ac.za",
             FirstName = "Thando",
             LastName = "Ndlela",
-            Email = "thando@ufs.ac.za",
+            Email = "consultant@ufs.ac.za",
             DateOfBirth = DateTime.Now,
             IDnumber = "9209151587083",
             StudentStaffNumber = "9158974481",
@@ -55,10 +55,10 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         private static readonly User FinancialAdvisor = new User
         {
-            UserName = "Master FinancialAdvisor",
+            UserName = "finAdvisor@ufs.ac.za",
             FirstName = "Millicent",
             LastName = "Kruger",
-            Email = "millicent@ufs.ac.za",
+            Email = "finAdvisor@ufs.ac.za",
             DateOfBirth = DateTime.Now,
             IDnumber = "9204247204082",
             StudentStaffNumber = "9876543210",
@@ -128,7 +128,7 @@ namespace UFSBankingSystemWebsite.Data.SeedData
                 var users = await context.Users.ToListAsync();
                 foreach (var notification in SampleData.SampleNotifications)
                 {
-                    notification.UserId = users[new Random().Next(users.Count)].Id;
+                    notification.Id = users[new Random().Next(users.Count)].Id;
                 }
                 await context.Notifications.AddRangeAsync(SampleData.SampleNotifications);
                 await context.SaveChangesAsync(); // Save notifications

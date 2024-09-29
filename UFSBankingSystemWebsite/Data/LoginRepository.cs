@@ -15,7 +15,7 @@ namespace UFSBankingSystemWebsite.Data
 
         public async Task<LoginSession> GetSessionByUserIdAsync(string userId)
         {
-            return await _context.LoginSessions.FirstOrDefaultAsync(ls => ls.UserId == userId);
+            return await _context.LoginSessions.FirstOrDefaultAsync(ls => ls.Id == userId);
         }
 
         public async Task<List<LoginSession>> GetAllSessionsAsync()

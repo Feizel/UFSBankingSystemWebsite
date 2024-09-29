@@ -7,6 +7,7 @@ using System.Transactions;
 using System.Data;
 using UFSBankingSystemWebsite.Data.Interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace UFSBankingSystemWebsite.Controllers
 {
@@ -48,27 +49,26 @@ namespace UFSBankingSystemWebsite.Controllers
             if (ModelState.IsValid)
             {
                 // Find the user by email
-                User user = await userManager.FindByEmailAsync(model.Email);
+                var user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
-                    // Attempt to sign in the user
+                    // Try to sign in
                     var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                     if (result.Succeeded)
                     {
-                        // Set ViewBag.FirstName for use in the layout
+                        // Set user's name in ViewBag
                         ViewBag.FirstName = user.FirstName;
-                        //ViewBag.LastName = user.LastName;
 
-                        // Log the login session
+                        // Log the login
                         var newLogin = new LoginSession
                         {
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,
                         };
                         await _repoWrapper.Logins.AddAsync(newLogin);
-                        _repoWrapper.SaveChanges(); // Ensure changes are saved
+                        _repoWrapper.SaveChanges();
 
-                        // Redirect based on user role
+                        // Redirect based on role
                         if (await userManager.IsInRoleAsync(user, _adminRole))
                             return RedirectToAction("Index", "AdminDashboard");
                         else if (await userManager.IsInRoleAsync(user, _consultantRole))
@@ -78,14 +78,14 @@ namespace UFSBankingSystemWebsite.Controllers
                         else if (await userManager.IsInRoleAsync(user, _customerRole))
                             return RedirectToAction("Index", "CustomerDashboard");
 
-                        // Default redirect
+                        // If no specific role, go to home
                         return Redirect(model?.ReturnUrl ?? "/Home/Index");
                     }
                 }
             }
 
-            // Add an error message if login fails
-            ModelState.AddModelError("", "Invalid email or password");
+            // If we got this far, something failed
+            ModelState.AddModelError("", "Login failed. Check your email and password.");
             return View(model);
         }
 
@@ -101,80 +101,108 @@ namespace UFSBankingSystemWebsite.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // Make sure the Customer role exists
                 if (await roleManager.FindByNameAsync(_customerRole) == null)
-                    await roleManager.CreateAsync(new(_customerRole));
+                    await roleManager.CreateAsync(new IdentityRole(_customerRole));
 
-                User user = new()
+                // Create the user
+                var user = new User
                 {
-                    UserName = (registerModel.LastName + registerModel.FirstName).Substring(0, 10),
-                    IDnumber = registerModel.IdPassportNumber.ToString(),
-                    Email = registerModel.EmailAddress,
-                    FirstName = registerModel.FirstName,
-                    LastName = registerModel.LastName,
-                    StudentStaffNumber = registerModel.StudentStaffNumber.ToString(),
-                    UserRole = registerModel.RegisterAs
+                    UserName = model.EmailAddress,
+                    Email = model.EmailAddress,
+                    IDnumber = model.IdPassportNumber.ToString(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    StudentStaffNumber = model.StudentStaffNumber.ToString(),
+                    UserRole = "User" // Default to User role
                 };
 
-                Random rndAccount = new Random();
-                string _randomAccount = string.Empty;
+                // Generate a unique account number
+                var accountNumber = "";
+                var rnd = new Random();
                 do
                 {
-                    _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
-                }
-                while (userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
-                user.AccountNumber = _randomAccount;
+                    accountNumber = rnd.Next(100000000, 999999999).ToString();
+                } while (await userManager.Users.AnyAsync(u => u.AccountNumber == accountNumber));
 
+                user.AccountNumber = accountNumber;
 
-
-                IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+                // Try to create the user
+                var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // Add user to Customer role
                     await userManager.AddToRoleAsync(user, _customerRole);
-                    BankAccount bankAccountMain = new()
+
+                    // Create a bank account for the user
+                    var bankAccount = new BankAccount
                     {
-                        AccountNumber = _randomAccount,
-                        Balance = 100m,
+                        Id = user.Id,
+                        AccountName = "Default",
+                        AccountNumber = accountNumber,
+                        Balance = 100m, // Starting balance
                         BankAccountType = "Savings",
                         AccountOrder = 1,
                         UserEmail = user.Email,
                     };
-                    await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
-                    Transactions transaction = new()
-                    {
-                        BankAccountIdReceiver = int.Parse(_randomAccount),
-                        Amount = 100m,
-                        Reference = "fee Open new account ",
-                        UserEmail = user.Email,
-                        TransactionDate = DateTime.Now,
+                    await _repoWrapper.BankAccount.AddAsync(bankAccount);
+                    _repoWrapper.SaveChanges(); // Ensure it is saved
 
-                    };
-                    await _repoWrapper.Transactions.AddAsync(transaction);
-                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password,
-                        isPersistent: false, lockoutOnFailure: false);
-                    if (signin_result.Succeeded)
+                    var bankAccountId = int.Parse(accountNumber); 
+                    var existingAccount = await _repoWrapper.BankAccount.FindByIdAsync(bankAccountId);
+                    if (existingAccount == null)
                     {
-                        var newLogin = new LoginSession
-                        {
-                            TimeStamp = DateTime.Now,
-                            UserEmail = user.Email,
-                        };
-                        await _repoWrapper.Logins.AddAsync(newLogin);
-                        _repoWrapper.SaveChanges();
-
-                        if (await userManager.IsInRoleAsync(user, "Customer"))
-                            return RedirectToAction("Index", "CustomerDashboard");
-                        return RedirectToAction("Index", "Home");
+                        // Log or throw an error indicating that the account does not exist
+                        throw new Exception("Bank account does not exist.");
                     }
+                    else
+                    {
+                        // Proceed with creating a transaction if the account exists
+
+                        // Log the initial deposit
+                        var transaction = new Transactions
+                        {
+                            BankAccountIdReceiver = bankAccount.BankAccountID, // Use the ID from the created bank account
+                            Amount = 100m,
+                            Reference = "Initial deposit",
+                            UserEmail = user.Email,
+                            TransactionDate = DateTime.Now,
+                        };
+                        await _repoWrapper.Transactions.AddAsync(transaction);
+                        _repoWrapper.SaveChanges(); // Ensure transaction is saved
+                    }
+
+                    // Save changes
+                    _repoWrapper.SaveChanges();
+
+                    // Sign in the new user
+                    await signInManager.SignInAsync(user, isPersistent: false);
+
+                    // Log the login
+                    var loginSession = new LoginSession
+                    {
+                        TimeStamp = DateTime.Now,
+                        UserEmail = user.Email,
+                    };
+                    await _repoWrapper.Logins.AddAsync(loginSession);
+                    _repoWrapper.SaveChanges();
+
+                    return RedirectToAction("Index", "CustomerDashboard");
                 }
-                else
-                    foreach (var error in result.Errors.Select(e => e.Description))
-                        ModelState.AddModelError("", error);
+
+                // If we got this far, something failed
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
-            return View(registerModel);
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
         }
 
         //[AllowAnonymous]

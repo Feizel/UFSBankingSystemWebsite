@@ -26,61 +26,39 @@ namespace UFSBankingSystemWebsite.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RolesConfiguration());
 
             // Configure relationships
             modelBuilder.Entity<User>()
-                .HasMany(u => u.BankAccounts)
-                .WithOne(a => a.User)
-                .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+           .HasMany(u => u.BankAccounts)
+           .WithOne(a => a.User)
+           .HasForeignKey(a => a.Id)
+           .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Notifications)
                 .WithOne(n => n.User)
-                .HasForeignKey(n => n.UserId)
+                .HasForeignKey(n => n.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
-                .HasOne(u => u.Consultant)
+                .HasOne(u => u.Consultants)
                 .WithOne(c => c.User)
-                .HasForeignKey<Consultant>(c => c.UserId)
+                .HasForeignKey<Consultant>(c => c.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
-                .HasOne(u => u.FinancialAdvisor)
+                .HasOne(u => u.FinancialAdvisors)
                 .WithOne(fa => fa.User)
-                .HasForeignKey<FinancialAdvisor>(fa => fa.UserId)
+                .HasForeignKey<FinancialAdvisor>(fa => fa.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<BankAccount>()
-                .HasMany(a => a.Transactions)
-                .WithOne(t => t.BankAccount)
-                .HasForeignKey(t => t.BankAccountID)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Transactions)
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<FinancialAdvisor>()
-                .HasMany(fa => fa.FinancialAdvices)
-                .WithOne(a => a.FinancialAdvisor)
-                .HasForeignKey(a => a.FinancialAdvisorID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Consultant>()
-                .HasMany(c => c.Reports)
-                .WithOne(r => r.Consultant)
-                .HasForeignKey(r => r.ConsultantID)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<FeedBack>()
-                .HasOne(f => f.User)
-                .WithMany()
-                .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<LoginSession>()
-                .HasOne(ls => ls.User)
-                .WithMany()
-                .HasForeignKey(ls => ls.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Configure table names (if needed)
             modelBuilder.Entity<User>().ToTable("Users");

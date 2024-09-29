@@ -11,7 +11,7 @@ namespace UFSBankingSystemWebsite.Models
         [Key]
         public int LoginSessionID { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string Id { get; set; } // Foreign key to User
         public string UserEmail { get; set; }
         [Required]
         public DateTime TimeStamp { get; set; }

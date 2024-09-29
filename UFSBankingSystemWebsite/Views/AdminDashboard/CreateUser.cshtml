@@ -2,7 +2,7 @@
 
 <h2>Create a New User</h2>
 
-<form asp-action="CreateUser" asp-controller="Admin" method="post">
+<form asp-action="AdminCreateUser" asp-controller="AdminDashboard" method="post">
     <div class="form-group">
         <label asp-for="RegisterAs"></label>
         <select asp-for="RegisterAs" class="form-control">
@@ -58,7 +58,7 @@
 </form>
 
 <div>
-    <a asp-action="Index" asp-controller="Admin" class="btn btn-secondary">Back to User List</a>
+    <a asp-action="UserManagement" asp-controller="AdminDashboard" class="btn btn-secondary">Back to User List</a>
 </div>
 
 @section Scripts {

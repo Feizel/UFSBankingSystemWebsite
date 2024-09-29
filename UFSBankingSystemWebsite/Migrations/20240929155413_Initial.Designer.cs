@@ -11,8 +11,8 @@ using UFSBankingSystemWebsite.Data;
 namespace UFSBankingSystemWebsite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240929113520_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240929155413_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,32 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "69415391-7f02-4578-9a8a-e0075d9e3bb1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "bba34598-8d6b-438f-96bb-ce28e5897e67",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "ea402513-d6f7-4fc9-b767-c43ce611a080",
+                            Name = "Consultant",
+                            NormalizedName = "CONSULTANT"
+                        },
+                        new
+                        {
+                            Id = "d0bc69c8-4319-4338-88e7-a6ca20548724",
+                            Name = "FinancialAdvisor",
+                            NormalizedName = "FINANCIALADVISOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -173,16 +199,16 @@ namespace UFSBankingSystemWebsite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("Id")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
                     b.HasKey("BankAccountID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Id");
 
                     b.ToTable("BankAccounts", (string)null);
                 });
@@ -198,13 +224,13 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ConsultantID");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("Consultants", (string)null);
@@ -219,6 +245,10 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<DateTime>("FeedbackDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -230,7 +260,6 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FeedBackID");
@@ -256,8 +285,11 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<int>("FinancialAdvisorID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("FinancialAdviceID");
@@ -280,13 +312,13 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FinancialAdvisorID");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("Id")
                         .IsUnique();
 
                     b.ToTable("FinancialAdvisors", (string)null);
@@ -298,6 +330,9 @@ namespace UFSBankingSystemWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
@@ -305,7 +340,6 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LoginSessionID");
@@ -324,6 +358,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("INTEGER");
 
@@ -337,13 +374,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("NotificationID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Notifications", (string)null);
                 });
@@ -410,9 +443,14 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TransactionID");
 
                     b.HasIndex("BankAccountID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transactions", (string)null);
                 });
@@ -567,7 +605,7 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany("BankAccounts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -577,8 +615,8 @@ namespace UFSBankingSystemWebsite.Migrations
             modelBuilder.Entity("UFSBankingSystemWebsite.Models.Consultant", b =>
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
-                        .WithOne("Consultant")
-                        .HasForeignKey("UFSBankingSystemWebsite.Models.Consultant", "UserId")
+                        .WithOne("Consultants")
+                        .HasForeignKey("UFSBankingSystemWebsite.Models.Consultant", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -588,10 +626,8 @@ namespace UFSBankingSystemWebsite.Migrations
             modelBuilder.Entity("UFSBankingSystemWebsite.Models.FeedBack", b =>
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -601,14 +637,12 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasOne("UFSBankingSystemWebsite.Models.FinancialAdvisor", "FinancialAdvisor")
                         .WithMany("FinancialAdvices")
                         .HasForeignKey("FinancialAdvisorID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("FinancialAdvisor");
 
@@ -618,8 +652,8 @@ namespace UFSBankingSystemWebsite.Migrations
             modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvisor", b =>
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
-                        .WithOne("FinancialAdvisor")
-                        .HasForeignKey("UFSBankingSystemWebsite.Models.FinancialAdvisor", "UserId")
+                        .WithOne("FinancialAdvisors")
+                        .HasForeignKey("UFSBankingSystemWebsite.Models.FinancialAdvisor", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -630,9 +664,7 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -641,9 +673,8 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -667,7 +698,14 @@ namespace UFSBankingSystemWebsite.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("BankAccount");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UFSBankingSystemWebsite.Models.BankAccount", b =>
@@ -689,11 +727,15 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     b.Navigation("BankAccounts");
 
-                    b.Navigation("Consultant");
+                    b.Navigation("Consultants");
 
-                    b.Navigation("FinancialAdvisor");
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("FinancialAdvisors");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

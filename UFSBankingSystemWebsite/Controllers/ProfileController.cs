@@ -26,33 +26,70 @@ namespace UFSBankingSystemWebsite.Controllers
 
 
         }
-        public async Task<IActionResult> Edit()
-        {
+        //public async Task<IActionResult> Edit()
+        //{
 
-            var user = await userManager.FindByEmailAsync(User!.Identity!.Name);
-            return View(new UserViewModel
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-            });
+        //    var user = await userManager.FindByEmailAsync(User!.Identity!.Name);
+        //    return View(new UserViewModel
+        //    {
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //    });
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(UserViewModel user)
+        //{
+
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(user);
+        //    }
+        //    var _user = await userManager.FindByEmailAsync(User!.Identity!.Name);
+
+        //    _user!.FirstName = user.FirstName;
+        //    _user.LastName = user.LastName;
+
+        //    appDbContext.Users.Update(_user);
+        //    if (await appDbContext.SaveChangesAsync() > 0)
+        //        return RedirectToAction(nameof(Index), new { Message = "Your profile details were updated successful." });
+        //    return View(user);
+        //}
+        public IActionResult EditProfile()
+        {
+            return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> Edit(UserViewModel user)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(UserProfileModel model)
         {
-
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(user);
+                var user = await userManager.GetUserAsync(User) as User;
+
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.StudentStaffNumber = model.StudentNumber;
+                user.StudentStaffNumber = model.EmployeeNumber;
+                user.IDnumber = model.IDNumber;
+
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "CustomerDashboard");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
             }
-            var _user = await userManager.FindByEmailAsync(User!.Identity!.Name);
 
-            _user!.FirstName = user.FirstName;
-            _user.LastName = user.LastName;
-
-            appDbContext.Users.Update(_user);
-            if (await appDbContext.SaveChangesAsync() > 0)
-                return RedirectToAction(nameof(Index), new { Message = "Your profile details were updated successful." });
-            return View(user);
+            return View(model);
         }
         public IActionResult ChangePassword()
         {

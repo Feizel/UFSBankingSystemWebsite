@@ -8,7 +8,7 @@ namespace UFSBankingSystemWebsite.Models
         [Key]
         public int FeedBackID { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string Id { get; set; } // Foreign key to User
         public string UserEmail { get; set; }
         [Required]
         public string Message { get; set; }
