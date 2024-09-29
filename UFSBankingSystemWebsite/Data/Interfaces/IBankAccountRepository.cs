@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using UFSBankingSystem.Models;
+using UFSBankingSystemWebsite.Models;
 
 namespace UFSBankingSystemWebsite.Data.Interfaces
 {

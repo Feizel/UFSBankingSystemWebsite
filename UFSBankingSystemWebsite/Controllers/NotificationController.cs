@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UFS_Banking_System_Website.Models;
+using UFSBankingSystemWebsite.Models;
 using System.Threading.Tasks;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     public class NotificationController : Controller
     {

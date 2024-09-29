@@ -2,7 +2,7 @@
 using UFSBankingSystemWebsite.Data.Interfaces;
 
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {

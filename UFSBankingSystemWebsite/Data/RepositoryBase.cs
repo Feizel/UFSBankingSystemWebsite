@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

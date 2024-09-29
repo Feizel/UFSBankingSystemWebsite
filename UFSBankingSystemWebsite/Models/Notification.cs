@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models
+namespace UFSBankingSystemWebsite.Models
 {
     public class Notification
     {
         [Key]
         public int NotificationID { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         public string UserEmail { get; set; }
         [Required]
         public string Message { get; set; }

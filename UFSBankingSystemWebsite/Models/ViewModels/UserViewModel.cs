@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models.ViewModels.Admin
+namespace UFSBankingSystemWebsite.Models.ViewModels.Admin
 {
     public class UserViewModel
     {

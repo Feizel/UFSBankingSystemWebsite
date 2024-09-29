@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using UFS_Banking_System_Website.Models;
+using UFSBankingSystemWebsite.Models;
 
-namespace UFSBankingSystem.Models
+namespace UFSBankingSystemWebsite.Models
 {
     public class User : IdentityUser
     {

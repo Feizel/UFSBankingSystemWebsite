@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using UFSBankingSystem.Data;
-using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels.Admin;
+using UFSBankingSystemWebsite.Data;
+using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels.Admin;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     public class ProfileController : Controller
     {

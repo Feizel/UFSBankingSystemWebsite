@@ -1,0 +1,386 @@
+I have a SeedData class and a SampleData class inside a SeedData folder, however when I try to Seed my data and sample data, my database remains empty without any users from my SeedData, or any of rhe dummy data from my Sample Data. What could be causing this issue? Here is my SeedData, my AppDbContext, and Program files, my connection string is et up properly:
+using UFSBankingSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using UFSBankingSystem.Data;
+
+namespace UFSBankingSystemWebsite.Data.SeedData
+{
+    public static class SeedData
+    {
+        private static readonly string password = "@TestApp123";
+
+        private static readonly User Admin = new User
+        {
+            UserName = "Master Admin",
+            FirstName = "Jonathan",
+            LastName = "Meyers",
+            Email = "jonathan@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
+            IDnumber = "8876543210123",
+            StudentStaffNumber = "9876543210",
+            AccountNumber = "0000000001",
+            UserRole = "Admin"
+        };
+
+        private static readonly User Customer = new User
+        {
+            UserName = "Test Customer",
+            FirstName = "Thabo",
+            LastName = "Zungu",
+            Email = "thabo@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
+            IDnumber = "0206151810182",
+            StudentStaffNumber = "7432108965",
+            AccountNumber = "0000000002",
+            UserRole = "User"
+        };
+
+        private static readonly User Consultant = new User
+        {
+            UserName = "Master Consultant",
+            FirstName = "Thando",
+            LastName = "Ndlela",
+            Email = "thando@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
+            IDnumber = "9209151587083",
+            StudentStaffNumber = "9158974481",
+            AccountNumber = "0000000003",
+            UserRole = "Consultant"
+        };
+
+        private static readonly User FinancialAdvisor = new User
+        {
+            UserName = "Master FinancialAdvisor",
+            FirstName = "Millicent",
+            LastName = "Kruger",
+            Email = "millicent@ufs.ac.za",
+            DateOfBirth = DateTime.Now,
+            IDnumber = "9204247204082",
+            StudentStaffNumber = "9876543210",
+            AccountNumber = "0000000004",
+            UserRole = "FinancialAdvisor"
+        };
+
+        public static async Task EnsurePopulatedAsync(IApplicationBuilder app)
+        {
+            AppDbContext context = app.ApplicationServices.CreateScope()
+               .ServiceProvider.GetRequiredService<AppDbContext>();
+
+            UserManager<User> userManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
+            RoleManager<IdentityRole> roleManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (context.Database.GetPendingMigrations().Any())
+                context.Database.Migrate();
+
+            // ADMIN
+            if (await userManager.FindByEmailAsync(Admin.UserName) == null)
+            {
+                if (await roleManager.FindByNameAsync(Admin.UserRole) == null)
+                    await roleManager.CreateAsync(new(Admin.UserRole));
+                IdentityResult result = await CreatePreAppUser(Admin, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+                result = await CreatePreAppUser(Admin, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+            }
+
+            // CUSTOMER
+            if (await userManager.FindByEmailAsync(Customer.UserName) == null)
+            {
+                if (await roleManager.FindByNameAsync(Customer.UserRole) == null)
+                    await roleManager.CreateAsync(new(Customer.UserRole));
+                IdentityResult result = await CreatePreAppUser(Customer, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Customer, "User");
+                result = await CreatePreAppUser(Customer, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+            }
+
+            // CONSULTANT
+            if (await userManager.FindByNameAsync(Consultant.UserName) == null)
+            {
+
+                if (await roleManager.FindByNameAsync(Consultant.UserRole) == null)
+                    await roleManager.CreateAsync(new(Consultant.UserRole));
+
+                IdentityResult result = await CreatePreAppUser(Consultant, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Consultant, "Consultant");
+                result = await CreatePreAppUser(Consultant, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+            }
+
+            // FIN ADVISOR
+            if (await userManager.FindByEmailAsync(FinancialAdvisor.UserName) == null)
+            {
+                if (await roleManager.FindByNameAsync(FinancialAdvisor.UserRole) == null)
+                    await roleManager.CreateAsync(new(FinancialAdvisor.UserRole));
+                IdentityResult result = await CreatePreAppUser(FinancialAdvisor, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(FinancialAdvisor, "FinancialAdvisor");
+                result = await CreatePreAppUser(FinancialAdvisor, userManager);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(Admin, "Admin");
+            }
+        }
+        public static async Task<IdentityResult> CreatePreAppUser(User user, UserManager<User> userManager)
+        {
+            User _user = new()
+            {
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                StudentStaffNumber = user.StudentStaffNumber,
+                AccountNumber = user.AccountNumber,
+                DateOfBirth = user.DateOfBirth,
+                IDnumber = user.IDnumber,
+                UserRole = user.UserRole,
+            };
+            return await userManager.CreateAsync(user, password);
+        }
+    }
+}
+
+using UFSBankingSystem.Models;
+using System.Collections.Generic;
+
+namespace UFSBankingSystem.Data.SeedData
+{
+    public static class SampleData
+    {
+        public static List<User> SampleCustomers { get; } = new List<User>
+        {
+            new User { UserName = "thabo@ufs.ac.za", FirstName = "Thabo", LastName = "Zungu", Email = "thabo@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "sipho@ufs.ac.za", FirstName = "Sipho", LastName = "Ndlovu", Email = "sipho@ufs.ac.za", IDnumber = "9312251234567", StudentStaffNumber = "1234567890", UserRole = "User" },
+            new User { UserName = "nomsa@ufs.ac.za", FirstName = "Nomsa", LastName = "Mkhize", Email = "nomsa@ufs.ac.za", IDnumber = "8506302345678", StudentStaffNumber = "0987654321", UserRole = "User" },
+            new User { UserName = "themba@ufs.ac.za", FirstName = "Themba", LastName = "Dlamini", Email = "themba@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "lerato@ufs.ac.za", FirstName = "Lerato", LastName = "Mokoena", Email = "lerato@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "thabiso@ufs.ac.za", FirstName = "Thabiso", LastName = "Khumalo", Email = "thabiso@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "mpho@ufs.ac.za", FirstName = "Mpho", LastName = "Mabuza", Email = "mpho@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "dineo@ufs.ac.za", FirstName = "Dineo", LastName = "Nkosi", Email = "dineo@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "tshepiso@ufs.ac.za", FirstName = "Tshepiso", LastName = "Maseko", Email = "tshepiso@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "thato@ufs.ac.za", FirstName = "Thato", LastName = "Moyo", Email = "thato@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" }
+        };
+
+        public static List<User> SampleStaff { get; } = new List<User>
+        {
+            new User { UserName = "john@ufs.ac.za", FirstName = "John", LastName = "Doe", Email = "john@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "jane@ufs.ac.za", FirstName = "Jane", LastName = "Smith", Email = "jane@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "david@ufs.ac.za", FirstName = "David", LastName = "Johnson", Email = "david@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "sarah@ufs.ac.za", FirstName = "Sarah", LastName = "Williams", Email = "sarah@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" },
+            new User { UserName = "michael@ufs.ac.za", FirstName = "Michael", LastName = "Brown", Email = "michael@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" }
+        };
+
+        public static List<Transactions> SampleTransactions { get; } = new List<Transactions>
+        {
+            new Transactions { UserEmail = "thabo@ufs.ac.za", Amount = 100m, TransactionDate = DateTime.Now.AddDays(-1) },
+            new Transactions { UserEmail = "sipho@ufs.ac.za", Amount = 250m, TransactionDate = DateTime.Now.AddDays(-2) },
+            new Transactions { UserEmail = "nomsa@ufs.ac.za", Amount = 300m, TransactionDate = DateTime.Now.AddDays(-3) },
+            new Transactions { UserEmail = "themba@ufs.ac.za", Amount = 150m, TransactionDate = DateTime.Now.AddDays(-4) },
+            new Transactions { UserEmail = "lerato@ufs.ac.za", Amount = 75m, TransactionDate = DateTime.Now.AddDays(-5) },
+            new Transactions { UserEmail = "thabiso@ufs.ac.za", Amount = 200m, TransactionDate = DateTime.Now.AddDays(-6) },
+            new Transactions { UserEmail = "mpho@ufs.ac.za", Amount = 400m, TransactionDate = DateTime.Now.AddDays(-7) },
+            new Transactions { UserEmail = "dineo@ufs.ac.za", Amount = 120m, TransactionDate = DateTime.Now.AddDays(-8) },
+            new Transactions { UserEmail = "tshepiso@ufs.ac.za", Amount = 180m, TransactionDate = DateTime.Now.AddDays(-9) },
+            new Transactions { UserEmail = "thato@ufs.ac.za", Amount = 220m, TransactionDate = DateTime.Now.AddDays(-10) }
+        };
+
+        public static List<Notification> SampleNotifications { get; } = new List<Notification>
+        {
+            new Notification { Message = "New user registered: Thabo", NotificationDate = DateTime.Now.AddMinutes(-10), IsRead = false },
+            new Notification { Message = "Transaction alert: $100 deposited to user account.", NotificationDate = DateTime.Now.AddMinutes(-5), IsRead = false },
+            new Notification { Message = "Consultant Thando has submitted a report.", NotificationDate = DateTime.Now.AddHours(-1), IsRead = false },
+            new Notification { Message = "Financial Advisor Millicent has provided advice.", NotificationDate = DateTime.Now.AddHours(-2), IsRead = false },
+            new Notification { Message = "Sipho has requested a password change.", NotificationDate = DateTime.Now.AddHours(-3), IsRead = false },
+            new Notification { Message = "Nomsa has transferred funds between accounts.", NotificationDate = DateTime.Now.AddHours(-4), IsRead = false },
+            new Notification { Message = "Themba has updated their profile information.", NotificationDate = DateTime.Now.AddHours(-5), IsRead = false },
+            new Notification { Message = "Lerato has requested a balance inquiry.", NotificationDate = DateTime.Now.AddHours(-6), IsRead = false },
+            new Notification { Message = "Thabiso has reported a suspicious transaction.", NotificationDate = DateTime.Now.AddHours(-7), IsRead = false },
+            new Notification { Message = "Mpho has requested a statement of account.", NotificationDate = DateTime.Now.AddHours(-8), IsRead = false }
+        };
+    }
+}
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using UFSBankingSystem.Data;
+using UFSBankingSystem.Models;
+using UFSBankingSystem.Data.SeedData;
+using UFSBankingSystem.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.Interfaces;
+using UFSBankingSystemWebsite.Data.SeedData;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+// Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+builder.Services.AddScoped<IFinancialAdvisorRepository, FinancialAdvisorRepository>();
+builder.Services.AddScoped<IConsultantRepository, ConsultantRepository>();
+builder.Services.AddScoped<IFeedBackRepository, FeedBackRepository>();
+
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(connString)); // Using SQLite instead of SQL Server below
+
+// Uncomment for SQL Server configuration if needed
+/*
+builder.Services.AddDbContext<AppDbContext>(opts =>
+opts.UseSqlServer(connString, opts =>
+{
+    opts.EnableRetryOnFailure();
+    opts.CommandTimeout(120);
+    opts.UseCompatibilityLevel(110);
+}));
+*/
+
+builder.Services.AddIdentity<User, IdentityRole>(opts =>
+{
+    opts.Password.RequiredLength = 8;
+    opts.Password.RequireUppercase = true;
+    opts.Password.RequireLowercase = true;
+    opts.Password.RequireNonAlphanumeric = true;
+    opts.Password.RequireDigit = true;
+    opts.User.RequireUniqueEmail = true;
+}).AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddIdentityCore<User>().AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+await SeedData.EnsurePopulatedAsync(app);
+
+app.Run();
+
+using UFSBankingSystem.Data.SeedData;
+using UFSBankingSystem.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using UFSBankingSystemWebsite.Data.SeedData;
+
+namespace UFSBankingSystem.Data
+{
+    public class AppDbContext : IdentityDbContext<User>
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<BankAccount> BankAccounts { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Consultant> Consultants { get; set; }
+        public DbSet<FinancialAdvisor> FinancialAdvisors { get; set; }
+        public DbSet<FinancialAdvice> FinancialAdvices { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<LoginSession> LoginSessions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure relationships
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.BankAccounts)
+                .WithOne(a => a.User)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notifications)
+                .WithOne(n => n.User)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Consultant)
+                .WithOne(c => c.User)
+                .HasForeignKey<Consultant>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.FinancialAdvisor)
+                .WithOne(fa => fa.User)
+                .HasForeignKey<FinancialAdvisor>(fa => fa.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BankAccount>()
+                .HasMany(a => a.Transactions)
+                .WithOne(t => t.BankAccount)
+                .HasForeignKey(t => t.BankAccountID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FinancialAdvisor>()
+                .HasMany(fa => fa.FinancialAdvices)
+                .WithOne(a => a.FinancialAdvisor)
+                .HasForeignKey(a => a.FinancialAdvisorID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Consultant>()
+                .HasMany(c => c.Reports)
+                .WithOne(r => r.Consultant)
+                .HasForeignKey(r => r.ConsultantID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FeedBack>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LoginSession>()
+                .HasOne(ls => ls.User)
+                .WithMany()
+                .HasForeignKey(ls => ls.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure table names (if needed)
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<BankAccount>().ToTable("BankAccounts");
+            modelBuilder.Entity<Transactions>().ToTable("Transactions");
+            modelBuilder.Entity<Notification>().ToTable("Notifications");
+            modelBuilder.Entity<Consultant>().ToTable("Consultants");
+            modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");
+            modelBuilder.Entity<FinancialAdvice>().ToTable("FinancialAdvices");
+            modelBuilder.Entity<Report>().ToTable("Reports");
+            modelBuilder.Entity<FeedBack>().ToTable("Feedbacks");
+            modelBuilder.Entity<LoginSession>().ToTable("LoginSessions");
+        }
+    }
+}

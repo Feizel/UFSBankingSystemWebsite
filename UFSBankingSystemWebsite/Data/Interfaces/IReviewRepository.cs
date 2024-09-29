@@ -1,4 +1,4 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 
 namespace UFSBankingSystemWebsite.Data.Interfaces
 {

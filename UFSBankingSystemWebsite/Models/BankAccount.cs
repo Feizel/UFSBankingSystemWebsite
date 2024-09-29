@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UFSBankingSystem.Models
+namespace UFSBankingSystemWebsite.Models
 {
     public class BankAccount
     {
@@ -25,7 +25,7 @@ namespace UFSBankingSystem.Models
 
         // Navigation properties
         public virtual User User { get; set; }
-        public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Transactions> Transactions { get; set; }
     }
 
 }

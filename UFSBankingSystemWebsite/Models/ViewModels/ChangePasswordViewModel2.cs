@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UFS_Banking_System_Website.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 {
     public class ChangePasswordViewModel2
     {

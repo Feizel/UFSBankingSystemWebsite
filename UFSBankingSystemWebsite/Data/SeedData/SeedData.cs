@@ -1,11 +1,12 @@
-using UFSBankingSystem.Models;
+using UFSBankingSystemWebsite.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UFSBankingSystem.Data;
+using UFSBankingSystemWebsite.Data;
+using UFSBankingSystemWebsite.Data.SeedData;
 
 namespace UFSBankingSystemWebsite.Data.SeedData
 {
@@ -67,84 +68,71 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         public static async Task EnsurePopulatedAsync(IApplicationBuilder app)
         {
-            AppDbContext context = app.ApplicationServices.CreateScope()
-               .ServiceProvider.GetRequiredService<AppDbContext>();
-
-            UserManager<User> userManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
-            RoleManager<IdentityRole> roleManager = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-            if (context.Database.GetPendingMigrations().Any())
-                context.Database.Migrate();
-
-            // ADMIN
-            if (await userManager.FindByEmailAsync(Admin.UserName) == null)
+            using (var scope = app.ApplicationServices.CreateScope())
             {
-                if (await roleManager.FindByNameAsync(Admin.UserRole) == null)
-                    await roleManager.CreateAsync(new(Admin.UserRole));
-                IdentityResult result = await CreatePreAppUser(Admin, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Admin, "Admin");
-                result = await CreatePreAppUser(Admin, userManager);
-                //if (result.Succeeded)
-                //    await userManager.AddToRoleAsync(Admin, "Admin");
-            }
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // CUSTOMER
-            if (await userManager.FindByEmailAsync(Customer.UserName) == null)
-            {
-                if (await roleManager.FindByNameAsync(Customer.UserRole) == null)
-                    await roleManager.CreateAsync(new(Customer.UserRole));
-                IdentityResult result = await CreatePreAppUser(Customer, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Customer, "User");
-                result = await CreatePreAppUser(Customer, userManager);
-                //if (result.Succeeded)
-                //    await userManager.AddToRoleAsync(Admin, "Admin");
-            }
+                if (context.Database.GetPendingMigrations().Any())
+                    await context.Database.MigrateAsync();
 
-            // CONSULTANT
-            if (await userManager.FindByNameAsync(Consultant.UserName) == null)
-            {
+                // Seed roles
+                string[] roles = new[] { "Admin", "User", "Consultant", "FinancialAdvisor" };
+                foreach (string role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                }
 
-                if (await roleManager.FindByNameAsync(Consultant.UserRole) == null)
-                    await roleManager.CreateAsync(new(Consultant.UserRole));
+                // Seed users
+                await SeedUser(userManager, Admin);
+                await SeedUser(userManager, Customer);
+                await SeedUser(userManager, Consultant);
+                await SeedUser(userManager, FinancialAdvisor);
 
-                IdentityResult result = await CreatePreAppUser(Consultant, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(Consultant, "Consultant");
-                result = await CreatePreAppUser(Consultant, userManager);
-                //if (result.Succeeded)
-                //    await userManager.AddToRoleAsync(Admin, "Admin");
-            }
+                // Seed sample data
+                await SeedSampleData(context);
 
-            // FIN ADVISOR
-            if (await userManager.FindByEmailAsync(FinancialAdvisor.UserName) == null)
-            {
-                if (await roleManager.FindByNameAsync(FinancialAdvisor.UserRole) == null)
-                    await roleManager.CreateAsync(new(FinancialAdvisor.UserRole));
-                IdentityResult result = await CreatePreAppUser(FinancialAdvisor, userManager);
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(FinancialAdvisor, "FinancialAdvisor");
-                result = await CreatePreAppUser(FinancialAdvisor, userManager);
-                //if (result.Succeeded)
-                //    await userManager.AddToRoleAsync(Admin, "Admin");
+                await context.SaveChangesAsync();
             }
         }
-        public static async Task<IdentityResult> CreatePreAppUser(User user, UserManager<User> userManager)
+
+        private static async Task SeedUser(UserManager<User> userManager, User user)
         {
-            User _user = new()
+            if (await userManager.FindByEmailAsync(user.Email) == null)
             {
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                StudentStaffNumber = user.StudentStaffNumber,
-                AccountNumber = user.AccountNumber,
-                DateOfBirth = user.DateOfBirth,
-                IDnumber = user.IDnumber,
-                UserRole = user.UserRole,
-            };
-            return await userManager.CreateAsync(user, password);
+                var result = await userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                    await userManager.AddToRoleAsync(user, user.UserRole);
+            }
+        }
+
+        private static async Task SeedSampleData(AppDbContext context)
+        {
+            if (!context.Users.Any(u => SampleData.SampleCustomers.Select(sc => sc.Email).Contains(u.Email)))
+            {
+                await context.Users.AddRangeAsync(SampleData.SampleCustomers);
+                await context.Users.AddRangeAsync(SampleData.SampleStaff);
+                await context.SaveChangesAsync(); // Save users first
+            }
+
+            if (!context.Transactions.Any())
+            {
+                await context.Transactions.AddRangeAsync(SampleData.SampleTransactions);
+                await context.SaveChangesAsync(); // Save transactions
+            }
+
+            if (!context.Notifications.Any())
+            {
+                var users = await context.Users.ToListAsync();
+                foreach (var notification in SampleData.SampleNotifications)
+                {
+                    notification.UserId = users[new Random().Next(users.Count)].Id;
+                }
+                await context.Notifications.AddRangeAsync(SampleData.SampleNotifications);
+                await context.SaveChangesAsync(); // Save notifications
+            }
         }
     }
 }

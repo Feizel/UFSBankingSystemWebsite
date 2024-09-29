@@ -1,12 +1,12 @@
-﻿using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels.Admin;
+﻿using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {

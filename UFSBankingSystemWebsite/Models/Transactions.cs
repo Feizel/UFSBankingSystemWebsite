@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models
+namespace UFSBankingSystemWebsite.Models
 {
-    public class Transaction
+    public class Transactions
     {
         [Key]
         public int TransactionID { get; set; }

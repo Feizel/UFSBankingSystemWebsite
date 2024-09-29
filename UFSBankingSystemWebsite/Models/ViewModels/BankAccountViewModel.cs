@@ -1,13 +1,13 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 
 {
     public class BankAccountViewModel
     {
         public BankAccount BankAccount { get; set; }
-        public IEnumerable<Transaction> Transactions { get; set; }
+        public IEnumerable<Transactions> Transactions { get; set; }
     }
     public class CreateAccountViewModel
     {

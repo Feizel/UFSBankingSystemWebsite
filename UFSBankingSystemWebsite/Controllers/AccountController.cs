@@ -1,13 +1,14 @@
-﻿using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels;
+﻿using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
 using System.Data;
 using UFSBankingSystemWebsite.Data.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     [Authorize]
     public class AccountController : Controller
@@ -78,7 +79,7 @@ namespace UFSBankingSystem.Controllers
                             return RedirectToAction("Index", "CustomerDashboard");
 
                         // Default redirect
-                        //return Redirect(model?.ReturnUrl ?? "/Home/Index");
+                        return Redirect(model?.ReturnUrl ?? "/Home/Index");
                     }
                 }
             }
@@ -90,76 +91,70 @@ namespace UFSBankingSystem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register(string registerAs, string userType, string userRole)
+        public IActionResult Register(string registerAs)
         {
             return View(new RegisterViewModel() 
             { 
-                RegisterAs = registerAs,
-                UserType = userType,
-                Role = userRole
+                RegisterAs = registerAs
             });
         }
 
         [AllowAnonymous]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                // Ensure roles exist
-                await EnsureRolesExist();
+                if (await roleManager.FindByNameAsync(_customerRole) == null)
+                    await roleManager.CreateAsync(new(_customerRole));
 
-                // Create a new user
                 User user = new()
                 {
-                    UserName = registerModel.EmailAddress, // Use email as username for clarity
-                    IDnumber = registerModel.IdPassportNumber,
+                    UserName = (registerModel.LastName + registerModel.FirstName).Substring(0, 10),
+                    IDnumber = registerModel.IdPassportNumber.ToString(),
                     Email = registerModel.EmailAddress,
                     FirstName = registerModel.FirstName,
                     LastName = registerModel.LastName,
-                    StudentStaffNumber = registerModel.StudentStaffNumber
-                    //UserRole = registerModel.Role,
-                    //UserType = registerModel.UserType
+                    StudentStaffNumber = registerModel.StudentStaffNumber.ToString(),
+                    UserRole = registerModel.RegisterAs
                 };
 
-                // Create the user
-                IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+                Random rndAccount = new Random();
+                string _randomAccount = string.Empty;
+                do
+                {
+                    _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
+                }
+                while (userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
+                user.AccountNumber = _randomAccount;
 
+
+
+                IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
                 if (result.Succeeded)
                 {
-                    // Assign role to user as Customer
                     await userManager.AddToRoleAsync(user, _customerRole);
-
-                    // Create a bank account for the user
                     BankAccount bankAccountMain = new()
                     {
-                        AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
-                        Balance = 100m, // Initial balance
+                        AccountNumber = _randomAccount,
+                        Balance = 100m,
                         BankAccountType = "Savings",
                         AccountOrder = 1,
-                        UserEmail = user.Email, // Associate with the registered user's email
-                        UserId = user.Id // Use Id from IdentityUser as foreign key
+                        UserEmail = user.Email,
                     };
-
-                    // Save the bank account to the database
                     await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
-
-                    // Create a transaction for initial deposit
-                    Models.Transaction transaction = new()
+                    Transactions transaction = new()
                     {
-                        BankAccountIdReceiver = bankAccountMain.BankAccountID, // Assuming this is how you reference accounts
+                        BankAccountIdReceiver = int.Parse(_randomAccount),
                         Amount = 100m,
-                        Reference = "Initial deposit",
+                        Reference = "fee Open new account ",
                         UserEmail = user.Email,
                         TransactionDate = DateTime.Now,
+
                     };
-
                     await _repoWrapper.Transactions.AddAsync(transaction);
-
-                    // Sign in the user after successful registration
-                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password, isPersistent: false, lockoutOnFailure: false);
-
+                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password,
+                        isPersistent: false, lockoutOnFailure: false);
                     if (signin_result.Succeeded)
                     {
                         var newLogin = new LoginSession
@@ -167,21 +162,101 @@ namespace UFSBankingSystem.Controllers
                             TimeStamp = DateTime.Now,
                             UserEmail = user.Email,
                         };
-
                         await _repoWrapper.Logins.AddAsync(newLogin);
-                        _repoWrapper.SaveChanges(); // Ensure changes are saved
+                        _repoWrapper.SaveChanges();
 
-                        return RedirectToAction("Index", "CustomerDashboard");
+                        if (await userManager.IsInRoleAsync(user, "Customer"))
+                            return RedirectToAction("Index", "CustomerDashboard");
+                        return RedirectToAction("Index", "Home");
                     }
                 }
                 else
-                {
                     foreach (var error in result.Errors.Select(e => e.Description))
                         ModelState.AddModelError("", error);
-                }
             }
             return View(registerModel);
         }
+
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Ensure roles exist
+        //        await EnsureRolesExist();
+
+        //        // Create a new user
+        //        User user = new()
+        //        {
+        //            UserName = registerModel.EmailAddress, // Use email as username for clarity
+        //            IDnumber = registerModel.IdPassportNumber.ToString(),
+        //            Email = registerModel.EmailAddress,
+        //            FirstName = registerModel.FirstName,
+        //            LastName = registerModel.LastName,
+        //            StudentStaffNumber = registerModel.StudentStaffNumber.ToString()
+        //        };
+
+        //        // Create the user
+        //        IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+
+        //        if (result.Succeeded)
+        //        {
+        //            // Assign role to user as Customer
+        //            await userManager.AddToRoleAsync(user, _customerRole);
+
+        //            // Create a bank account for the user
+        //            BankAccount bankAccountMain = new()
+        //            {
+        //                AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
+        //                Balance = 100m, // Initial balance
+        //                BankAccountType = "Savings",
+        //                AccountOrder = 1,
+        //                UserEmail = user.Email, // Associate with the registered user's email
+        //                UserId = user.Id // Use Id from IdentityUser as foreign key
+        //            };
+
+        //            // Save the bank account to the database
+        //            await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
+
+        //            // Create a transaction for initial deposit
+        //            Models.Transaction transaction = new()
+        //            {
+        //                BankAccountIdReceiver = bankAccountMain.BankAccountID, // Assuming this is how you reference accounts
+        //                Amount = 100m,
+        //                Reference = "Initial deposit",
+        //                UserEmail = user.Email,
+        //                TransactionDate = DateTime.Now,
+        //            };
+
+        //            await _repoWrapper.Transactions.AddAsync(transaction);
+
+        //            // Sign in the user after successful registration
+        //            var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password, isPersistent: false, lockoutOnFailure: false);
+
+        //            if (signin_result.Succeeded)
+        //            {
+        //                var newLogin = new LoginSession
+        //                {
+        //                    TimeStamp = DateTime.Now,
+        //                    UserEmail = user.Email,
+        //                };
+
+        //                await _repoWrapper.Logins.AddAsync(newLogin);
+        //                _repoWrapper.SaveChanges(); // Ensure changes are saved
+
+        //                return RedirectToAction("Index", "CustomerDashboard");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            foreach (var error in result.Errors.Select(e => e.Description))
+        //                ModelState.AddModelError("", error);
+        //        }
+        //    }
+        //    ModelState.AddModelError("", "Registration failed");
+        //    return View(registerModel);
+        //}
 
         // Helper method to ensure roles exist
         private async Task EnsureRolesExist()

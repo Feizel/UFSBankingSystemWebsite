@@ -1,4 +1,6 @@
-﻿namespace UFSBankingSystemWebsite.Data.Interfaces
+﻿using UFSBankingSystemWebsite.Models;
+
+namespace UFSBankingSystemWebsite.Data.Interfaces
 {
     public interface IRepositoryWrapper
     {

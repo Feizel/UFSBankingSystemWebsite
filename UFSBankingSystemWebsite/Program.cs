@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using UFSBankingSystem.Data;
-using UFSBankingSystem.Models;
-using UFSBankingSystem.Data.SeedData;
-using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystemWebsite.Data.Interfaces;
+using UFSBankingSystemWebsite.Data;
+using UFSBankingSystemWebsite.Models;
 using UFSBankingSystemWebsite.Data.SeedData;
+using UFSBankingSystemWebsite.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,21 +21,18 @@ builder.Services.AddScoped<IFinancialAdvisorRepository, FinancialAdvisorReposito
 builder.Services.AddScoped<IConsultantRepository, ConsultantRepository>();
 builder.Services.AddScoped<IFeedBackRepository, FeedBackRepository>();
 
-var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Configure SQLite
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbPath = Path.GetFullPath(connectionString.Replace("Data Source=", ""));
+var dbDirectory = Path.GetDirectoryName(dbPath);
+
+if (!Directory.Exists(dbDirectory))
+{
+    Directory.CreateDirectory(dbDirectory);
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(connString)); // Using SQLite instead of SQL Server below
-
-// Uncomment for SQL Server configuration if needed
-/*
-builder.Services.AddDbContext<AppDbContext>(opts =>
-opts.UseSqlServer(connString, opts =>
-{
-    opts.EnableRetryOnFailure();
-    opts.CommandTimeout(120);
-    opts.UseCompatibilityLevel(110);
-}));
-*/
+    options.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddIdentity<User, IdentityRole>(opts =>
 {
@@ -73,6 +68,37 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-await SeedData.EnsurePopulatedAsync(app);
+// Database initialization and seeding
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        // Check if the database exists and delete it
+        if (File.Exists(dbPath))
+        {
+            logger.LogInformation("Deleting existing database...");
+            context.Database.EnsureDeleted();
+        }
+
+        // Create a new database and apply migrations
+        logger.LogInformation("Creating new database and applying migrations...");
+        context.Database.Migrate();
+
+        // Seed data
+        logger.LogInformation("Seeding data...");
+        await SeedData.EnsurePopulatedAsync(app);
+
+        logger.LogInformation("Database setup completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while setting up or seeding the database.");
+    }
+}
 
 app.Run();

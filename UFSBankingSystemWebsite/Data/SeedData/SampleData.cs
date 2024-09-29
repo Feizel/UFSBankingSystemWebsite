@@ -1,7 +1,7 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 using System.Collections.Generic;
 
-namespace UFSBankingSystem.Data.SeedData
+namespace UFSBankingSystemWebsite.Data.SeedData
 {
     public static class SampleData
     {
@@ -28,32 +28,32 @@ namespace UFSBankingSystem.Data.SeedData
             new User { UserName = "michael@ufs.ac.za", FirstName = "Michael", LastName = "Brown", Email = "michael@ufs.ac.za", IDnumber = "0206151810182", StudentStaffNumber = "7432108965", UserRole = "User" }
         };
 
-        public static List<Transaction> SampleTransactions { get; } = new List<Transaction>
+        public static List<Transactions> SampleTransactions { get; } = new List<Transactions>
         {
-            new Transaction { UserEmail = "thabo@ufs.ac.za", Amount = 100m, TransactionDate = DateTime.Now.AddDays(-1) },
-            new Transaction { UserEmail = "sipho@ufs.ac.za", Amount = 250m, TransactionDate = DateTime.Now.AddDays(-2) },
-            new Transaction { UserEmail = "nomsa@ufs.ac.za", Amount = 300m, TransactionDate = DateTime.Now.AddDays(-3) },
-            new Transaction { UserEmail = "themba@ufs.ac.za", Amount = 150m, TransactionDate = DateTime.Now.AddDays(-4) },
-            new Transaction { UserEmail = "lerato@ufs.ac.za", Amount = 75m, TransactionDate = DateTime.Now.AddDays(-5) },
-            new Transaction { UserEmail = "thabiso@ufs.ac.za", Amount = 200m, TransactionDate = DateTime.Now.AddDays(-6) },
-            new Transaction { UserEmail = "mpho@ufs.ac.za", Amount = 400m, TransactionDate = DateTime.Now.AddDays(-7) },
-            new Transaction { UserEmail = "dineo@ufs.ac.za", Amount = 120m, TransactionDate = DateTime.Now.AddDays(-8) },
-            new Transaction { UserEmail = "tshepiso@ufs.ac.za", Amount = 180m, TransactionDate = DateTime.Now.AddDays(-9) },
-            new Transaction { UserEmail = "thato@ufs.ac.za", Amount = 220m, TransactionDate = DateTime.Now.AddDays(-10) }
+            new Transactions { UserEmail = "thabo@ufs.ac.za", Amount = 100m, TransactionDate = DateTime.Now.AddDays(-1) },
+            new Transactions { UserEmail = "sipho@ufs.ac.za", Amount = 250m, TransactionDate = DateTime.Now.AddDays(-2) },
+            new Transactions { UserEmail = "nomsa@ufs.ac.za", Amount = 300m, TransactionDate = DateTime.Now.AddDays(-3) },
+            new Transactions { UserEmail = "themba@ufs.ac.za", Amount = 150m, TransactionDate = DateTime.Now.AddDays(-4) },
+            new Transactions { UserEmail = "lerato@ufs.ac.za", Amount = 75m, TransactionDate = DateTime.Now.AddDays(-5) },
+            new Transactions { UserEmail = "thabiso@ufs.ac.za", Amount = 200m, TransactionDate = DateTime.Now.AddDays(-6) },
+            new Transactions { UserEmail = "mpho@ufs.ac.za", Amount = 400m, TransactionDate = DateTime.Now.AddDays(-7) },
+            new Transactions { UserEmail = "dineo@ufs.ac.za", Amount = 120m, TransactionDate = DateTime.Now.AddDays(-8) },
+            new Transactions { UserEmail = "tshepiso@ufs.ac.za", Amount = 180m, TransactionDate = DateTime.Now.AddDays(-9) },
+            new Transactions { UserEmail = "thato@ufs.ac.za", Amount = 220m, TransactionDate = DateTime.Now.AddDays(-10) }
         };
 
         public static List<Notification> SampleNotifications { get; } = new List<Notification>
-        {
-            new Notification { Message = "New user registered: Thabo", NotificationDate = DateTime.Now.AddMinutes(-10), IsRead = false },
-            new Notification { Message = "Transaction alert: $100 deposited to user account.", NotificationDate = DateTime.Now.AddMinutes(-5), IsRead = false },
-            new Notification { Message = "Consultant Thando has submitted a report.", NotificationDate = DateTime.Now.AddHours(-1), IsRead = false },
-            new Notification { Message = "Financial Advisor Millicent has provided advice.", NotificationDate = DateTime.Now.AddHours(-2), IsRead = false },
-            new Notification { Message = "Sipho has requested a password change.", NotificationDate = DateTime.Now.AddHours(-3), IsRead = false },
-            new Notification { Message = "Nomsa has transferred funds between accounts.", NotificationDate = DateTime.Now.AddHours(-4), IsRead = false },
-            new Notification { Message = "Themba has updated their profile information.", NotificationDate = DateTime.Now.AddHours(-5), IsRead = false },
-            new Notification { Message = "Lerato has requested a balance inquiry.", NotificationDate = DateTime.Now.AddHours(-6), IsRead = false },
-            new Notification { Message = "Thabiso has reported a suspicious transaction.", NotificationDate = DateTime.Now.AddHours(-7), IsRead = false },
-            new Notification { Message = "Mpho has requested a statement of account.", NotificationDate = DateTime.Now.AddHours(-8), IsRead = false }
-        };
+    {
+        new Notification { Message = "New user registered: Thabo", NotificationDate = DateTime.Now.AddMinutes(-10), IsRead = false },
+        new Notification { Message = "Transaction alert: $100 deposited to user account.", NotificationDate = DateTime.Now.AddMinutes(-5), IsRead = false },
+        new Notification { Message = "Consultant Thando has submitted a report.", NotificationDate = DateTime.Now.AddHours(-1), IsRead = false },
+        new Notification { Message = "Financial Advisor Millicent has provided advice.", NotificationDate = DateTime.Now.AddHours(-2), IsRead = false },
+        new Notification { Message = "Sipho has requested a password change.", NotificationDate = DateTime.Now.AddHours(-3), IsRead = false },
+        new Notification { Message = "Nomsa has transferred funds between accounts.", NotificationDate = DateTime.Now.AddHours(-4), IsRead = false },
+        new Notification { Message = "Themba has updated their profile information.", NotificationDate = DateTime.Now.AddHours(-5), IsRead = false },
+        new Notification { Message = "Lerato has requested a balance inquiry.", NotificationDate = DateTime.Now.AddHours(-6), IsRead = false },
+        new Notification { Message = "Thabiso has reported a suspicious transaction.", NotificationDate = DateTime.Now.AddHours(-7), IsRead = false },
+        new Notification { Message = "Mpho has requested a statement of account.", NotificationDate = DateTime.Now.AddHours(-8), IsRead = false }
+    };
     }
 }

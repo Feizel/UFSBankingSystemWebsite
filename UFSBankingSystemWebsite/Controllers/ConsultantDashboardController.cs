@@ -1,15 +1,13 @@
-using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels;
+using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
-using UFS_Banking_System_Website.Models.ViewModels;
-using UFSBankingSystem.Models.ViewModels.Admin;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
 
     [Authorize(Roles = "Consultant,Admin")]
@@ -125,7 +123,7 @@ namespace UFSBankingSystem.Controllers
                             userBankAcc.Balance -= model.Amount;
                         }
                         await _repository.BankAccount.UpdateAsync(userBankAcc);
-                        var transaction = new Transaction
+                        var transaction = new Transactions
                         {
                             Amount = model.Amount,
                             UserEmail = model.UserEmail,
@@ -418,7 +416,7 @@ namespace UFSBankingSystem.Controllers
             account.Balance += amount; // Update balance logic
             await _repository.BankAccount.UpdateAsync(account);
 
-            var transaction = new Transaction
+            var transaction = new Transactions
             {
                 BankAccountID = account.BankAccountID,
                 Amount = amount,

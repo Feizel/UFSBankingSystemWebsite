@@ -1,12 +1,12 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
-    public class TransactionRepository : RepositoryBase<Transaction>, ITransactionRepository
+    public class TransactionRepository : RepositoryBase<Transactions>, ITransactionRepository
     {
         private readonly AppDbContext _context;
 
@@ -15,7 +15,7 @@ namespace UFSBankingSystem.Data
             _context = context;
         }
 
-        public async Task<List<Transaction>> GetTransactionsByUserIdAsync(string userId)
+        public async Task<List<Transactions>> GetTransactionsByUserIdAsync(string userId)
         {
             return await _context.Transactions.Where(t => t.UserEmail == userId).ToListAsync();
         }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 {
     public class ConsultantViewModel
     {

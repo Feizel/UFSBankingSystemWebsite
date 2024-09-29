@@ -1,15 +1,15 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 {
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Email Address Does Not Exist")]
         [UIHint("email")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Incorrect Password")]
         [DataType(DataType.Password)]
         [UIHint("password")]
         public string Password { get; set; }
@@ -19,10 +19,11 @@ namespace UFSBankingSystem.Models.ViewModels
 
     public class RegisterViewModel
     {
-        public string RegisterAs { get; set; } = "studentstaff";
-        [Required(ErrorMessage = "Role is required.")]
-        public required string Role { get; set; }
-        public required string UserType { get; set; }
+        public string RegisterAs { get; set; } = "User";
+
+        //[Required(ErrorMessage = "Role is required.")]
+        //public required string UserRole { get; set; }
+
         [Required(ErrorMessage = "Please enter first name")]
         [DisplayName("First name")]
         public string FirstName { get; set; }
@@ -39,10 +40,10 @@ namespace UFSBankingSystem.Models.ViewModels
 
         [Required(ErrorMessage = "Please enter ID or passport number.")]
         [DisplayName("ID or Passport number")]
-        public string IdPassportNumber { get; set; }
+        public long IdPassportNumber { get; set; }
 
         [DisplayName("Student or Staff number")]
-        public string StudentStaffNumber { get; set; }
+        public int StudentStaffNumber { get; set; }
 
         [Required(ErrorMessage = "Please enter password")]
         [DisplayName("Password")]
@@ -62,12 +63,9 @@ namespace UFSBankingSystem.Models.ViewModels
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string AccountNumber { get; set; }
-       
         public string IDNumber { get; set; }
         public string LastName { get; set; }
-
         public string FirstName { get; set; }
-
         public string Userrole { get; set; }
     }
 

@@ -1,10 +1,10 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 
-namespace UFSBankingSystem.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 {
     public class CustomerViewModel
     {
         public IEnumerable<BankAccount> BankAccounts { get; set; } // User's bank accounts
-        public IEnumerable<Transaction> Transactions { get; set; } // User's transactions
+        public IEnumerable<Transactions> Transactions { get; set; } // User's transactions
     }
 }

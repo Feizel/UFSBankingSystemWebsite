@@ -1,15 +1,15 @@
-﻿using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels;
+﻿using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UFSBankingSystem.Models.ViewModels.Admin;
+using UFSBankingSystemWebsite.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using UFSBankingSystem.Data;
+using UFSBankingSystemWebsite.Data;
 using Microsoft.AspNetCore.Authorization;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     [Authorize(Roles = "User")]
     public class CustomerDashboardController : Controller
@@ -262,7 +262,7 @@ namespace UFSBankingSystem.Controllers
             await _repo.BankAccount.UpdateAsync(receiverBankAccount);
 
 
-            var transaction = new Transaction
+            var transaction = new Transactions
             {
                 BankAccountIdSender = int.Parse(senderBankAccount.AccountNumber), // Assuming this property exists
                 BankAccountIdReceiver = int.Parse(receiverBankAccount.AccountNumber), // Assuming this property exists

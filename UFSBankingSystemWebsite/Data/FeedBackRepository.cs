@@ -1,10 +1,10 @@
-﻿using UFSBankingSystem.Data.Interfaces;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Data.Interfaces;
+using UFSBankingSystemWebsite.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class FeedBackRepository : RepositoryBase<FeedBack>, IFeedBackRepository
     {

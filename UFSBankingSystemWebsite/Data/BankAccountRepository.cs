@@ -1,10 +1,10 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class BankAccountRepository : RepositoryBase<BankAccount>, IBankAccountRepository
     {

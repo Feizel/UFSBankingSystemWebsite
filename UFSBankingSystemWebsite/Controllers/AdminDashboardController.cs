@@ -1,16 +1,16 @@
-﻿using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels;
-using UFSBankingSystem.Models.ViewModels.Admin;
+﻿using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
+using UFSBankingSystemWebsite.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using Microsoft.IdentityModel.Abstractions;
-using UFSBankingSystem.Data.SeedData;
+using UFSBankingSystemWebsite.Data.SeedData;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminDashboardController : Controller
@@ -216,7 +216,7 @@ namespace UFSBankingSystem.Controllers
                             userBankAcc.Balance -= model.Amount;
                         }
                         await _wrapper.BankAccount.UpdateAsync(userBankAcc);
-                        var transaction = new Transaction
+                        var transaction = new Transactions
                         {
                             Amount = model.Amount,
                             UserEmail = model.UserEmail,
@@ -428,8 +428,8 @@ namespace UFSBankingSystem.Controllers
                     Email = model.EmailAddress,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    IDnumber = model.IdPassportNumber,
-                    StudentStaffNumber = model.StudentStaffNumber,
+                    IDnumber = model.IdPassportNumber.ToString(),
+                    StudentStaffNumber = model.StudentStaffNumber.ToString(),
                     UserName = (model.LastName + model.FirstName).Substring(0, 10),
                     UserRole = model.RegisterAs
                 };
@@ -462,7 +462,7 @@ namespace UFSBankingSystem.Controllers
                     await _wrapper.BankAccount.AddAsync(bankAccountMain);
 
                     // Log initial transaction
-                    Transaction transaction = new()
+                    Transactions transaction = new()
                     {
                         BankAccountIdReceiver = int.Parse(_randomAccount),
                         Amount = 100m,

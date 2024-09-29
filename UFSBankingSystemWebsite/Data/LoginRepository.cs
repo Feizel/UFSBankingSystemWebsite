@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using UFSBankingSystem.Models;
+using UFSBankingSystemWebsite.Models;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class LoginRepository : RepositoryBase<LoginSession>, ILoginRepository
     {

@@ -1,4 +1,4 @@
-﻿namespace UFSBankingSystem.Models
+﻿namespace UFSBankingSystemWebsite.Models
 {
     public enum TransactionType
     {

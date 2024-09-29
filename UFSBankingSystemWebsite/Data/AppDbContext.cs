@@ -1,17 +1,20 @@
-﻿using UFSBankingSystem.Data.SeedData;
-using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Data.SeedData;
+using UFSBankingSystemWebsite.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using UFSBankingSystemWebsite.Data.SeedData;
 
-namespace UFSBankingSystem.Data
+namespace UFSBankingSystemWebsite.Data
 {
     public class AppDbContext : IdentityDbContext<User>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
+        {
+            Database.EnsureCreated();
+        
+        }
 
         public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Transactions> Transactions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
         public DbSet<FinancialAdvisor> FinancialAdvisors { get; set; }
@@ -82,7 +85,7 @@ namespace UFSBankingSystem.Data
             // Configure table names (if needed)
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<BankAccount>().ToTable("BankAccounts");
-            modelBuilder.Entity<Transaction>().ToTable("Transactions");
+            modelBuilder.Entity<Transactions>().ToTable("Transactions");
             modelBuilder.Entity<Notification>().ToTable("Notifications");
             modelBuilder.Entity<Consultant>().ToTable("Consultants");
             modelBuilder.Entity<FinancialAdvisor>().ToTable("FinancialAdvisors");

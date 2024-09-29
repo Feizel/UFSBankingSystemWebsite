@@ -1,9 +1,9 @@
-﻿using UFSBankingSystem.Models;
+﻿using UFSBankingSystemWebsite.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Data.Interfaces
+namespace UFSBankingSystemWebsite.Data.Interfaces
 {
     public interface IFeedBackRepository : IRepositoryBase<FeedBack>
     {

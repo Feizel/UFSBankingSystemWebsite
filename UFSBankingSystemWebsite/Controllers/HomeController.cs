@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using UFSBankingSystem.Models;
+using UFSBankingSystemWebsite.Models;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     public class HomeController : Controller
     {

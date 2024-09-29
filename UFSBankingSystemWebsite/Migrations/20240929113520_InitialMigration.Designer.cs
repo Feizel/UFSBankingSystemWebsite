@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UFSBankingSystem.Data;
+using UFSBankingSystemWebsite.Data;
 
 #nullable disable
 
 namespace UFSBankingSystemWebsite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240927175434_Initital")]
-    partial class Initital
+    [Migration("20240929113520_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,32 +44,6 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "2b0e05d7-3da9-418c-adf7-2816c11c1b2b",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "01b0677d-e3e9-4e06-ae4c-2ca1129ff187",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "d7087392-faf1-4ca5-b40a-98a8805747bb",
-                            Name = "Consultant",
-                            NormalizedName = "CONSULTANT"
-                        },
-                        new
-                        {
-                            Id = "6b45bcfc-82bc-4fec-9f72-ee7e13b6b4e2",
-                            Name = "FinancialAdvisor",
-                            NormalizedName = "FINANCIALADVISOR"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -174,16 +148,19 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.BankAccount", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.BankAccount", b =>
                 {
                     b.Property<int>("BankAccountID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("AccountName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("AccountOrder")
@@ -193,53 +170,47 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BankAccountType")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("BankAccountID");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("BankAccounts", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Consultant", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Consultant", b =>
                 {
                     b.Property<int>("ConsultantID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("EmployeeNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId1")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ConsultantID");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Consultants", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FeedBack", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FeedBack", b =>
                 {
                     b.Property<int>("FeedBackID")
                         .ValueGeneratedOnAdd()
@@ -249,6 +220,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Message")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
@@ -257,112 +229,70 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("FeedBackID");
 
-                    b.HasIndex("UserEmail");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Feedbacks", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvice", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvice", b =>
                 {
                     b.Property<int>("FinancialAdviceID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Advice")
+                        .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("ConsultantID")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("FinancialAdvisorID")
+                    b.Property<int>("FinancialAdvisorID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FinancialAdviceID");
-
-                    b.HasIndex("ConsultantID");
 
                     b.HasIndex("FinancialAdvisorID");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FinancialAdvices");
+                    b.ToTable("FinancialAdvices", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvisor", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvisor", b =>
                 {
                     b.Property<int>("FinancialAdvisorID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("EmployeeNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("IDnumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FinancialAdvisorID");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("FinancialAdvisors", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Investment", b =>
-                {
-                    b.Property<int>("InvestmentID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("InitialValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("InvestmentDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InvestmentType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("InvestmentID");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Investments");
-                });
-
-            modelBuilder.Entity("UFSBankingSystem.Models.LoginSession", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.LoginSession", b =>
                 {
                     b.Property<int>("LoginSessionID")
                         .ValueGeneratedOnAdd()
@@ -375,6 +305,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("LoginSessionID");
@@ -384,7 +315,7 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.ToTable("LoginSessions", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Notification", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Notification", b =>
                 {
                     b.Property<int>("NotificationID")
                         .ValueGeneratedOnAdd()
@@ -397,6 +328,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Message")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("NotificationDate")
@@ -406,6 +338,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("NotificationID");
@@ -415,59 +348,30 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.ToTable("Notifications", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Report", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Report", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConsultantID")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ReportID")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("ReportID");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
+                    b.HasIndex("ConsultantID");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Statement", b =>
-                {
-                    b.Property<int>("StatementID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("StatementID");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Statements");
-                });
-
-            modelBuilder.Entity("UFSBankingSystem.Models.Transaction", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Transactions", b =>
                 {
                     b.Property<int>("TransactionID")
                         .ValueGeneratedOnAdd()
@@ -477,7 +381,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("BalanceAfter")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("BankAccountID")
                         .HasColumnType("INTEGER");
@@ -500,11 +404,11 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("transactionType")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("TransactionID");
 
@@ -513,7 +417,7 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.ToTable("Transactions", (string)null);
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.User", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -528,9 +432,6 @@ namespace UFSBankingSystemWebsite.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ConsultantID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
@@ -542,10 +443,12 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("IDnumber")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("IDnumber")
+                        .HasMaxLength(13)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsConsultant")
                         .HasColumnType("INTEGER");
@@ -554,6 +457,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
@@ -582,8 +486,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("StudentStaffNumber")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("StudentStaffNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");
@@ -618,7 +523,7 @@ namespace UFSBankingSystemWebsite.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -627,7 +532,7 @@ namespace UFSBankingSystemWebsite.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -642,7 +547,7 @@ namespace UFSBankingSystemWebsite.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UFSBankingSystem.Models.User", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -651,95 +556,91 @@ namespace UFSBankingSystemWebsite.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.BankAccount", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.BankAccount", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
-                        .WithMany("Accounts")
-                        .HasForeignKey("UserId");
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
+                        .WithMany("BankAccounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Consultant", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Consultant", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
+                        .WithOne("Consultant")
+                        .HasForeignKey("UFSBankingSystemWebsite.Models.Consultant", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FeedBack", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FeedBack", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserEmail");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvice", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvice", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.Consultant", null)
+                    b.HasOne("UFSBankingSystemWebsite.Models.FinancialAdvisor", "FinancialAdvisor")
                         .WithMany("FinancialAdvices")
-                        .HasForeignKey("ConsultantID");
+                        .HasForeignKey("FinancialAdvisorID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("UFSBankingSystem.Models.FinancialAdvisor", null)
-                        .WithMany("FinancialAdvices")
-                        .HasForeignKey("FinancialAdvisorID");
-
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
-                        .WithMany("FinancialAdvices")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UFSBankingSystem.Models.Investment", b =>
-                {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FinancialAdvisor");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.LoginSession", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvisor", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
+                        .WithOne("FinancialAdvisor")
+                        .HasForeignKey("UFSBankingSystemWebsite.Models.FinancialAdvisor", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.LoginSession", b =>
+                {
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Notification", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Notification", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
+                    b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UFSBankingSystem.Models.Report", b =>
-                {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UFSBankingSystem.Models.Statement", b =>
-                {
-                    b.HasOne("UFSBankingSystem.Models.User", "User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -747,37 +648,50 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Transaction", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Report", b =>
                 {
-                    b.HasOne("UFSBankingSystem.Models.BankAccount", "Account")
+                    b.HasOne("UFSBankingSystemWebsite.Models.Consultant", "Consultant")
+                        .WithMany("Reports")
+                        .HasForeignKey("ConsultantID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consultant");
+                });
+
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Transactions", b =>
+                {
+                    b.HasOne("UFSBankingSystemWebsite.Models.BankAccount", "BankAccount")
                         .WithMany("Transactions")
                         .HasForeignKey("BankAccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
+                    b.Navigation("BankAccount");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.BankAccount", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.BankAccount", b =>
                 {
                     b.Navigation("Transactions");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.Consultant", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.Consultant", b =>
+                {
+                    b.Navigation("Reports");
+                });
+
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.FinancialAdvisor", b =>
                 {
                     b.Navigation("FinancialAdvices");
                 });
 
-            modelBuilder.Entity("UFSBankingSystem.Models.FinancialAdvisor", b =>
+            modelBuilder.Entity("UFSBankingSystemWebsite.Models.User", b =>
                 {
-                    b.Navigation("FinancialAdvices");
-                });
+                    b.Navigation("BankAccounts");
 
-            modelBuilder.Entity("UFSBankingSystem.Models.User", b =>
-                {
-                    b.Navigation("Accounts");
+                    b.Navigation("Consultant");
 
-                    b.Navigation("FinancialAdvices");
+                    b.Navigation("FinancialAdvisor");
 
                     b.Navigation("Notifications");
                 });

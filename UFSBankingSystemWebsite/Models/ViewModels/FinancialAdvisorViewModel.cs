@@ -1,11 +1,11 @@
-﻿
+﻿using UFSBankingSystemWebsite.Models;
 
-namespace UFSBankingSystem.Models.ViewModels
+namespace UFSBankingSystemWebsite.Models.ViewModels
 {
     public class FinancialAdvisorViewModel
     {
         public User CurrentUser { get; set; }
-        public List<Transaction> Transactions { get; set; }
+        public List<Transactions> Transactions { get; set; }
         public BankAccount CurrentUserBankAccount { get; set; }
     }
 

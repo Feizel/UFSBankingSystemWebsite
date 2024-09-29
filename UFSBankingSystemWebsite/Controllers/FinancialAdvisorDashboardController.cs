@@ -1,11 +1,11 @@
-using UFSBankingSystem.Models;
-using UFSBankingSystem.Models.ViewModels;
+using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UFSBankingSystemWebsite.Data.Interfaces;
 
-namespace UFSBankingSystem.Controllers
+namespace UFSBankingSystemWebsite.Controllers
 {
     [Authorize(Roles = "FinancialAdvisor, Admin")]
     public class FinancialAdvisorDashboardController : Controller
@@ -62,7 +62,7 @@ namespace UFSBankingSystem.Controllers
             {
                 UserEmail = user.Email,
                 CurrentUser = user,
-                Transactions = allTransactions ?? new List<Transaction>(), // Initialize to an empty list if null
+                Transactions = allTransactions ?? new List<Transactions>(), // Initialize to an empty list if null
                 CurrentUserBankAccount = currentUserBankAccount ?? new BankAccount(), // Initialize to a new Account object if null
                 Advise = string.Empty // Initialize Advise to avoid null values in the view
             });

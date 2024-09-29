@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace UFSBankingSystem.Models
+namespace UFSBankingSystemWebsite.Models
 {
     public class Consultant
     {
