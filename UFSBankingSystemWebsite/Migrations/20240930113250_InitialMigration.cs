@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UFSBankingSystemWebsite.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,6 +39,7 @@ namespace UFSBankingSystemWebsite.Migrations
                     IDnumber = table.Column<string>(type: "TEXT", maxLength: 13, nullable: true),
                     UserRole = table.Column<string>(type: "TEXT", nullable: true),
                     AccountNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsConsultant = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsCustomer = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -390,10 +391,10 @@ namespace UFSBankingSystemWebsite.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "69415391-7f02-4578-9a8a-e0075d9e3bb1", null, "Admin", "ADMIN" },
-                    { "bba34598-8d6b-438f-96bb-ce28e5897e67", null, "User", "USER" },
-                    { "d0bc69c8-4319-4338-88e7-a6ca20548724", null, "FinancialAdvisor", "FINANCIALADVISOR" },
-                    { "ea402513-d6f7-4fc9-b767-c43ce611a080", null, "Consultant", "CONSULTANT" }
+                    { "4f2fa04c-5476-43ce-a44f-3fb24a6fdd76", null, "Admin", "ADMIN" },
+                    { "55f21a0b-d29a-42fe-985c-fa2cb0524f95", null, "FinancialAdvisor", "FINANCIALADVISOR" },
+                    { "80fd2d92-6d03-414c-b4aa-300fde1cc90e", null, "User", "USER" },
+                    { "87498d51-36b9-4f29-ba3b-97ed66c1567f", null, "Consultant", "CONSULTANT" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -1,0 +1,12 @@
+﻿@model string // email or user ID
+
+<div class="container mt-4">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete the user with email: @Model?</p>
+
+    <form asp-action="AdminDeleteUser" method="post">
+        <input type="hidden" name="email" value="@Model" />
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a asp-action="UserManagement" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

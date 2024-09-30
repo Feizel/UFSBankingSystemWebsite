@@ -9,6 +9,8 @@ using System.Text;
 using Microsoft.IdentityModel.Abstractions;
 using UFSBankingSystemWebsite.Data.SeedData;
 using UFSBankingSystemWebsite.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using UFSBankingSystemWebsite.Data;
 
 namespace UFSBankingSystemWebsite.Controllers
 {
@@ -17,12 +19,14 @@ namespace UFSBankingSystemWebsite.Controllers
     {
         private readonly IRepositoryWrapper _wrapper;
         private readonly UserManager<User> _userManager;
+        private readonly AppDbContext _context;
         private readonly string role = "User";
 
-        public AdminDashboardController(IRepositoryWrapper wrapper, UserManager<User> userManager)
+        public AdminDashboardController(IRepositoryWrapper wrapper, UserManager<User> userManager, AppDbContext context)
         {
             _wrapper = wrapper;
             _userManager = userManager;
+            _context = context;
         }
 
         //public async Task<IActionResult> Index()
@@ -153,6 +157,99 @@ namespace UFSBankingSystemWebsite.Controllers
                 });
             }
             return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Assuming you have a method to get the bank account associated with the user
+            var bankAccount = await _context.BankAccounts.FirstOrDefaultAsync(b => b.Id == user.Id);
+
+            var model = new UserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                IDNumber = user.IDnumber,
+                AccountNumber = bankAccount?.AccountNumber, // Use null-conditional operator
+                Balance = bankAccount?.Balance ?? 0, // Default to 0 if no account found
+                IsActive = user.IsActive
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditUser(UserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.Id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                // Update user details
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.IDnumber = model.IDNumber;
+
+                // Update user's active status if needed
+                user.IsActive = model.IsActive;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["Message"] = "User updated successfully!";
+                    return RedirectToAction("ManageUsers");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ViewUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Assuming you have a method to get the bank account associated with the user
+            var bankAccount = await _context.BankAccounts.FirstOrDefaultAsync(b => b.Id == user.Id);
+
+            var model = new UserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                IDNumber = user.IDnumber,
+                AccountNumber = bankAccount?.AccountNumber, // Use null-conditional operator
+                Balance = bankAccount?.Balance ?? 0, // Default to 0 if no account found
+                IsActive = user.IsActive
+            };
+
+            return View(model);
         }
 
         // DELETE USER
@@ -593,7 +690,7 @@ namespace UFSBankingSystemWebsite.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                //user.IsActive = isActive;
+                user.IsActive = isActive;
                 var result = await _userManager.UpdateAsync(user);
                 return Json(new { success = result.Succeeded });
             }

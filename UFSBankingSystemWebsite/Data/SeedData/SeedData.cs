@@ -13,6 +13,7 @@ namespace UFSBankingSystemWebsite.Data.SeedData
     public static class SeedData
     {
         private static readonly string password = "@TestApp123";
+        private static readonly Random random = new Random();
 
         private static readonly User Admin = new User
         {
@@ -86,34 +87,75 @@ namespace UFSBankingSystemWebsite.Data.SeedData
                 }
 
                 // Seed users
-                await SeedUser(userManager, Admin);
-                await SeedUser(userManager, Customer);
-                await SeedUser(userManager, Consultant);
-                await SeedUser(userManager, FinancialAdvisor);
+                await SeedUser(userManager, context, Admin);
+                await SeedUser(userManager, context, Customer);
+                await SeedUser(userManager, context, Consultant);
+                await SeedUser(userManager, context, FinancialAdvisor);
 
                 // Seed sample data
-                await SeedSampleData(context);
+                await SeedSampleData(context, userManager);
 
                 await context.SaveChangesAsync();
             }
         }
 
-        private static async Task SeedUser(UserManager<User> userManager, User user)
+        private static async Task SeedUser(UserManager<User> userManager, AppDbContext context, User user)
         {
             if (await userManager.FindByEmailAsync(user.Email) == null)
             {
-                var result = await userManager.CreateAsync(user, password);
+                var result = await userManager.CreateAsync(user, SampleData.DefaultPassword);
                 if (result.Succeeded)
+                {
                     await userManager.AddToRoleAsync(user, user.UserRole);
+                    await CreateBankAccounts(context, user);
+                }
             }
+
+            //if (await userManager.FindByEmailAsync(user.Email) == null)
+            //{
+            //    var result = await userManager.CreateAsync(user, password);
+            //    if (result.Succeeded)
+            //        await userManager.AddToRoleAsync(user, user.UserRole);
+            //}
         }
 
-        private static async Task SeedSampleData(AppDbContext context)
+        private static async Task CreateBankAccounts(AppDbContext context, User user)
+        {
+            string[] accountTypes = { "Fixed", "Savings", "Cheque" };
+            int order = 1;
+
+            foreach (var accountType in accountTypes)
+            {
+                var bankAccount = new BankAccount
+                {
+                    Id = user.Id,
+                    AccountNumber = SampleData.GenerateAccountNumber(),
+                    Balance = SampleData.GetRandomBalance(),
+                    BankAccountType = accountType,
+                    AccountName = $"{user.FirstName}'s {accountType} Account",
+                    AccountOrder = order++,
+                    UserEmail = user.Email,
+                    User = user
+                };
+
+                context.BankAccounts.Add(bankAccount);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task SeedSampleData(AppDbContext context, UserManager<User> userManager)
         {
             if (!context.Users.Any(u => SampleData.SampleCustomers.Select(sc => sc.Email).Contains(u.Email)))
             {
-                await context.Users.AddRangeAsync(SampleData.SampleCustomers);
-                await context.Users.AddRangeAsync(SampleData.SampleStaff);
+                //await context.Users.AddRangeAsync(SampleData.SampleCustomers);
+                //await context.Users.AddRangeAsync(SampleData.SampleStaff);
+
+                foreach (var user in SampleData.SampleCustomers.Concat(SampleData.SampleStaff))
+                {
+                    await SeedUser(userManager, context, user);
+                }
+
                 await context.SaveChangesAsync(); // Save users first
             }
 
@@ -125,14 +167,29 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
             if (!context.Notifications.Any())
             {
-                var users = await context.Users.ToListAsync();
-                foreach (var notification in SampleData.SampleNotifications)
+                var users = await context.Users.ToListAsync(); // Fetch all users
+                if (users.Count > 0) // Ensure there are users available
                 {
-                    notification.Id = users[new Random().Next(users.Count)].Id;
+                    foreach (var notification in SampleData.SampleNotifications)
+                    {
+                        // Assign a random user ID from the list of users to each notification
+                        notification.Id = users[new Random().Next(users.Count)].Id;
+                    }
+                    await context.Notifications.AddRangeAsync(SampleData.SampleNotifications);
+                    await context.SaveChangesAsync(); // Save notifications
                 }
-                await context.Notifications.AddRangeAsync(SampleData.SampleNotifications);
-                await context.SaveChangesAsync(); // Save notifications
             }
+
+            //if (!context.Notifications.Any())
+            //{
+            //    var users = await context.Users.ToListAsync();
+            //    foreach (var notification in SampleData.SampleNotifications)
+            //    {
+            //        notification.Id = users[new Random().Next(users.Count)].Id;
+            //    }
+            //    await context.Notifications.AddRangeAsync(SampleData.SampleNotifications);
+            //    await context.SaveChangesAsync(); // Save notifications
+            //}
         }
     }
 }

@@ -45,25 +45,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "69415391-7f02-4578-9a8a-e0075d9e3bb1",
+                            Id = "4f2fa04c-5476-43ce-a44f-3fb24a6fdd76",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "bba34598-8d6b-438f-96bb-ce28e5897e67",
+                            Id = "80fd2d92-6d03-414c-b4aa-300fde1cc90e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "ea402513-d6f7-4fc9-b767-c43ce611a080",
+                            Id = "87498d51-36b9-4f29-ba3b-97ed66c1567f",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "d0bc69c8-4319-4338-88e7-a6ca20548724",
+                            Id = "55f21a0b-d29a-42fe-985c-fa2cb0524f95",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });
@@ -484,6 +484,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("IDnumber")
                         .HasMaxLength(13)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsConsultant")
                         .HasColumnType("INTEGER");

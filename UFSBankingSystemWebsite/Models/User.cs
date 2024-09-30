@@ -17,6 +17,7 @@ namespace UFSBankingSystemWebsite.Models
         public string IDnumber { get; set; }
         public string UserRole { get; set; }
         public string AccountNumber { get; set; }
+        public bool IsActive { get; set; }
 
         // Navigation properties
         public virtual ICollection<BankAccount> BankAccounts { get; set; }
