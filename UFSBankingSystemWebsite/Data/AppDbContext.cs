@@ -56,7 +56,7 @@ namespace UFSBankingSystemWebsite.Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Transactions)
                 .WithOne(t => t.User)
-                .HasForeignKey(t => t.UserId)
+                .HasForeignKey(t => t.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace UFSBankingSystemWebsite.Data.SeedData
 {
@@ -38,30 +39,30 @@ namespace UFSBankingSystemWebsite.Data.SeedData
 
         public static List<Transactions> SampleTransactions { get; } = new List<Transactions>
         {
-            new Transactions { Amount=100m, TransactionDate=DateTime.Now.AddDays(-1), Reference="Initial Deposit for Thabo"},
-            new Transactions { Amount=250m, TransactionDate=DateTime.Now.AddDays(-2), Reference="Initial Deposit for Sipho"},
-            new Transactions { Amount=300m, TransactionDate=DateTime.Now.AddDays(-3), Reference="Initial Deposit for Nomsa"},
-            new Transactions { Amount=150m, TransactionDate=DateTime.Now.AddDays(-4), Reference="Initial Deposit for Themba"},
-            new Transactions { Amount=75m, TransactionDate=DateTime.Now.AddDays(-5), Reference="Initial Deposit for Lerato"},
-            new Transactions { Amount=200m, TransactionDate=DateTime.Now.AddDays(-6), Reference="Initial Deposit for Thabiso"},
-            new Transactions { Amount=400m, TransactionDate=DateTime.Now.AddDays(-7), Reference="Initial Deposit for Mpho"},
-            new Transactions { Amount=120m, TransactionDate=DateTime.Now.AddDays(-8), Reference="Initial Deposit for Dineo"},
-            new Transactions { Amount=180m, TransactionDate=DateTime.Now.AddDays(-9), Reference="Initial Deposit for Tshepiso"},
-            new Transactions { Amount=220m, TransactionDate=DateTime.Now.AddDays(-10), Reference="Initial Deposit for Thato"}
+            new Transactions { Amount=100m, TransactionDate=DateTime.Now.AddDays(-1), Reference="Initial Deposit for Thabo", BankAccountID=1, BankAccountIdSender=1, BankAccountIdReceiver=1, TransactionType=TransactionType.Deposit, BalanceAfter=100m },
+            new Transactions { Amount=250m, TransactionDate=DateTime.Now.AddDays(-2), Reference="Initial Deposit for Sipho", BankAccountID=2, BankAccountIdSender=2, BankAccountIdReceiver=2, TransactionType=TransactionType.Deposit, BalanceAfter=250m },
+            new Transactions { Amount=300m, TransactionDate=DateTime.Now.AddDays(-3), Reference="Initial Deposit for Nomsa", BankAccountID=3, BankAccountIdSender=3, BankAccountIdReceiver=3, TransactionType=TransactionType.Deposit, BalanceAfter=300m },
+            new Transactions { Amount=150m, TransactionDate=DateTime.Now.AddDays(-4), Reference="Initial Deposit for Themba", BankAccountID=4, BankAccountIdSender=4, BankAccountIdReceiver=4, TransactionType=TransactionType.Deposit, BalanceAfter=150m },
+            new Transactions { Amount=75m, TransactionDate=DateTime.Now.AddDays(-5), Reference="Initial Deposit for Lerato", BankAccountID=5, BankAccountIdSender=5, BankAccountIdReceiver=5, TransactionType=TransactionType.Deposit, BalanceAfter=75m },
+            new Transactions { Amount=200m, TransactionDate=DateTime.Now.AddDays(-6), Reference="Initial Deposit for Thabiso", BankAccountID=6, BankAccountIdSender=6, BankAccountIdReceiver=6, TransactionType=TransactionType.Deposit, BalanceAfter=200m },
+            new Transactions { Amount=400m, TransactionDate=DateTime.Now.AddDays(-7), Reference="Initial Deposit for Mpho", BankAccountID=7, BankAccountIdSender=7, BankAccountIdReceiver=7, TransactionType=TransactionType.Deposit, BalanceAfter=400m },
+            new Transactions { Amount=120m, TransactionDate=DateTime.Now.AddDays(-8), Reference="Initial Deposit for Dineo", BankAccountID=8, BankAccountIdSender=8, BankAccountIdReceiver=8, TransactionType=TransactionType.Deposit, BalanceAfter=120m },
+            new Transactions { Amount=180m, TransactionDate=DateTime.Now.AddDays(-9), Reference="Initial Deposit for Tshepiso", BankAccountID=9, BankAccountIdSender=9, BankAccountIdReceiver=9, TransactionType=TransactionType.Deposit, BalanceAfter=180m },
+            new Transactions { Amount=220m, TransactionDate=DateTime.Now.AddDays(-10), Reference="Initial Deposit for Thato", BankAccountID=10, BankAccountIdSender=10, BankAccountIdReceiver=10, TransactionType=TransactionType.Deposit, BalanceAfter=220m }
         };
 
         public static List<Notification> SampleNotifications { get; } = new List<Notification>
         {
-                new Notification { Message="New user registered: Thabo Zungu.", NotificationDate=DateTime.Now.AddMinutes(-10), IsRead=false },
-                new Notification { Message="Transaction alert: R100 deposited to Thabo's account.", NotificationDate=DateTime.Now.AddMinutes(-5), IsRead=false },
-                new Notification { Message = "Sipho has requested a password change.", NotificationDate = DateTime.Now.AddHours(-3), IsRead = false },
-                new Notification { Message = "Nomsa has transferred funds between accounts.", NotificationDate = DateTime.Now.AddHours(-4), IsRead = false },
-                new Notification { Message = "Themba has updated their profile information.", NotificationDate = DateTime.Now.AddHours(-5), IsRead = false },
-                new Notification { Message = "Lerato has requested a balance inquiry.", NotificationDate = DateTime.Now.AddHours(-6), IsRead = false },
-                new Notification { Message = "Thabiso has reported a suspicious transaction.", NotificationDate = DateTime.Now.AddHours(-7), IsRead = false },
-                new Notification { Message = "Mpho has requested a statement of account.", NotificationDate = DateTime.Now.AddHours(-8), IsRead = false },
-                new Notification { Message = "Dineo has received a transaction alert.", NotificationDate = DateTime.Now.AddHours(-9), IsRead = false },
-                new Notification { Message = "Tshepiso has logged in successfully.", NotificationDate = DateTime.Now.AddHours(-10), IsRead = false }
+            new Notification { Id = "", UserEmail = "thabo@ufs.ac.za", Message = "Welcome to the banking system!", NotificationDate = DateTime.Now.AddMinutes(-10), IsRead = false },
+            new Notification { Id = "", UserEmail = "sipho@ufs.ac.za", Message = "Your account has been successfully created.", NotificationDate = DateTime.Now.AddMinutes(-20), IsRead = false },
+            new Notification { Id = "", UserEmail = "nomsa@ufs.ac.za", Message = "Your account balance is low.", NotificationDate = DateTime.Now.AddMinutes(-30), IsRead = false },
+            new Notification { Id = "", UserEmail = "themba@ufs.ac.za", Message = "New features have been added to your account.", NotificationDate = DateTime.Now.AddMinutes(-40), IsRead = false },
+            new Notification { Id = "", UserEmail = "lerato@ufs.ac.za", Message = "Your recent transaction was successful.", NotificationDate = DateTime.Now.AddMinutes(-50), IsRead = false },
+            new Notification { Id = "", UserEmail = "thabiso@ufs.ac.za", Message = "Your password has been changed successfully.", NotificationDate = DateTime.Now.AddMinutes(-60), IsRead = false },
+            new Notification { Id = "", UserEmail = "mpho@ufs.ac.za", Message = "You have a new message from support.", NotificationDate = DateTime.Now.AddMinutes(-70), IsRead = false },
+            new Notification { Id = "", UserEmail = "dineo@ufs.ac.za", Message = "Your profile has been updated.", NotificationDate = DateTime.Now.AddMinutes(-80), IsRead = false },
+            new Notification { Id = "", UserEmail = "tshepiso@ufs.ac.za", Message = "Your account settings have been changed.", NotificationDate = DateTime.Now.AddMinutes(-90), IsRead = false },
+            new Notification { Id = "", UserEmail = "thato@ufs.ac.za", Message = "Thank you for using our banking services!", NotificationDate = DateTime.Now.AddMinutes(-100), IsRead = false }
         };
 
         //public static List<FeedBack> SampleFeedbacks { get; } = new List<FeedBack>
@@ -99,7 +100,7 @@ namespace UFSBankingSystemWebsite.Data.SeedData
             return new string(Enumerable.Repeat("0123456789", 10).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public static async Task SeedDataAsync(UserManager<User> userManager)
+        public static async Task SeedDataAsync(UserManager<User> userManager, AppDbContext context)
         {
             foreach (var user in SampleCustomers)
             {
@@ -110,6 +111,54 @@ namespace UFSBankingSystemWebsite.Data.SeedData
                     {
                         Console.WriteLine($"Error creating user {user.UserName}: {error.Description}");
                     }
+                }
+            }
+
+            // Seed Notifications
+            await SeedNotificationsAsync(context);
+
+            // Seed Transactions
+            await SeedTransactionsAsync(context);
+        }
+
+        private static async Task SeedNotificationsAsync(AppDbContext context)
+        {
+            if (!context.Notifications.Any())
+            {
+                var users = await context.Users.ToListAsync();
+                if (users.Count > 0)
+                {
+                    foreach (var notification in SampleNotifications)
+                    {
+                        notification.Id = users[new Random().Next(users.Count)].Id; // Assign a random user ID
+                    }
+                    await context.Notifications.AddRangeAsync(SampleNotifications);
+                    await context.SaveChangesAsync(); // Save notifications
+                }
+            }
+        }
+
+        private static async Task SeedTransactionsAsync(AppDbContext context)
+        {
+            if (!context.Transactions.Any())
+            {
+                var users = await context.Users.ToListAsync();
+                if (users.Count > 0)
+                {
+                    var transactionsToSeed = new List<Transactions>();
+                    foreach (var transaction in SampleTransactions)
+                    {
+                        var randomUserId = users[new Random().Next(users.Count)].Id; // Assign a random user ID
+                        transactionsToSeed.Add(new Transactions
+                        {
+                            Id = randomUserId,
+                            Amount = transaction.Amount,
+                            TransactionDate = transaction.TransactionDate,
+                            Reference = transaction.Reference
+                        });
+                    }
+                    await context.Transactions.AddRangeAsync(transactionsToSeed);
+                    await context.SaveChangesAsync(); // Save transactions
                 }
             }
         }

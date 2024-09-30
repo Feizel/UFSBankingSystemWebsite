@@ -12,7 +12,7 @@
         </div>
     }
 
-    <h2 class="mb-4">Customer Dashboard</h2>
+    <h2 class="mb-4">Customer Dashboard Panel</h2>
 
     <div class="text-center mb-4">
         <h4>Welcome back, @ViewBag.FirstName!</h4>
@@ -43,7 +43,7 @@
                             <a asp-controller="CustomerDashboard" asp-action="Withdraw" asp-route-id="@account.BankAccountID" class="btn btn-warning">
                                 <i class="fas fa-money-bill-wave"></i> Withdraw
                             </a>
-                            <a asp-controller="CustomerDashboard" asp-action="Transfer" asp-route-id="@account.BankAccountID" class="btn btn-success">
+                            <a asp-controller="CustomerDashboard" asp-action="TransferMoneyView" asp-route-id="@account.BankAccountID" class="btn btn-success">
                                 <i class="fas fa-exchange-alt"></i> Transfer
                             </a>
                         </td>
@@ -57,13 +57,13 @@
             <a asp-action="Withdraw" asp-controller="CustomerDashboard" class="btn btn-danger">
                 <i class="fas fa-money-bill-wave"></i> Withdraw Funds
             </a>
-            <a asp-action="Transfer" asp-controller="CustomerDashboard" class="btn btn-primary">
+            <a asp-action="TransferMoneyView" asp-controller="CustomerDashboard" class="btn btn-primary">
                 <i class="fas fa-exchange-alt"></i> Transfer Funds
             </a>
-            <a asp-action="EditProfile" asp-controller="CustomerDashboard" class="btn btn-warning">
+            <a asp-action="EditProfile" asp-controller="Profile" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Profile
             </a>
-            <a asp-action="ChangePassword" asp-controller="CustomerDashboard" class="btn btn-secondary">
+            <a asp-action="ChangePassword" asp-controller="Profile" class="btn btn-secondary">
                 <i class="fas fa-lock"></i> Change Password
             </a>
         </div>

@@ -307,6 +307,7 @@ namespace UFSBankingSystemWebsite.Migrations
                 {
                     TransactionID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(type: "TEXT", nullable: true),
                     BankAccountID = table.Column<int>(type: "INTEGER", nullable: false),
                     BankAccountIdSender = table.Column<int>(type: "INTEGER", nullable: false),
                     BankAccountIdReceiver = table.Column<int>(type: "INTEGER", nullable: false),
@@ -317,8 +318,7 @@ namespace UFSBankingSystemWebsite.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     BalanceAfter = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: true),
-                    UserEmail = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true)
+                    UserEmail = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -330,8 +330,8 @@ namespace UFSBankingSystemWebsite.Migrations
                         principalColumn: "BankAccountID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Transactions_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Transactions_Users_Id",
+                        column: x => x.Id,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -391,10 +391,10 @@ namespace UFSBankingSystemWebsite.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4f2fa04c-5476-43ce-a44f-3fb24a6fdd76", null, "Admin", "ADMIN" },
-                    { "55f21a0b-d29a-42fe-985c-fa2cb0524f95", null, "FinancialAdvisor", "FINANCIALADVISOR" },
-                    { "80fd2d92-6d03-414c-b4aa-300fde1cc90e", null, "User", "USER" },
-                    { "87498d51-36b9-4f29-ba3b-97ed66c1567f", null, "Consultant", "CONSULTANT" }
+                    { "3429eb95-eb55-4833-9b23-f8d3fe003a52", null, "Consultant", "CONSULTANT" },
+                    { "6a64d068-714e-4755-b539-0b2eeb8c869c", null, "FinancialAdvisor", "FINANCIALADVISOR" },
+                    { "9c6f4358-c461-4b7b-8f96-8dc055eba2d9", null, "User", "USER" },
+                    { "e216fc3c-f09c-4517-993a-c9d70ff2a4d2", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -476,9 +476,9 @@ namespace UFSBankingSystemWebsite.Migrations
                 column: "BankAccountID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_UserId",
+                name: "IX_Transactions_Id",
                 table: "Transactions",
-                column: "UserId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",

@@ -7,6 +7,7 @@ namespace UFSBankingSystemWebsite.Models.ViewModels.Admin
         public string Id { get; set; }
         public User AppUser { get; set; }
         public BankAccount BankAccount { get; set; }
+        public List<Transactions> Transactions { get; set; }
         public string AccountNumber { get; set; }
         public string IDNumber { get; set; }
         public string FirstName { get; set; }

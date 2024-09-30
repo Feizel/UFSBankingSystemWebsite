@@ -11,7 +11,7 @@ using UFSBankingSystemWebsite.Data;
 namespace UFSBankingSystemWebsite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240930113250_InitialMigration")]
+    [Migration("20240930163522_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -48,25 +48,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4f2fa04c-5476-43ce-a44f-3fb24a6fdd76",
+                            Id = "e216fc3c-f09c-4517-993a-c9d70ff2a4d2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "80fd2d92-6d03-414c-b4aa-300fde1cc90e",
+                            Id = "9c6f4358-c461-4b7b-8f96-8dc055eba2d9",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "87498d51-36b9-4f29-ba3b-97ed66c1567f",
+                            Id = "3429eb95-eb55-4833-9b23-f8d3fe003a52",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "55f21a0b-d29a-42fe-985c-fa2cb0524f95",
+                            Id = "6a64d068-714e-4755-b539-0b2eeb8c869c",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });
@@ -428,6 +428,9 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Reference")
                         .HasColumnType("TEXT");
 
@@ -443,14 +446,11 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<string>("UserEmail")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("TransactionID");
 
                     b.HasIndex("BankAccountID");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Transactions", (string)null);
                 });
@@ -703,7 +703,7 @@ namespace UFSBankingSystemWebsite.Migrations
 
                     b.HasOne("UFSBankingSystemWebsite.Models.User", "User")
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("BankAccount");

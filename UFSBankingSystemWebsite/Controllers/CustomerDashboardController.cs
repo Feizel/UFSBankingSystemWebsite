@@ -11,7 +11,7 @@ using UFSBankingSystemWebsite.Data.Interfaces;
 
 namespace UFSBankingSystemWebsite.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User, Admin")]
     public class CustomerDashboardController : Controller
     {
         private readonly IRepositoryWrapper _repo;
@@ -53,22 +53,35 @@ namespace UFSBankingSystemWebsite.Controllers
             // Return the view with the viewModel
             return View(viewModel);
         }
-    
+
+        [HttpGet]
+        public IActionResult ViewAccount()
+        {
+            return View();
+        }
+
         // View Account
+        [HttpPost]
         public async Task<IActionResult> ViewAccount(string id)
         {
-            var account = await _context.BankAccounts.FindAsync(id);
-            if (account == null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            var transactions = await _context.Transactions.Where(t => t.BankAccountID == int.Parse(id)).ToListAsync();
+            // Fetch transactions associated with the user
+            var transactions = await _context.Transactions
+                .Where(t => t.Id == user.Id) // Assuming you have a Id in Transactions
+                .ToListAsync();
 
-            var model = new BankAccountViewModel
+            var model = new UserViewModel
             {
-                BankAccount = account,
-                Transactions = transactions
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Transactions = transactions // Ensure this property exists in UserViewModel
             };
 
             return View(model);

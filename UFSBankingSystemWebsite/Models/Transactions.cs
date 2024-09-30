@@ -7,6 +7,7 @@ namespace UFSBankingSystemWebsite.Models
     {
         [Key]
         public int TransactionID { get; set; }
+        public string Id { get; set; }  // Foreign key of the Id of the User
         [Required]
         public int BankAccountID { get; set; }
         public int BankAccountIdSender { get; set; }
@@ -24,8 +25,6 @@ namespace UFSBankingSystemWebsite.Models
         public decimal BalanceAfter { get; set; }
         public string Status { get; set; }
         public string UserEmail { get; set; }
-
-        public string UserId { get; set; }  // This is correct, as it references the Id of the User
 
         // Navigation properties
         public virtual BankAccount BankAccount { get; set; }
