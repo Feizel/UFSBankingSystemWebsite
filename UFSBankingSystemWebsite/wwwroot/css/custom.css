@@ -151,6 +151,10 @@ body
     background-color: rgba(220, 220, 220, 0.9); /* Darker background */
 }
 
+/* Specific styles for users table*/
+#userTableBody {
+    color: white; /* White text color */
+}
 /* Table Headings */
 .table th {
     background-color: var(--primary-color); /* Use primary color for headings */

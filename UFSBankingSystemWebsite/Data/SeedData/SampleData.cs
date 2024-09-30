@@ -51,7 +51,7 @@ namespace UFSBankingSystemWebsite.Data.SeedData
         public static List<Notification> SampleNotifications { get; } = new List<Notification>
         {
                 new Notification { Message="New user registered: Thabo Zungu.", NotificationDate=DateTime.Now.AddMinutes(-10), IsRead=false },
-                new Notification { Message="Transaction alert: $100 deposited to Thabo's account.", NotificationDate=DateTime.Now.AddMinutes(-5), IsRead=false },
+                new Notification { Message="Transaction alert: R100 deposited to Thabo's account.", NotificationDate=DateTime.Now.AddMinutes(-5), IsRead=false },
                 new Notification { Message = "Sipho has requested a password change.", NotificationDate = DateTime.Now.AddHours(-3), IsRead = false },
                 new Notification { Message = "Nomsa has transferred funds between accounts.", NotificationDate = DateTime.Now.AddHours(-4), IsRead = false },
                 new Notification { Message = "Themba has updated their profile information.", NotificationDate = DateTime.Now.AddHours(-5), IsRead = false },

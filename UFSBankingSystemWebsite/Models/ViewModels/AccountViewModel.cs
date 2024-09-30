@@ -90,7 +90,7 @@ namespace UFSBankingSystemWebsite.Models.ViewModels
     public class ChangePasswordViewModel
     {
         [Required]
-        public string UserId { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

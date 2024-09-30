@@ -30,12 +30,33 @@
         @foreach (var user in Model.AppUsers)
         {
             <tr data-id="@user.Id">
-                <td>@user.BankAccount.AccountNumber</td>
+                <td>
+                    @if (user.BankAccount != null)
+                    {
+                        @user.BankAccount.AccountNumber
+                    }
+                    else
+                    {
+                        <span class="text-muted text-white">No Account Found</span>
+                    }
+                </td>
                 <td>@user.fullName</td>
                 <td>@user.Email</td>
-                <td>@user.BankAccount.Balance.ToString("C")</td> <!-- Format as currency -->
                 <td>
-                    <span class="badge @(user.IsActive ? "badge-success" : "badge-secondary")">@(user.IsActive ? "Active" : "Inactive")</span>
+                    @if (user.BankAccount != null)
+                    {
+                        @user.BankAccount.Balance.ToString("C")
+                        // Format as currency
+                    }
+                    else
+                    {
+                        <span class="text-muted text-white">N/A</span>
+                    }
+                </td>
+                <td>
+                    <span class="badge @(user.IsActive ? "badge-success" : "badge-secondary")">
+                        @(user.IsActive ? "Active" : "Inactive")
+                    </span>
                 </td>
                 <td>
                     <button class="btn btn-warning btn-sm edit-btn" data-id="@user.Id">Edit</button>
@@ -62,7 +83,55 @@
     </ul>
 </nav> *@
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function () {
+        // Edit button click
+        $('.edit-btn').click(function () {
+            var userId = $(this).data('id');
+            window.location.href = '/AdminDashboard/EditConsultant?id=' + userId; // Redirect to edit page
+        });
+
+        // Delete button click
+        $('.delete-btn').click(function () {
+            var userId = $(this).data('id');
+            if (confirm("Are you sure you want to delete this user?")) {
+                $.post('/AdminDashboard/AdminDeleteUser', { email: userId }, function (result) {
+                    // Handle success or failure
+                    if (result.success) {
+                        location.reload(); // Reload the page to see changes
+                    } else {
+                        alert("Error deleting user.");
+                    }
+                });
+            }
+        });
+
+        // View button click
+        $('.view-btn').click(function () {
+            var userId = $(this).data('id');
+            window.location.href = '/AdminDashboard/ViewCustomer?id=' + userId; // Redirect to view page
+        });
+
+        // Toggle status button click
+        $('.toggle-status-btn').click(function () {
+            var userId = $(this).data('id');
+            var currentStatus = $(this).data('status');
+            var newStatus = !currentStatus; // Toggle status
+
+            $.post('/AdminDashboard/ToggleUserStatus', { id: userId, isActive: newStatus }, function (result) {
+                // Handle success or failure
+                if (result.success) {
+                    location.reload(); // Reload the page to see changes
+                } else {
+                    alert("Error toggling status.");
+                }
+            });
+        });
+    });
+</script>
+
+@* <script>
     // User Filtering Function
     function filterUsers() {
         const input = document.getElementById("searchInput").value.toLowerCase();
@@ -116,13 +185,13 @@
     // Edit User Functionality (AJAX)
     $(document).on('click', '.edit-btn', function () {
         const userId = $(this).data('id');
-        window.location.href = `/Admin/EditUser/${userId}`;
+        window.location.href = `/Admin/EditConsultant/${userId}`;
     });
 
     // View User Functionality (AJAX)
     $(document).on('click', '.view-btn', function () {
         const userId = $(this).data('id');
-        window.location.href = `/Admin/ViewUser/${userId}`;
+        window.location.href = `/Admin/ViewCustomer/${userId}`;
     });
 
     // Delete User Functionality (AJAX)
@@ -130,7 +199,7 @@
         const userId = $(this).data('id');
         if (confirm('Are you sure you want to delete this user?')) {
             $.ajax({
-                url: `/Admin/DeleteUser/${userId}`,
+                url: `/Admin/AdminDeleteUser/${userId}`,
                 method: 'DELETE',
                 success: function (response) {
                     alert('User deleted successfully.');
@@ -142,4 +211,4 @@
             });
         }
     });
-</script>
+</script> *@

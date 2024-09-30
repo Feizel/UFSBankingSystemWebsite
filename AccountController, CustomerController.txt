@@ -1,0 +1,824 @@
+using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
+using System.Data;
+using UFSBankingSystemWebsite.Data.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+namespace UFSBankingSystemWebsite.Controllers
+{
+    [Authorize]
+    public class AccountController : Controller
+    {
+
+        private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> signInManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IRepositoryWrapper _repoWrapper;
+        private readonly string _customerRole = "User";
+        private readonly string _consultantRole = "Consultant";
+        private readonly string _financialAdvisorRole = "FinancialAdvisor";
+        private readonly string _adminRole = "Admin";
+
+        public AccountController(UserManager<User> _userManager, SignInManager<User> _signInManager,
+            RoleManager<IdentityRole> _roleManager, IRepositoryWrapper _wrapper)
+        {
+            userManager = _userManager;
+            signInManager = _signInManager;
+            roleManager = _roleManager;
+            _repoWrapper = _wrapper;
+        }
+        [AllowAnonymous]
+        public IActionResult Login(string returnUrl)
+        {
+            return View(new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Find the user by email
+                User user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // Attempt to sign in the user
+                    var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                    if (result.Succeeded)
+                    {
+                        // Set ViewBag.FirstName for use in the layout
+                        ViewBag.FirstName = user.FirstName;
+                        //ViewBag.LastName = user.LastName;
+
+                        // Log the login session
+                        var newLogin = new LoginSession
+                        {
+                            TimeStamp = DateTime.Now,
+                            UserEmail = user.Email,
+                        };
+                        await _repoWrapper.Logins.AddAsync(newLogin);
+                        _repoWrapper.SaveChanges(); // Ensure changes are saved
+
+                        // Redirect based on user role
+                        if (await userManager.IsInRoleAsync(user, _adminRole))
+                            return RedirectToAction("Index", "AdminDashboard");
+                        else if (await userManager.IsInRoleAsync(user, _consultantRole))
+                            return RedirectToAction("Index", "ConsultantDashboard");
+                        else if (await userManager.IsInRoleAsync(user, _financialAdvisorRole))
+                            return RedirectToAction("Index", "FinancialAdvisorDashboard");
+                        else if (await userManager.IsInRoleAsync(user, _customerRole))
+                            return RedirectToAction("Index", "CustomerDashboard");
+
+                        // Default redirect
+                        return Redirect(model?.ReturnUrl ?? "/Home/Index");
+                    }
+                }
+            }
+
+            // Add an error message if login fails
+            ModelState.AddModelError("", "Invalid email or password");
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Register(string registerAs)
+        {
+            return View(new RegisterViewModel() 
+            { 
+                RegisterAs = registerAs
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (await roleManager.FindByNameAsync(_customerRole) == null)
+                    await roleManager.CreateAsync(new(_customerRole));
+
+                User user = new()
+                {
+                    UserName = (registerModel.LastName + registerModel.FirstName).Substring(0, 10),
+                    IDnumber = registerModel.IdPassportNumber.ToString(),
+                    Email = registerModel.EmailAddress,
+                    FirstName = registerModel.FirstName,
+                    LastName = registerModel.LastName,
+                    StudentStaffNumber = registerModel.StudentStaffNumber.ToString(),
+                    UserRole = registerModel.RegisterAs
+                };
+
+                Random rndAccount = new Random();
+                string _randomAccount = string.Empty;
+                do
+                {
+                    _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
+                }
+                while (userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
+                user.AccountNumber = _randomAccount;
+
+
+
+                IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, _customerRole);
+                    BankAccount bankAccountMain = new()
+                    {
+                        AccountNumber = _randomAccount,
+                        Balance = 100m,
+                        BankAccountType = "Savings",
+                        AccountOrder = 1,
+                        UserEmail = user.Email,
+                    };
+                    await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
+                    Transactions transaction = new()
+                    {
+                        BankAccountIdReceiver = int.Parse(_randomAccount),
+                        Amount = 100m,
+                        Reference = "fee Open new account ",
+                        UserEmail = user.Email,
+                        TransactionDate = DateTime.Now,
+
+                    };
+                    await _repoWrapper.Transactions.AddAsync(transaction);
+                    var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password,
+                        isPersistent: false, lockoutOnFailure: false);
+                    if (signin_result.Succeeded)
+                    {
+                        var newLogin = new LoginSession
+                        {
+                            TimeStamp = DateTime.Now,
+                            UserEmail = user.Email,
+                        };
+                        await _repoWrapper.Logins.AddAsync(newLogin);
+                        _repoWrapper.SaveChanges();
+
+                        if (await userManager.IsInRoleAsync(user, "Customer"))
+                            return RedirectToAction("Index", "CustomerDashboard");
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                    foreach (var error in result.Errors.Select(e => e.Description))
+                        ModelState.AddModelError("", error);
+            }
+            return View(registerModel);
+        }
+
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public async Task<IActionResult> Register(RegisterViewModel registerModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Ensure roles exist
+        //        await EnsureRolesExist();
+
+        //        // Create a new user
+        //        User user = new()
+        //        {
+        //            UserName = registerModel.EmailAddress, // Use email as username for clarity
+        //            IDnumber = registerModel.IdPassportNumber.ToString(),
+        //            Email = registerModel.EmailAddress,
+        //            FirstName = registerModel.FirstName,
+        //            LastName = registerModel.LastName,
+        //            StudentStaffNumber = registerModel.StudentStaffNumber.ToString()
+        //        };
+
+        //        // Create the user
+        //        IdentityResult result = await userManager.CreateAsync(user, registerModel.Password);
+
+        //        if (result.Succeeded)
+        //        {
+        //            // Assign role to user as Customer
+        //            await userManager.AddToRoleAsync(user, _customerRole);
+
+        //            // Create a bank account for the user
+        //            BankAccount bankAccountMain = new()
+        //            {
+        //                AccountNumber = GenerateAccountNumber(), // Implement this method for unique account numbers
+        //                Balance = 100m, // Initial balance
+        //                BankAccountType = "Savings",
+        //                AccountOrder = 1,
+        //                UserEmail = user.Email, // Associate with the registered user's email
+        //                UserId = user.Id // Use Id from IdentityUser as foreign key
+        //            };
+
+        //            // Save the bank account to the database
+        //            await _repoWrapper.BankAccount.AddAsync(bankAccountMain);
+
+        //            // Create a transaction for initial deposit
+        //            Models.Transaction transaction = new()
+        //            {
+        //                BankAccountIdReceiver = bankAccountMain.BankAccountID, // Assuming this is how you reference accounts
+        //                Amount = 100m,
+        //                Reference = "Initial deposit",
+        //                UserEmail = user.Email,
+        //                TransactionDate = DateTime.Now,
+        //            };
+
+        //            await _repoWrapper.Transactions.AddAsync(transaction);
+
+        //            // Sign in the user after successful registration
+        //            var signin_result = await signInManager.PasswordSignInAsync(user, registerModel.Password, isPersistent: false, lockoutOnFailure: false);
+
+        //            if (signin_result.Succeeded)
+        //            {
+        //                var newLogin = new LoginSession
+        //                {
+        //                    TimeStamp = DateTime.Now,
+        //                    UserEmail = user.Email,
+        //                };
+
+        //                await _repoWrapper.Logins.AddAsync(newLogin);
+        //                _repoWrapper.SaveChanges(); // Ensure changes are saved
+
+        //                return RedirectToAction("Index", "CustomerDashboard");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            foreach (var error in result.Errors.Select(e => e.Description))
+        //                ModelState.AddModelError("", error);
+        //        }
+        //    }
+        //    ModelState.AddModelError("", "Registration failed");
+        //    return View(registerModel);
+        //}
+
+        // Helper method to ensure roles exist
+        private async Task EnsureRolesExist()
+        {
+            if (await roleManager.FindByNameAsync(_customerRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_customerRole));
+            if (await roleManager.FindByNameAsync(_adminRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_adminRole));
+            if (await roleManager.FindByNameAsync(_consultantRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_consultantRole));
+            if (await roleManager.FindByNameAsync(_financialAdvisorRole) == null)
+                await roleManager.CreateAsync(new IdentityRole(_financialAdvisorRole));
+        }
+        private string GenerateAccountNumber()
+        {
+            // Logic to generate a unique account number
+            return "ACCT" + new Random().Next(100000, 999999).ToString();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateProfile()
+        {
+            var username = User.Identity.Name;
+            var user = await userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var model = new UpdateProfileViewModel
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                IDNumber = user.IDnumber,
+                LastName = user.LastName + " " + user.FirstName,
+                Userrole = user.UserRole,
+                AccountNumber = user.AccountNumber // Add the AccountNumber to the model
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
+                if (user != null)
+                {
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
+                    var result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Could not find user, please contact system admin");
+                    return View(model);
+                }
+            }
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+    }
+}
+
+
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace UFSBankingSystemWebsite.Models.ViewModels
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "Email Address Does Not Exist")]
+        [UIHint("email")]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+        [Required(ErrorMessage = "Incorrect Password")]
+        [DataType(DataType.Password)]
+        [UIHint("password")]
+        public string Password { get; set; }
+        public bool RememberMe { get; set; }
+        public string ReturnUrl { get; set; } = "/";
+    }
+
+    public class RegisterViewModel
+    {
+        public string RegisterAs { get; set; } = "User";
+
+        //[Required(ErrorMessage = "Role is required.")]
+        //public required string UserRole { get; set; }
+
+        [Required(ErrorMessage = "Please enter first name")]
+        [DisplayName("First name")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Please enter last name")]
+        [DisplayName("Last name")]
+        [DataType(DataType.Text)]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Please enter a unique email address")]
+        [DisplayName("Email address")]
+        [DataType(DataType.EmailAddress)]
+        public string EmailAddress { get; set; }
+
+        [Required(ErrorMessage = "Please enter ID or passport number.")]
+        [DisplayName("ID or Passport number")]
+        public long IdPassportNumber { get; set; }
+
+        [DisplayName("Student or Staff number")]
+        public int StudentStaffNumber { get; set; }
+
+        [Required(ErrorMessage = "Please enter password")]
+        [DisplayName("Password")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Please confirm password")]
+        [DisplayName("Confirm password")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords must match")]
+        public string ConfirmPassword { get; set; }
+    }
+
+    public class UpdateProfileViewModel
+    {
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string AccountNumber { get; set; }
+        public string IDNumber { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string Userrole { get; set; }
+    }
+
+    public class ConsultantUpdateUserModel : UpdateProfileViewModel
+    {
+        [Required(ErrorMessage = "Please enter password")]
+        [DisplayName("Password")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Please confirm password")]
+        [DisplayName("Confirm password")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords must match")]
+        public string ConfirmPassword { get; set; }
+    }
+    public class TransferSuccessViewModel
+    {
+        public decimal Amount { get; set; }
+        public string ReceiverAccount { get; set; }
+    }
+    public class ChangePasswordViewModel
+    {
+        [Required]
+        public string UserId { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current Password")]
+        public string CurrentPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm New Password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CUSTOMER CONTROLLER:
+using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using UFSBankingSystemWebsite.Models.ViewModels.Admin;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using UFSBankingSystemWebsite.Data;
+using Microsoft.AspNetCore.Authorization;
+using UFSBankingSystemWebsite.Data.Interfaces;
+
+namespace UFSBankingSystemWebsite.Controllers
+{
+    [Authorize(Roles = "User")]
+    public class CustomerDashboardController : Controller
+    {
+        private readonly IRepositoryWrapper _repo;
+        private readonly UserManager<User> _userManager;
+        private readonly AppDbContext _context;
+
+        public CustomerDashboardController(IRepositoryWrapper repo, UserManager<User> userManager, AppDbContext context)
+        {
+            _repo = repo;
+            _userManager = userManager;
+            _context = context;
+        }
+        [TempData]
+        public string Message { get; set; }
+        public async Task<IActionResult> Index()
+        {
+            // Get the logged-in user's username
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+
+            // Set ViewBag.FirstName for use in the layout
+            ViewBag.FirstName = user.FirstName;
+
+            // Get all bank accounts for the user
+            var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+            var userBankAccounts = allBankAccounts.Where(b => b.UserEmail == user.Email).ToList();
+
+
+            var transactions = await _repo.Transactions.GetAllAsync();
+              
+
+            // View model to pass to the view
+            var viewModel = new CustomerViewModel
+            {
+                BankAccounts = userBankAccounts,
+                Transactions = userTransactions
+            };
+
+            // Return the view with the viewModel
+            return View(viewModel);
+        }
+    
+        // View Account
+        public async Task<IActionResult> ViewAccount(string id)
+        {
+            var account = await _context.BankAccounts.FindAsync(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            var transactions = await _context.Transactions.Where(t => t.BankAccountID == int.Parse(id)).ToListAsync();
+
+            var model = new BankAccountViewModel
+            {
+                BankAccount = account,
+                Transactions = transactions
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CreateAccount()
+        {
+            return View();
+        }
+
+        //Create Account
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Create a new bank account
+                var newAccount = new BankAccount
+                {
+                    AccountNumber = GenerateAccountNumber(), // Method to generate a unique account number
+                    Balance = model.InitialDeposit,
+                    BankAccountType = model.AccountType,
+                    AccountName = model.AccountName, // Set the account name from the view model
+                    UserEmail = User.Identity.Name // Assuming the user is logged in and their email is their username
+                };
+
+                // Save the new account to the database
+                await _repo.BankAccount.CreateAsync(newAccount);
+                _repo.SaveChanges(); // Ensure changes are saved
+
+                TempData["Message"] = "Your account has been created successfully!";
+                return RedirectToAction("Index", "CustomerDashboard");
+            }
+
+            return View(model);
+        }
+
+        private string GenerateAccountNumber()
+        {
+            // Logic to generate a unique account number
+            return "ACCT" + new Random().Next(100000, 999999).ToString();
+        }
+
+        public async Task<IActionResult> NotificationMessage()
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var allNotifications = await _repo.Notification.GetAllAsync();
+            var userNotifications = allNotifications.Where(n => n.UserEmail == user.Email).ToList();
+
+            foreach (var notification in userNotifications)
+            {
+                if (!notification.IsRead)
+                {
+                    notification.IsRead = true;
+                    await _repo.Notification.UpdateAsync(notification);
+                }
+            }
+
+            return View(userNotifications);
+        }
+
+
+        public async Task<IActionResult> ViewAdvice()
+        {
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentUser == null)
+            {
+                Message = "User not found.";
+                return RedirectToAction("Index", "CustomerDashboard");
+            }
+
+            // Retrieve advice notifications for the current user
+            var adviceList = await _repo.Notification.GetAllAsync();
+            var userAdvice = adviceList.Where(n => n.UserEmail == currentUser.Email && n.Message.StartsWith(" ")).ToList();
+
+            return View(userAdvice);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> AddRating()
+        {
+            var currentLoginUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentLoginUser != null)
+            {
+                var feedback = new FeedBack
+                {
+                    UserEmail = currentLoginUser.Email // Pre-populate email field
+                };
+                return View(feedback);
+            }
+
+            // Handle case where the user is not logged in or not found
+            Message = "User not found or not logged in";
+            return RedirectToAction("Index", "CustomerDashboard");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddRating(FeedBack feedback)
+        {
+            var currentLoginUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (currentLoginUser != null)
+            {
+                feedback.UserEmail = currentLoginUser.Email; // Ensure email is set here
+                feedback.FeedbackDate = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    await _repo.Review.AddAsync(feedback);
+                    Message = "Review sent successfully";
+                    return RedirectToAction("Index", "CustomerDashboard");
+                }
+            }
+
+            Message = "There was an error sending the review";
+            return View(feedback);
+        }
+        public async Task<bool> Transfer(string senderAccountNumber, string receiverAccountNumber, decimal amount)
+        {
+
+            var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+
+            var senderBankAccount = allBankAccounts.FirstOrDefault(b => b.AccountNumber == senderAccountNumber);
+            var receiverBankAccount = allBankAccounts.FirstOrDefault(b => b.AccountNumber == receiverAccountNumber);
+
+            if (senderBankAccount == null || receiverBankAccount == null)
+            {
+                return false;
+            }
+
+
+            if (senderBankAccount.Balance < amount)
+            {
+                return false;
+            }
+
+
+            senderBankAccount.Balance -= amount;
+            receiverBankAccount.Balance += amount;
+
+
+            await _repo.BankAccount.UpdateAsync(senderBankAccount);
+            await _repo.BankAccount.UpdateAsync(receiverBankAccount);
+
+
+            var transaction = new Transactions
+            {
+                BankAccountIdSender = int.Parse(senderBankAccount.AccountNumber), // Assuming this property exists
+                BankAccountIdReceiver = int.Parse(receiverBankAccount.AccountNumber), // Assuming this property exists
+                Amount = amount,
+                TransactionDate = DateTime.UtcNow,
+                Reference = $"Transfer from {senderBankAccount.AccountNumber} to {receiverBankAccount.AccountNumber}",
+                UserEmail = senderBankAccount.UserEmail
+            };
+            await _repo.Transactions.AddAsync(transaction);
+
+            var senderNotification = new Notification
+            {
+                Message = $"You have sent {amount:C} to account {receiverBankAccount.AccountNumber}.",
+                NotificationDate = DateTime.UtcNow,
+                IsRead = false,
+                UserEmail = senderBankAccount.UserEmail
+            };
+            var receiverNotification = new Notification
+            {
+                Message = $"You have received {amount:C} from account {senderBankAccount.AccountNumber}.",
+                NotificationDate = DateTime.UtcNow,
+                IsRead = false,
+                UserEmail = receiverBankAccount.UserEmail
+            };
+
+            await _repo.Notification.AddAsync(senderNotification);
+            await _repo.Notification.AddAsync(receiverNotification);
+            return true;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Transfer()
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+
+            var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+            var mainBankAccount = allBankAccounts.FirstOrDefault(b => b.UserEmail == user.Email && b.AccountOrder == 1);
+
+            var viewModel = new MoneyTransferViewModel
+            {
+                SenderBankAccountNumber = mainBankAccount.AccountNumber,
+                AvailableBalance = mainBankAccount.Balance,
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TransferMoneyView(MoneyTransferViewModel model)
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+            var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+            var mainBankAccount = allBankAccounts.FirstOrDefault(b => b.UserEmail == user.Email && b.AccountOrder == 1);
+
+            string senderAccountNumber = mainBankAccount.AccountNumber;
+            string receiverAccountNumber = model.ReceiverBankAccountNumber;
+            decimal amount = model.Amount;
+
+
+            bool transferSuccess = await Transfer(senderAccountNumber, receiverAccountNumber, amount);
+
+            if (transferSuccess)
+            {
+                return RedirectToAction("TransferSuccess", new { amount = amount, receiverAccount = receiverAccountNumber });
+            }
+            else
+            {
+                return View("NotFound");
+
+            }
+        }
+        public IActionResult TransferSuccess(decimal amount, string receiverAccount)
+        {
+            var model = new TransferSuccessViewModel
+            {
+                Amount = amount,
+                ReceiverAccount = receiverAccount
+            };
+            return View(model);
+        }
+
+        public async Task<IActionResult> TransactionHistory()
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Get all bank accounts for the user
+            var allBankAccounts = await _repo.BankAccount.GetAllAsync();
+            var userBankAccounts = allBankAccounts.Where(b => b.UserEmail == user.Email).ToList();
+
+            // Get all transactions related to the user's accounts
+            var allTransactions = await _repo.Transactions.GetAllAsync();
+            var userTransactions = allTransactions
+                .Where(t => userBankAccounts.Any(b => b.AccountNumber == t.BankAccountIdSender.ToString() || b.AccountNumber == t.BankAccountIdReceiver.ToString()))
+                .OrderByDescending(t => t.TransactionDate)
+                .ToList();
+
+            // Pass the transactions to the view
+            return View(userTransactions);
+        }
+        
+    }
+}

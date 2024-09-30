@@ -380,7 +380,7 @@ namespace UFSBankingSystemWebsite.Controllers
         // Change Password for a User
         public IActionResult ChangePassword(string id)
         {
-            var model = new ChangePasswordViewModel { UserId = id };
+            var model = new ChangePasswordViewModel { Id = id };
             return View(model);
         }
 
@@ -390,7 +390,7 @@ namespace UFSBankingSystemWebsite.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _repository.AppUser.FindByIdAsync(int.Parse(model.UserId));
+                var user = await _repository.AppUser.FindByIdAsync(int.Parse(model.Id));
                 if (user == null) return NotFound();
 
                 var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);

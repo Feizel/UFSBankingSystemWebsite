@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UFSBankingSystemWebsite.Data;
 using UFSBankingSystemWebsite.Models;
+using UFSBankingSystemWebsite.Models.ViewModels;
 using UFSBankingSystemWebsite.Models.ViewModels.Admin;
 
 namespace UFSBankingSystemWebsite.Controllers
@@ -112,6 +113,62 @@ namespace UFSBankingSystemWebsite.Controllers
 
             foreach (var item in results.Errors)
                 ModelState.AddModelError(item.Code, item.Description);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdateProfile()
+        {
+            // Get the current user and pass their info to the view model
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var model = new UpdateProfileViewModel
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                IDNumber = user.Id, // Assuming ID is stored in the user object
+                Userrole = user.UserRole, // Assuming you have a UserRole property
+                LastName = user.LastName
+
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                // Update the user's profile
+                user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
+
+                // Save changes
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    // Redirect to some confirmation page or profile view
+                    return RedirectToAction("Profile", "Account");
+                }
+
+                // Add any errors to the ModelState if the update fails
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
 
             return View(model);
         }

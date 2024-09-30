@@ -27,7 +27,7 @@ namespace UFSBankingSystemWebsite.Data
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     AccountNumber = u.BankAccounts.Select(b => b.AccountNumber).FirstOrDefault(), // Get first account number
-                    Balance = u.BankAccounts.Sum(b => b.Balance) // Total balance across all accounts
+                    Balance = (decimal)u.BankAccounts.Sum(b => (double)b.Balance) // Total balance across all accounts
                 })
                 .ToListAsync();
         }
