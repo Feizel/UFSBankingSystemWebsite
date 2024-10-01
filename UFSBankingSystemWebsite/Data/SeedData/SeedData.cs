@@ -132,7 +132,6 @@ namespace UFSBankingSystemWebsite.Data.SeedData
                     AccountNumber = SampleData.GenerateAccountNumber(),
                     Balance = SampleData.GetRandomBalance(),
                     BankAccountType = accountType,
-                    AccountName = $"{user.FirstName}'s {accountType} Account",
                     AccountOrder = order++,
                     UserEmail = user.Email,
                     User = user

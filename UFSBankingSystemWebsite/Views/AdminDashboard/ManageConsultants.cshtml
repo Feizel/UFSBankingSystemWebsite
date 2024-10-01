@@ -3,6 +3,10 @@
     ViewData["Title"] = "Manage Consultants";
 }
 
+<div class="card">
+    <h2 class="card-title m-4 text-dark">Manage Consultants</h2>
+</div>
+
 <div class="container mt-4">
     @if (TempData["Message"] != null)
     {
@@ -11,12 +15,6 @@
             @TempData["Message"]
         </div>
     }
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="fw-bold fs-4">Manage Consultants</h3>
-        </div>
-    </div>
 
     <div class="mb-4">
         <a asp-action="AdminCreateUser" class="btn btn-success">Create Consultant</a>

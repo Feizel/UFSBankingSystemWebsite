@@ -96,11 +96,13 @@ namespace UFSBankingSystemWebsite.Data
             }
         }
 
-    
-
         public void SaveChanges()
         {
             _appDbContext.SaveChanges();
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _appDbContext.SaveChangesAsync(); // Call the async version of SaveChanges
         }
     }
 }

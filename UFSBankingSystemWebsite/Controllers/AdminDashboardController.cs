@@ -14,11 +14,12 @@ using UFSBankingSystemWebsite.Data;
 
 namespace UFSBankingSystemWebsite.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Consultant, FinancialAdvisor")]
     public class AdminDashboardController : Controller
     {
         private readonly IRepositoryWrapper _wrapper;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AppDbContext _context;
         private readonly string role = "User";
 
@@ -76,11 +77,12 @@ namespace UFSBankingSystemWebsite.Controllers
             // Retrieve users by role
             var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
             var finAdvisors = (await _userManager.GetUsersInRoleAsync("FinancialAdvisor")).ToList();
+            var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
 
             // Combine actual users with sample customers and staff for demonstration
-            var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
-            users.AddRange(SampleData.SampleCustomers); // Add sample customers
-            users.AddRange(SampleData.SampleStaff); // Add sample staff
+            //var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
+            //users.AddRange(SampleData.SampleCustomers); // Add sample customers
+            //users.AddRange(SampleData.SampleStaff); // Add sample staff
 
             // Calculate total users
             int totalUsersCount = users.Count;
@@ -96,27 +98,13 @@ namespace UFSBankingSystemWebsite.Controllers
                 FinancialAdvisors = finAdvisors,
                 Consultants = consultants,
 
-                Users = SampleData.SampleCustomers, // Count all users including samples
+                Users = users, // Count all users including samples
                 Notifications = SampleData.SampleNotifications, // Use sample notifications
-                ActiveTransactions = SampleData.SampleTransactions // Set active transactions here
+                ActiveTransactions = activeTransactions // Set active transactions here
             };
 
+            indexPageViewModel.TotalUsers = totalUsersCount; // Set total user count
             return View(indexPageViewModel);
-        }
-
-        // VIEW CUSTOMER
-        public async Task<IActionResult> ViewCustomer()
-        {
-            List<User> lstUsers = new List<User>();
-            foreach (var user in _userManager.Users)
-            {
-                if (await _userManager.IsInRoleAsync(user, "User"))
-                    lstUsers.Add(user);
-            }
-            return View(new ConsultantViewModel
-            {
-                appUsers = lstUsers.AsQueryable()
-            });
         }
 
         // MANAGE USERS
@@ -160,8 +148,7 @@ namespace UFSBankingSystemWebsite.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> EditUser(string id)
+        public async Task<IActionResult> AdminEditUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -188,8 +175,7 @@ namespace UFSBankingSystemWebsite.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> EditUser(UserViewModel model)
+        public async Task<IActionResult> AdminEditUser(UserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -212,7 +198,7 @@ namespace UFSBankingSystemWebsite.Controllers
                 if (result.Succeeded)
                 {
                     TempData["Message"] = "User updated successfully!";
-                    return RedirectToAction("ManageUsers");
+                    return RedirectToAction("UserManagement");
                 }
 
                 foreach (var error in result.Errors)
@@ -225,8 +211,7 @@ namespace UFSBankingSystemWebsite.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ViewUser(string id)
+        public async Task<IActionResult> AdminViewUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -261,7 +246,7 @@ namespace UFSBankingSystemWebsite.Controllers
                 var results = await _userManager.DeleteAsync(user);
                 if (results.Succeeded)
                 {
-                    return RedirectToAction("Index", "Consultant");
+                    return RedirectToAction("UserManagement", "AdminDashboard");
                 }
                 return View();
             }
@@ -277,83 +262,216 @@ namespace UFSBankingSystemWebsite.Controllers
 
         // CREATE USER
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminCreateUser(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Create the user
-                var user = new User
+                return View(model);
+            }
+
+            // Create new user
+            var user = new User
+            {
+                UserName = model.EmailAddress, // Set this to email for consistency
+                Email = model.EmailAddress,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                IDnumber = model.IdPassportNumber,
+                StudentStaffNumber = model.StudentStaffNumber,
+                UserRole = "User", // Default to User role
+                IsActive = true // Set initial status as active
+            };
+
+            // Create user in Identity
+            var result = await _userManager.CreateAsync(user, model.Password);
+            await _wrapper.SaveChangesAsync();
+
+            // Generate random account number
+            Random rndAccount = new Random();
+            string _randomAccount = string.Empty;
+            do
+            {
+                _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
+            }
+            while (_userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
+            user.AccountNumber = _randomAccount;
+
+            if (result.Succeeded)
+            {
+                // Assign role if needed
+                await _userManager.AddToRoleAsync(user, model.RegisterAs);
+
+                // Create and add bank account
+                BankAccount bankAccountMain = new()
                 {
-                    Email = model.EmailAddress,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    IDnumber = model.IdPassportNumber.ToString(),
-                    StudentStaffNumber = model.StudentStaffNumber.ToString(),
-                    UserName = (model.LastName + model.FirstName).Substring(0, 100),
-                    UserRole = model.RegisterAs
+                    Id = user.Id, // Set the Id to link with the user
+                    AccountNumber = _randomAccount,
+                    Balance = 100m,
+                    BankAccountType = "Savings",
+                    AccountOrder = 1,
+                    UserEmail = user.Email // Ensure this is set correctly as well
                 };
 
-                // Generate random account number
-                Random rndAccount = new Random();
-                string _randomAccount = string.Empty;
-                do
+                await _wrapper.BankAccount.AddAsync(bankAccountMain); // Add bank account to DB
+                                                                      // Save changes for bank account creation
+                await _wrapper.SaveChangesAsync();
+
+                // Log initial transaction
+                Transactions transaction = new Transactions
                 {
-                    _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
-                }
-                while (_userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
-                user.AccountNumber = _randomAccount;
+                    BankAccountIdReceiver = int.Parse(_randomAccount), // Ensure this is valid
+                    Amount = 100m,
+                    Reference = "Fee for opening new account",
+                    UserEmail = user.Email,
+                    TransactionDate = DateTime.Now,
+                    TransactionType = TransactionType.Deposit, // Define this enum appropriately
+                    BalanceAfter = bankAccountMain.Balance // Set this to reflect balance after transaction
+                };
 
-                // Create user in Identity
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                await _wrapper.Transactions.AddAsync(transaction); // Add transaction to DB
+                await _wrapper.SaveChangesAsync();
+
+                // Send notification with password
+                var notification = new Notification
                 {
-                    await _userManager.AddToRoleAsync(user, role);
+                    Message = $"New account created. Email: {model.EmailAddress}, Password: {model.Password}",
+                    UserEmail = model.EmailAddress,
+                    NotificationDate = DateTime.Now,
+                    IsRead = false,
+                    Id = user.Id // Link notification to user ID
+                };
 
-                    // Create and add bank account
-                    BankAccount bankAccountMain = new()
-                    {
-                        AccountNumber = _randomAccount,
-                        Balance = 100m,
-                        BankAccountType = "Savings",
-                        AccountOrder = 1,
-                        UserEmail = user.Email
-                    };
-                    await _wrapper.BankAccount.AddAsync(bankAccountMain);
+                await _wrapper.Notification.AddAsync(notification); // Add notification to DB
 
-                    // Log initial transaction
-                    Transactions transaction = new()
-                    {
-                        BankAccountIdReceiver = int.Parse(_randomAccount),
-                        Amount = 100m,
-                        Reference = "fee Open new account",
-                        UserEmail = user.Email,
-                        TransactionDate = DateTime.Now
-                    };
-                    await _wrapper.Transactions.AddAsync(transaction);
+                await _context.SaveChangesAsync(); // Save all changes at once
 
-                    // Send notification with password
-                    var notification = new Notification
-                    {
-                        Message = $"New account created. Email: {model.EmailAddress}, Password: {model.Password}",
-                        UserEmail = model.EmailAddress,
-                        NotificationDate = DateTime.Now,
-                        IsRead = false
-                    };
-                    await _wrapper.Notification.AddAsync(notification);
-                    _wrapper.SaveChanges();
+                TempData["Message"] = "User created successfully!";
+                return RedirectToAction("UserManagement");
+            }
 
-                    return RedirectToAction("Index", "Admin");
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
             }
 
             return View(model);
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> AdminCreateUser(RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Create the user
+        //        var user = new User
+        //        {
+        //            UserName = model.EmailAddress,
+        //            Email = model.EmailAddress,
+        //            FirstName = model.FirstName,
+        //            LastName = model.LastName,
+        //            IDnumber = model.IdPassportNumber.ToString(),
+        //            StudentStaffNumber = model.StudentStaffNumber.ToString(),
+        //            UserRole = model.RegisterAs,
+        //            IsActive = true
+        //        };
+
+        //        // Generate random account number
+        //        Random rndAccount = new Random();
+        //        string _randomAccount = string.Empty;
+        //        do
+        //        {
+        //            _randomAccount = rndAccount.Next(99999999, 999999999).ToString();
+        //        }
+        //        while (_userManager.Users.Where(u => u.AccountNumber != _randomAccount).FirstOrDefault() == null);
+        //        user.AccountNumber = _randomAccount;
+
+        //        // Create user in Identity
+        //        var result = await _userManager.CreateAsync(user, model.Password);
+        //        if (result.Succeeded)
+        //        {
+        //            await _userManager.AddToRoleAsync(user, role);
+
+        //            // Create and add bank account
+        //            BankAccount bankAccountMain = new()
+        //            {
+        //                AccountNumber = _randomAccount,
+        //                Balance = 100m,
+        //                BankAccountType = "Savings",
+        //                AccountOrder = 1,
+        //                UserEmail = user.Email
+        //            };
+        //            await _wrapper.BankAccount.AddAsync(bankAccountMain);
+
+        //            // Assuming you have a method to create a new user and this is part of that process
+
+        //            // Log initial transaction
+        //            try
+        //            {
+        //                // Ensure _randomAccount is a valid account ID
+        //                if (int.TryParse(_randomAccount, out int bankAccountIdReceiver))
+        //                {
+        //                    // Create the transaction
+        //                    Transactions transaction = new Transactions
+        //                    {
+        //                        BankAccountIdReceiver = bankAccountIdReceiver,
+        //                        Amount = 100m,
+        //                        Reference = "Fee for opening new account",
+        //                        UserEmail = user.Email,
+        //                        TransactionDate = DateTime.Now,
+        //                        TransactionType = TransactionType.Deposit, // Ensure this enum value exists
+        //                        BalanceAfter = 0m // Set this to the appropriate balance after the transaction
+        //                    };
+
+        //                    // Add the transaction to the database
+        //                    await _wrapper.Transactions.AddAsync(transaction);
+        //                }
+        //                else
+        //                {
+        //                    throw new Exception("Invalid bank account ID.");
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                // Handle any exceptions (log them or display an error message)
+        //                Console.WriteLine($"Error creating transaction: {ex.Message}");
+        //            }
+
+        //            // Send notification with password
+        //            try
+        //            {
+        //                var notification = new Notification
+        //                {
+        //                    Message = $"New account created. Email: {model.EmailAddress}, Password: {model.Password}",
+        //                    UserEmail = model.EmailAddress,
+        //                    NotificationDate = DateTime.Now,
+        //                    IsRead = false,
+        //                    Id = user.Id // Ensure this links to the correct user ID
+        //                };
+
+        //                // Add the notification to the database
+        //                await _wrapper.Notification.AddAsync(notification);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                // Handle any exceptions (log them or display an error message)
+        //                Console.WriteLine($"Error sending notification: {ex.Message}");
+        //            }
+
+        //            // Save changes to the database after adding both entities
+        //            await _context.SaveChangesAsync();
+        //            _wrapper.SaveChanges();
+
+        //            return RedirectToAction("Index", "AdminDashboard");
+        //        }
+
+        //        foreach (var error in result.Errors)
+        //        {
+        //            ModelState.AddModelError("", error.Description);
+        //        }
+        //    }
+
+        //    return View(model);
+        //}
 
         // MANAGE CONSULTANTS
         [HttpGet]
@@ -365,7 +483,6 @@ namespace UFSBankingSystemWebsite.Controllers
 
         // EDIT CONSULTANT
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditConsultant(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -389,7 +506,6 @@ namespace UFSBankingSystemWebsite.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditConsultant(ConsultantUpdateUserModel model)
         {
             if (ModelState.IsValid)
@@ -541,7 +657,7 @@ namespace UFSBankingSystemWebsite.Controllers
                             TransactionDate = DateTime.Now
                         };
                         await _wrapper.Transactions.AddAsync(transaction);
-                        _wrapper.SaveChanges();
+                        await _wrapper.SaveChangesAsync();
                         Message = $"Money Successfully {CultureInfo.CurrentCulture.TextInfo.ToTitleCase(action)} to account";
                         return RedirectToAction("Index", "Consultant");
                     }
@@ -684,17 +800,71 @@ namespace UFSBankingSystemWebsite.Controllers
 
         // Toggle Status
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ToggleUserStatus(string id, bool isActive)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
+            if (user == null)
             {
-                user.IsActive = isActive;
-                var result = await _userManager.UpdateAsync(user);
-                return Json(new { success = result.Succeeded });
+                return NotFound();
             }
-            return Json(new { success = false });
+
+            user.IsActive = isActive; // Toggle the active status
+            await _userManager.UpdateAsync(user);
+
+            TempData["Message"] = $"User {user.UserName} has been {(isActive ? "activated" : "deactivated")}.";
+            return RedirectToAction("ManageUsers");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignRole(string userId)
+        {
+            // Fetch the user by ID
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Create a view model to hold user information and roles
+            var model = new AssignRoleViewModel
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = await _roleManager.Roles.ToListAsync() // Get all available roles
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignRole(AssignRoleViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                // Remove existing roles
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+                // Assign new role(s)
+                if (model.SelectedRoles != null && model.SelectedRoles.Any())
+                {
+                    await _userManager.AddToRolesAsync(user, model.SelectedRoles);
+                    TempData["Message"] = "Roles assigned successfully!";
+                    return RedirectToAction("ManageUsers"); // Redirect to a suitable action
+                }
+
+                TempData["Message"] = "No roles were selected.";
+            }
+
+            return View(model); // If we got this far, something failed, redisplay form
         }
     }
 }

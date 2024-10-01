@@ -1,4 +1,7 @@
 @model ConsultantViewModel
+@{
+    ViewData["Title"] = "Consultant Dashboard";
+}
 
 <!-- Include Font Awesome for icons if not already included -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -12,10 +15,22 @@
         </div>
     }
 
-    <h3 class="mb-5">Consultant Dashboard</h3>
+    <div class="card">
+        <h3 class="card-title mb-5 text-center text-dark">Consultant Dashboard</h3>
+    </div>
 
     <div class="text-center">
-        <h1>Welcome back @ViewBag.FirstName</h1>
+        <h4>Welcome back, Consultant @ViewBag.FirstName</h4>
+        <p class="text-start">You have the following options:</p>
+    </div>
+
+    <!-- Navigation Links for Quick Access -->
+    <div class="mb-4">
+        <a asp-action="UserManagement" asp-controller="AdminDashboard" class="btn btn-primary">Manage Users</a>
+        <a asp-action="Transactions" class="btn btn-primary">Assist Transactions</a>
+        <a asp-action="ViewAdvices" class="btn btn-primary">View Advice</a>
+        <a asp-action="GenerateReports" class="btn btn-primary">Generate Report</a>
+        <a asp-action="AdminCreateUser" class="btn btn-success">Create User</a>
     </div>
 
     <div class="row">
@@ -70,6 +85,40 @@
                 <h4 class="text-center"><i class="fas fa-exclamation-triangle"></i> No users found</h4>
             }
         </div>
+        <h2>Your Managed Users</h2>
+        @if (Model.ClientsManaged != null)
+        {
+            <div class="row">
+                @foreach (var user in Model.ClientsManaged)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title">@user.FirstName @user.LastName</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"><strong>Email:</strong> @user.Email</p>
+                                <p class="card-text"><strong>ID Number:</strong> @user.IDNumber</p>
+
+                                <div class="d-flex flex-column gap-2">
+                                    <a class="btn btn-warning" asp-action="ConsultantUpdateUser" asp-controller="ConsultantDashboard" asp-route-id="@user.Id">
+                                        Edit User
+                                    </a>
+                                    <a class="btn btn-danger" asp-action="ConsultantDeleteUser" asp-controller="ConsultantDashboard" asp-route-id="@user.Id"
+                                       onclick="return confirm('Are you sure you want to delete this user?');">
+                                        Delete User
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <h4 class="text-center"><i class="fas fa-exclamation-triangle"></i> No users found.</h4>
+        }
     </div>
 </div>
 

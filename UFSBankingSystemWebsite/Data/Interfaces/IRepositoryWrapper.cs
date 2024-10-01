@@ -11,5 +11,6 @@ namespace UFSBankingSystemWebsite.Data.Interfaces
         INotificationRepository Notification { get; }
         IUserRepository AppUser { get; }
         void SaveChanges();
+        Task SaveChangesAsync(); // Save Asynchronously
     }
 }

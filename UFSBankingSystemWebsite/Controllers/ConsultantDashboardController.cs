@@ -10,7 +10,7 @@ using UFSBankingSystemWebsite.Data.Interfaces;
 namespace UFSBankingSystemWebsite.Controllers
 {
 
-    [Authorize(Roles = "Consultant,Admin")]
+    [Authorize(Roles = "Consultant, Admin")]
     public class ConsultantDashboardController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -83,6 +83,22 @@ namespace UFSBankingSystemWebsite.Controllers
             }
             return View("Index");
         }
+
+        // VIEW CUSTOMER
+        public async Task<IActionResult> ViewCustomer()
+        {
+            List<User> lstUsers = new List<User>();
+            foreach (var user in _userManager.Users)
+            {
+                if (await _userManager.IsInRoleAsync(user, "User"))
+                    lstUsers.Add(user);
+            }
+            return View(new ConsultantViewModel
+            {
+                appUsers = lstUsers.AsQueryable()
+            });
+        }
+
         [HttpGet]
         public async Task<IActionResult> ViewReviews()
         {

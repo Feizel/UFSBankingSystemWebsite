@@ -1,13 +1,17 @@
 ﻿@model RegisterViewModel
 
-<h2>Create a New User</h2>
+<div class="card">
+    <h2 class="card-title m-4 text-dark">Create a New User</h2>
+</div>
 
 <form asp-action="AdminCreateUser" asp-controller="AdminDashboard" method="post">
     <div class="form-group">
         <label asp-for="RegisterAs"></label>
         <select asp-for="RegisterAs" class="form-control">
-            <option value="student">Student</option>
-            <option value="staff">Staff</option>
+            <option value="User">Student</option>
+            <option value="User">Staff</option>
+            <option value="Consultant">Consultant</option>
+            <option value="FinancialAdvisor">Financial Advisor</option>
         </select>
         <span asp-validation-for="RegisterAs" class="text-danger"></span>
     </div>

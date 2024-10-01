@@ -1,14 +1,16 @@
 ﻿@model UFSBankingSystemWebsite.Models.ViewModels.Admin.UserViewModel
 
 <div class="container mt-4">
-    <h3>Edit User</h3>
+    <div class="card">
+        <h2 class="card-title m-4 text-dark">Edit User</h2>
+    </div>
 
     @if (TempData["Message"] != null)
     {
         <div class="alert alert-success">@TempData["Message"]</div>
     }
 
-    <form asp-action="EditUser" method="post">
+    <form asp-action="AdminEditUser" method="post">
         <input type="hidden" asp-for="Id" />
 
         <div class="mb-3">

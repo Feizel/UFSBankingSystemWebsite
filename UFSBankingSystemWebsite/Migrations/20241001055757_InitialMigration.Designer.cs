@@ -11,7 +11,7 @@ using UFSBankingSystemWebsite.Data;
 namespace UFSBankingSystemWebsite.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240930163522_InitialMigration")]
+    [Migration("20241001055757_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -48,25 +48,25 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e216fc3c-f09c-4517-993a-c9d70ff2a4d2",
+                            Id = "73ceec7c-bdb9-46ac-bf7a-b5c801e2a54d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9c6f4358-c461-4b7b-8f96-8dc055eba2d9",
+                            Id = "405f2d96-54f2-493d-bcfd-329996293c7a",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "3429eb95-eb55-4833-9b23-f8d3fe003a52",
+                            Id = "873b27db-29a2-4f5e-b998-bf1a9219aeb4",
                             Name = "Consultant",
                             NormalizedName = "CONSULTANT"
                         },
                         new
                         {
-                            Id = "6a64d068-714e-4755-b539-0b2eeb8c869c",
+                            Id = "d630f928-edc3-47f4-9dfb-2ec6a2f0625d",
                             Name = "FinancialAdvisor",
                             NormalizedName = "FINANCIALADVISOR"
                         });
@@ -179,10 +179,6 @@ namespace UFSBankingSystemWebsite.Migrations
                     b.Property<int>("BankAccountID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("AccountName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("AccountNumber")
                         .IsRequired()

@@ -2,6 +2,11 @@
 
 <h2>Your Notifications</h2>
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
 <ul class="list-group">
     @foreach (var notification in Model)
     {

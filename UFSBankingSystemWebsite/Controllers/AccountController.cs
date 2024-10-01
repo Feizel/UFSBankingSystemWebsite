@@ -66,7 +66,7 @@ namespace UFSBankingSystemWebsite.Controllers
                             UserEmail = user.Email,
                         };
                         await _repoWrapper.Logins.AddAsync(newLogin);
-                        _repoWrapper.SaveChanges();
+                        await _repoWrapper.SaveChangesAsync();
 
                         // Redirect based on role
                         if (await userManager.IsInRoleAsync(user, _adminRole))
@@ -93,8 +93,8 @@ namespace UFSBankingSystemWebsite.Controllers
         [HttpGet]
         public IActionResult Register(string registerAs)
         {
-            return View(new RegisterViewModel() 
-            { 
+            return View(new RegisterViewModel()
+            {
                 RegisterAs = registerAs
             });
         }
@@ -118,8 +118,12 @@ namespace UFSBankingSystemWebsite.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     StudentStaffNumber = model.StudentStaffNumber.ToString(),
-                    UserRole = "User" // Default to User role
+                    UserRole = "User", // Default to User role
+                    IsActive = true // Set initial status as active
                 };
+
+                // Save changes for user creation
+                await _repoWrapper.SaveChangesAsync();
 
                 // Generate a unique account number
                 var accountNumber = "";
@@ -133,51 +137,41 @@ namespace UFSBankingSystemWebsite.Controllers
 
                 // Try to create the user
                 var result = await userManager.CreateAsync(user, model.Password);
+                await _repoWrapper.SaveChangesAsync();
+
                 if (result.Succeeded)
                 {
                     // Add user to Customer role
                     await userManager.AddToRoleAsync(user, _customerRole);
 
                     // Create a bank account for the user
-                    var bankAccount = new BankAccount
-                    {
-                        Id = user.Id,
-                        AccountName = "Default",
-                        AccountNumber = accountNumber,
-                        Balance = 100m, // Starting balance
-                        BankAccountType = "Savings",
-                        AccountOrder = 1,
-                        UserEmail = user.Email,
-                    };
-                    await _repoWrapper.BankAccount.AddAsync(bankAccount);
-                    _repoWrapper.SaveChanges(); // Ensure it is saved
+                    //var bankAccount = new BankAccount
+                    //{
+                    //    Id = user.Id,
+                    //    AccountNumber = accountNumber,
+                    //    Balance = 100m, // Starting balance
+                    //    BankAccountType = "Savings",
+                    //    AccountOrder = 1,
+                    //    UserEmail = user.Email,
+                    //};
+                    //await _repoWrapper.BankAccount.AddAsync(bankAccount);
+                    //await _repoWrapper.SaveChangesAsync(); // Ensure it is saved
 
-                    var bankAccountId = int.Parse(accountNumber); 
-                    var existingAccount = await _repoWrapper.BankAccount.FindByIdAsync(bankAccountId);
-                    if (existingAccount == null)
-                    {
-                        // Log or throw an error indicating that the account does not exist
-                        throw new Exception("Bank account does not exist.");
-                    }
-                    else
-                    {
-                        // Proceed with creating a transaction if the account exists
+                    //// Log the initial deposit
+                    //var transaction = new Transactions
+                    //{
+                    //    BankAccountIdReceiver = bankAccount.BankAccountID, // Use the ID from the created bank account
+                    //    Amount = 100m,
+                    //    Reference = "Initial deposit",
+                    //    UserEmail = user.Email,
+                    //    TransactionDate = DateTime.Now,
+                    //};
+                    //await _repoWrapper.Transactions.AddAsync(transaction);
+                    //await _repoWrapper.SaveChangesAsync(); // Ensure transaction is saved
 
-                        // Log the initial deposit
-                        var transaction = new Transactions
-                        {
-                            BankAccountIdReceiver = bankAccount.BankAccountID, // Use the ID from the created bank account
-                            Amount = 100m,
-                            Reference = "Initial deposit",
-                            UserEmail = user.Email,
-                            TransactionDate = DateTime.Now,
-                        };
-                        await _repoWrapper.Transactions.AddAsync(transaction);
-                        _repoWrapper.SaveChanges(); // Ensure transaction is saved
-                    }
 
                     // Save changes
-                    _repoWrapper.SaveChanges();
+                    await _repoWrapper.SaveChangesAsync();
 
                     // Sign in the new user
                     await signInManager.SignInAsync(user, isPersistent: false);
@@ -189,7 +183,7 @@ namespace UFSBankingSystemWebsite.Controllers
                         UserEmail = user.Email,
                     };
                     await _repoWrapper.Logins.AddAsync(loginSession);
-                    _repoWrapper.SaveChanges();
+                    await _repoWrapper.SaveChangesAsync();
 
                     return RedirectToAction("Index", "CustomerDashboard");
                 }

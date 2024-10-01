@@ -20,6 +20,7 @@ namespace UFSBankingSystemWebsite.Models.ViewModels
 
     public class CreateBankAccountViewModel
     {
+        public string Id { get; set; } // Foreign key to User
         [Required]
         public string AccountType { get; set; } // e.g., Savings, Checking
 

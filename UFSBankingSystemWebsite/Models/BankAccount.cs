@@ -18,8 +18,6 @@ namespace UFSBankingSystemWebsite.Models
         public decimal Balance { get; set; }
         [Required]
         public string BankAccountType { get; set; }
-        [Required]
-        public string AccountName { get; set; }
         public int AccountOrder { get; set; }
         public string UserEmail { get; set; }
 

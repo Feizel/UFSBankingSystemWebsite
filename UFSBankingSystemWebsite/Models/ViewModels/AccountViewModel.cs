@@ -40,10 +40,10 @@ namespace UFSBankingSystemWebsite.Models.ViewModels
 
         [Required(ErrorMessage = "Please enter ID or passport number.")]
         [DisplayName("ID or Passport number")]
-        public long IdPassportNumber { get; set; }
+        public string IdPassportNumber { get; set; }
 
         [DisplayName("Student or Staff number")]
-        public int StudentStaffNumber { get; set; }
+        public string StudentStaffNumber { get; set; }
 
         [Required(ErrorMessage = "Please enter password")]
         [DisplayName("Password")]

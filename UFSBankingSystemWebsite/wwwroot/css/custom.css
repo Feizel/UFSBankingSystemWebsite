@@ -34,33 +34,31 @@ body
 
 /* Heading styles */
 h1, h2, h3, h4 {
-    color: #2c3e50; /* Darker color for headings */
-    margin-bottom: 15px; /* Space below headings */
-    text-align: left; /* Align headings to the left */
-    font-weight: bold; /* Bold headings */
+    margin-bottom: 15px;  /*Space below headings */
+    text-align: center;  /*Align headings to the center */
+    font-weight: bold;  /*Bold headings */
 }
 
-/* Specific heading sizes */
+ Specific heading sizes 
 h1 {
-    font-size: 2.5rem; /* Large heading size */
+    font-size: 2.5rem;  /*Large heading size */
 }
 
 h2 {
-    font-size: 2rem; /* Medium heading size */
+    font-size: 2rem;  /*Medium heading size*/ 
 }
 
 h3 {
-    font-size: 1.75rem; /* Smaller heading size */
+    font-size: 1.75rem;  /*Smaller heading size */
 }
 
 h4 {
-    font-size: 1.5rem; /* Even smaller heading size */
+    font-size: 1.5rem;  /*Even smaller heading size */
 }
 
-/* Paragraph styles */
+ Paragraph styles 
 p {
-    margin-bottom: 15px; /* Space below paragraphs */
-    text-align: justify; /* Justify text for better alignment */
+    margin-bottom: 15px;  /*Space below paragraphs */
 }
 
 /* Link styles */
@@ -162,6 +160,7 @@ a {
     }
 
 .card {
+    margin: 16px;
     border: none;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -175,7 +174,7 @@ a {
 
 .card-header {
     background-color: var(--primary-color);
-    color: #fff;
+    color: black;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }

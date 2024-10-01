@@ -295,31 +295,39 @@ namespace UFSBankingSystemWebsite.Controllers
             return View();
         }
 
-        //Create Account
+        // Create Account
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAccount(CreateBankAccountViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // Get the currently logged-in user
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
                 // Create a new bank account
                 var newAccount = new BankAccount
                 {
-                    AccountNumber = GenerateAccountNumber(), // Method to generate a unique account number
+                    Id = user.Id, // Set foreign key to link with the user
+                    AccountNumber = GenerateAccountNumber(),
                     Balance = model.InitialDeposit,
                     BankAccountType = model.AccountType,
-                    UserEmail = User.Identity.Name // Assuming the user is logged in and their email is their username
+                    UserEmail = user.Email // Ensure this is set correctly as well
                 };
 
                 // Save the new account to the database
-                await _repo.BankAccount.CreateAsync(newAccount);
-                _repo.SaveChanges(); // Ensure changes are saved
+                await _repo.BankAccount.AddAsync(newAccount);
+                await _repo.SaveChangesAsync(); // Ensure changes are saved
 
-                TempData["Message"] = "Your account has been created successfully!";
+                TempData["Message"] = "Your new bank account has been created successfully!";
                 return RedirectToAction("Index", "CustomerDashboard");
             }
 
-            return View(model);
+            return View(model); // If we got this far, something failed, redisplay form
         }
 
         private string GenerateAccountNumber()
@@ -328,6 +336,7 @@ namespace UFSBankingSystemWebsite.Controllers
             return "ACCT" + new Random().Next(100000, 999999).ToString();
         }
 
+        // Notifications
         public async Task<IActionResult> NotificationMessage()
         {
             var username = User.Identity.Name;
@@ -335,12 +344,14 @@ namespace UFSBankingSystemWebsite.Controllers
 
             if (user == null)
             {
-                return NotFound();
+                TempData["Message"] = "User not found.";
+                return RedirectToAction("Index", "CustomerDashboard");
             }
 
             var allNotifications = await _repo.Notification.GetAllAsync();
             var userNotifications = allNotifications.Where(n => n.UserEmail == user.Email).ToList();
 
+            // Mark notifications as read
             foreach (var notification in userNotifications)
             {
                 if (!notification.IsRead)
@@ -353,22 +364,24 @@ namespace UFSBankingSystemWebsite.Controllers
             return View(userNotifications);
         }
 
+        // View Advice
         public async Task<IActionResult> ViewAdvice()
         {
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
             if (currentUser == null)
             {
-                Message = "User not found.";
+                TempData["Message"] = "User not found.";
                 return RedirectToAction("Index", "CustomerDashboard");
             }
 
             // Retrieve advice notifications for the current user
             var adviceList = await _repo.Notification.GetAllAsync();
-            var userAdvice = adviceList.Where(n => n.UserEmail == currentUser.Email && n.Message.StartsWith(" ")).ToList();
+            var userAdvice = adviceList.Where(n => n.UserEmail == currentUser.Email && n.Message.StartsWith("Advice:")).ToList();
 
             return View(userAdvice);
         }
 
+        // Add Rating
         [HttpGet]
         public async Task<IActionResult> AddRating()
         {
@@ -383,10 +396,12 @@ namespace UFSBankingSystemWebsite.Controllers
             }
 
             // Handle case where the user is not logged in or not found
-            Message = "User not found or not logged in";
+            TempData["Message"] = "User not found or not logged in";
             return RedirectToAction("Index", "CustomerDashboard");
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddRating(FeedBack feedback)
         {
             var currentLoginUser = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -398,14 +413,17 @@ namespace UFSBankingSystemWebsite.Controllers
                 if (ModelState.IsValid)
                 {
                     await _repo.Review.AddAsync(feedback);
-                    Message = "Review sent successfully";
+                    await _repo.SaveChangesAsync(); // Ensure changes are saved
+
+                    TempData["Message"] = "Review submitted successfully!";
                     return RedirectToAction("Index", "CustomerDashboard");
                 }
             }
 
-            Message = "There was an error sending the review";
+            TempData["Message"] = "There was an error submitting the review.";
             return View(feedback);
         }
+
         //public async Task<bool> Transfer(string senderAccountNumber, string receiverAccountNumber, decimal amount)
         //{
 

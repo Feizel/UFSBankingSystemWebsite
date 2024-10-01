@@ -178,7 +178,6 @@ namespace UFSBankingSystemWebsite.Migrations
                     AccountNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BankAccountType = table.Column<string>(type: "TEXT", nullable: false),
-                    AccountName = table.Column<string>(type: "TEXT", nullable: false),
                     AccountOrder = table.Column<int>(type: "INTEGER", nullable: false),
                     UserEmail = table.Column<string>(type: "TEXT", nullable: true)
                 },
@@ -391,10 +390,10 @@ namespace UFSBankingSystemWebsite.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3429eb95-eb55-4833-9b23-f8d3fe003a52", null, "Consultant", "CONSULTANT" },
-                    { "6a64d068-714e-4755-b539-0b2eeb8c869c", null, "FinancialAdvisor", "FINANCIALADVISOR" },
-                    { "9c6f4358-c461-4b7b-8f96-8dc055eba2d9", null, "User", "USER" },
-                    { "e216fc3c-f09c-4517-993a-c9d70ff2a4d2", null, "Admin", "ADMIN" }
+                    { "405f2d96-54f2-493d-bcfd-329996293c7a", null, "User", "USER" },
+                    { "73ceec7c-bdb9-46ac-bf7a-b5c801e2a54d", null, "Admin", "ADMIN" },
+                    { "873b27db-29a2-4f5e-b998-bf1a9219aeb4", null, "Consultant", "CONSULTANT" },
+                    { "d630f928-edc3-47f4-9dfb-2ec6a2f0625d", null, "FinancialAdvisor", "FINANCIALADVISOR" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -3,7 +3,9 @@
     ViewData["Title"] = "User Management";
 }
 
-<h2>All Users</h2>
+<div class="card">
+    <h2 class="card-title m-4 text-dark">Manage All Users</h2>
+</div>
 
 <!-- Search Bar -->
 <div class="mb-3">
@@ -31,26 +33,31 @@
         {
             <tr data-id="@user.Id">
                 <td>
-                    @if (user.BankAccount != null)
+                    @if (user.BankAccounts != null && user.BankAccounts.Any())
                     {
-                        @user.BankAccount.AccountNumber
+                        foreach (var account in user.BankAccounts)
+                        {
+                            <div>@account.AccountNumber</div>
+                        }
                     }
                     else
                     {
-                        <span class="text-muted text-white">No Account Found</span>
+                        <span class="text text-white">No Account Found</span>
                     }
                 </td>
                 <td>@user.fullName</td>
                 <td>@user.Email</td>
                 <td>
-                    @if (user.BankAccount != null)
+                    @if (user.BankAccounts != null && user.BankAccounts.Any())
                     {
-                        @user.BankAccount.Balance.ToString("C")
-                        // Format as currency
+                        foreach (var account in user.BankAccounts)
+                        {
+                            <div>@account.Balance.ToString("C")</div>
+                        }
                     }
                     else
                     {
-                        <span class="text-muted text-white">N/A</span>
+                        <span class="text text-white">N/A</span>
                     }
                 </td>
                 <td>
@@ -59,10 +66,10 @@
                     </span>
                 </td>
                 <td>
-                    <a class="btn btn-warning btn-sm" href="@Url.Action("EditUser", "AdminDashboard", new { id = user.Id })">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="@Url.Action("AdminDeleteUser", "AdminDashboard", new { email = user.Email })" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
-                    <a class="btn btn-info btn-sm" href="@Url.Action("ViewUser", "AdminDashboard", new { id = user.Id })">View</a>
-                    <a class="btn btn-secondary btn-sm" href="@Url.Action("ToggleUserStatus", "AdminDashboard", new { id = user.Id, isActive = !user.IsActive })">
+                    <a class="btn btn-warning btn-sm" asp-controller="AdminDashboard" asp-action="EditUser" asp-route-id="@user.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-controller="AdminDashboard" asp-action="AdminDeleteUser" asp-route-email="@user.Email" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                    <a class="btn btn-info btn-sm" asp-controller="AdminDashboard" asp-action="ViewUser" asp-route-id="@user.Id">View</a>
+                    <a class="btn btn-secondary btn-sm" asp-controller="AdminDashboard" asp-action="ToggleUserStatus" asp-route-id="@user.Id" asp-route-isActive="@user.IsActive">
                         @(user.IsActive ? "Deactivate" : "Activate")
                     </a>
                 </td>
