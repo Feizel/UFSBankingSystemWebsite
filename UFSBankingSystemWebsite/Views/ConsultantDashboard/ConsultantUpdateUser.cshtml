@@ -2,10 +2,10 @@
 
 <div class="container mt-4">
     <h2 class="mb-4">Update Profile</h2>
-    <form asp-action="ConsultantUpdateUser" asp-controller="Consultant" method="post">
+    <form asp-action="ConsultantUpdateUser" asp-controller="ConsultantDashboard" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <table class="table table-bordered">
+        <table class="table table-bordered text-white">
             <tbody>
                 <tr>
                     <td><label asp-for="Email" class="control-label">Email <i class="fas fa-envelope"></i></label></td>

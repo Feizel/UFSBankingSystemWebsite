@@ -16,7 +16,7 @@
     }
 
     <div class="card">
-        <h3 class="card-title mb-5 text-center text-dark">Consultant Dashboard</h3>
+        <h3 class="card-title m-4 text-center text-dark">Consultant Dashboard Panel</h3>
     </div>
 
     <div class="text-center">
@@ -26,11 +26,10 @@
 
     <!-- Navigation Links for Quick Access -->
     <div class="mb-4">
-        <a asp-action="UserManagement" asp-controller="AdminDashboard" class="btn btn-primary">Manage Users</a>
         <a asp-action="Transactions" class="btn btn-primary">Assist Transactions</a>
         <a asp-action="ViewAdvices" class="btn btn-primary">View Advice</a>
+        <a asp-action="ViewReviews" class="btn btn-primary">View Advice</a>
         <a asp-action="GenerateReports" class="btn btn-primary">Generate Report</a>
-        <a asp-action="AdminCreateUser" class="btn btn-success">Create User</a>
     </div>
 
     <div class="row">
@@ -42,7 +41,9 @@
         <br />
 
         <div class="col-md-10">
-            <h2>Customers</h2>
+            <div class="card">
+                <h2 class="card-subtitle m-4 text-dark">Customers</h2>
+            </div>
             @if (Model.appUsers.Any())
             {
                 <div class="row">
@@ -59,17 +60,17 @@
                                     <p class="card-text"><i class="fas fa-id-badge"></i> Student/Staff No: @user.StudentStaffNumber</p>
 
                                     <div class="d-flex flex-column gap-2">
-                                        <a class="btn btn-warning" asp-action="DepositWithdraw" asp-controller="Consultant" asp-route-email="@user.Email">
+                                        <a class="btn btn-warning" asp-action="DepositWithdraw" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
                                             <i class="fas fa-money-bill-wave"></i> Deposit/Withdraw
                                         </a>
                                         <div class="btn-group">
-                                            <a class="btn btn-warning" asp-action="ConsultantUpdateUser" asp-controller="Consultant" asp-route-email="@user.Email">
+                                            <a class="btn btn-warning" asp-action="ConsultantUpdateUser" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a class="btn btn-danger" asp-action="ConsultantDeleteUser" asp-controller="Consultant" asp-route-email="@user.Email" onclick="return confirm('Are you sure you want to delete user: @user.Email?');">
+                                            <a class="btn btn-danger" asp-action="ConsultantDeleteUser" asp-controller="ConsultantDashboard" asp-route-email="@user.Email" onclick="return confirm('Are you sure you want to delete user: @user.Email?');">
                                                 <i class="fas fa-trash"></i> Delete
                                             </a>
-                                            <a class="btn btn-outline-primary" asp-action="ViewAllLogins" asp-controller="Consultant" asp-route-email="@user.Email">
+                                            <a class="btn btn-outline-primary" asp-action="ViewAllLogins" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
                                                 <i class="fas fa-sign-in-alt"></i> View Logins
                                             </a>
                                         </div>
@@ -85,7 +86,7 @@
                 <h4 class="text-center"><i class="fas fa-exclamation-triangle"></i> No users found</h4>
             }
         </div>
-        <h2>Your Managed Users</h2>
+        @* <h2>Your Managed Users</h2>
         @if (Model.ClientsManaged != null)
         {
             <div class="row">
@@ -98,7 +99,7 @@
                             </div>
                             <div class="card-body">
                                 <p class="card-text"><strong>Email:</strong> @user.Email</p>
-                                <p class="card-text"><strong>ID Number:</strong> @user.IDNumber</p>
+                                <p class="card-text"><strong>ID Number:</strong> @user.IDnumber</p>
 
                                 <div class="d-flex flex-column gap-2">
                                     <a class="btn btn-warning" asp-action="ConsultantUpdateUser" asp-controller="ConsultantDashboard" asp-route-id="@user.Id">
@@ -119,7 +120,52 @@
         {
             <h4 class="text-center"><i class="fas fa-exclamation-triangle"></i> No users found.</h4>
         }
-    </div>
+    </div> *@
+
+   @*  <div class="col-md-10">
+        <h3>Clients</h3>
+        @if (Model.appUsers.Any())
+        {
+            <div class="row">
+                @foreach (var user in Model.appUsers)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title"><i class="fas fa-user-circle"></i> @user.FirstName @user.LastName</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text"><i class="fas fa-credit-card"></i> Account No: @user.AccountNumber</p>
+                                <p class="card-text"><i class="fas fa-envelope"></i> Email: @user.Email</p>
+                                <p class="card-text"><i class="fas fa-id-badge"></i> Student/Staff No: @user.StudentStaffNumber</p>
+
+                                <div class="d-flex flex-column gap-2">
+                                    <a class="btn btn-warning" asp-action="DepositWithdraw" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
+                                        <i class="fas fa-money-bill-wave"></i> Deposit/Withdraw
+                                    </a>
+                                    <div class="btn-group">
+                                        <a class="btn btn-warning" asp-action="ConsultantUpdateUser" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a class="btn btn-danger" asp-action="ConsultantDeleteUser" asp-controller="ConsultantDashboard" asp-route-email="@user.Email" onclick="return confirm('Are you sure you want to delete user: @user.Email?');">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                        <a class="btn btn-outline-primary" asp-action="ViewAllLogins" asp-controller="ConsultantDashboard" asp-route-email="@user.Email">
+                                            <i class="fas fa-sign-in-alt"></i> View Logins
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <h4 class="text-center"><i class="fas fa-exclamation-triangle"></i> No users found</h4>
+        }
+    </div> *@
 </div>
 
 <!-- Ensure Bootstrap JavaScript is included -->

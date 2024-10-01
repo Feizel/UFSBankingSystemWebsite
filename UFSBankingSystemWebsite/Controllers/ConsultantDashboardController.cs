@@ -45,9 +45,9 @@ namespace UFSBankingSystemWebsite.Controllers
             // Create the view model
             var viewModel = new ConsultantViewModel
             {
-                ClientsManaged = clientsManaged.Select(c => new EditUserViewModel
+                ClientsManaged = clientsManaged.Select(c => new User
                 {
-                    IDNumber = c.IDnumber,
+                    IDnumber = c.IDnumber,
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     Email = c.Email
@@ -57,16 +57,27 @@ namespace UFSBankingSystemWebsite.Controllers
             };
 
             List<User> lstUsers = new List<User>();
-            foreach (var lstUser in _userManager.Users.ToList())
+            foreach (var uuser in _userManager.Users)
             {
-                if (await _userManager.IsInRoleAsync(user, "User"))
-                    lstUsers.Add(user);
+                if (await _userManager.IsInRoleAsync(uuser, "User"))
+                    lstUsers.Add(uuser);
             }
-
             return View(new ConsultantViewModel
             {
                 appUsers = lstUsers.AsQueryable()
             });
+
+            //List<User> lstUsers = new List<User>();
+            //foreach (var lstUser in _userManager.Users.ToList())
+            //{
+            //    if (await _userManager.IsInRoleAsync(user, "User"))
+            //        lstUsers.Add(user);
+            //}
+
+            //return View(new ConsultantViewModel
+            //{
+            //    appUsers = lstUsers.AsQueryable()
+            //});
         }
         public async Task<IActionResult> ViewAllLogins(string email)
         {

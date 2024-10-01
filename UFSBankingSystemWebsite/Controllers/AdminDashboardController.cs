@@ -29,36 +29,8 @@ namespace UFSBankingSystemWebsite.Controllers
             _userManager = userManager;
             _context = context;
         }
-
-        //public async Task<IActionResult> Index()
-        //{
-        //    // Retrieve transactions and add sample transactions for demonstration
-        //    var transactions = await _wrapper.Transactions.GetAllAsync();
-        //    transactions.AddRange(SampleData.SampleTransactions); // Add sample transactions
-
-        //    // Retrieve users by role
-        //    var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
-        //    var finAdvisors = (await _userManager.GetUsersInRoleAsync("FinancialAdvisor")).ToList();
-        //    var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
-
-        //    // Combine actual users with sample customers and staff for demonstration
-        //    users.AddRange(SampleData.SampleCustomers); // Add sample customers
-        //    users.AddRange(SampleData.SampleStaff); // Add sample staff
-
-        //    // Create the view model with all necessary data
-        //    var indexPageViewModel = new AdminViewModel()
-        //    {
-        //        CurrentPage = "index",
-        //        Transactions = transactions,
-        //        FinancialAdvisors = finAdvisors,
-        //        Consultants = consultants,
-        //        TotalUsers = users.Count, // Count all users including samples
-        //        Notifications = SampleData.SampleNotifications, // Use sample notifications
-        //        Users = users // Include all users in the view model if needed
-        //    };
-
-        //    return View(indexPageViewModel);
-        //}
+        [TempData]
+        public string Message { get; set; }
         public async Task<IActionResult> Index()
         {
             // Get the logged-in user's username
@@ -78,11 +50,6 @@ namespace UFSBankingSystemWebsite.Controllers
             var consultants = (await _userManager.GetUsersInRoleAsync("Consultant")).ToList();
             var finAdvisors = (await _userManager.GetUsersInRoleAsync("FinancialAdvisor")).ToList();
             var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
-
-            // Combine actual users with sample customers and staff for demonstration
-            //var users = (await _userManager.GetUsersInRoleAsync("User")).ToList();
-            //users.AddRange(SampleData.SampleCustomers); // Add sample customers
-            //users.AddRange(SampleData.SampleStaff); // Add sample staff
 
             // Calculate total users
             int totalUsersCount = users.Count;
@@ -156,18 +123,17 @@ namespace UFSBankingSystemWebsite.Controllers
                 return NotFound();
             }
 
-            // Assuming you have a method to get the bank account associated with the user
-            var bankAccount = await _context.BankAccounts.FirstOrDefaultAsync(b => b.Id == user.Id);
-
-            var model = new UserViewModel
+            var model = new EditUserViewModel
             {
                 Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IDNumber = user.IDnumber,
-                AccountNumber = bankAccount?.AccountNumber, // Use null-conditional operator
-                Balance = bankAccount?.Balance ?? 0, // Default to 0 if no account found
+                AccountNumber = await _context.BankAccounts
+                    .Where(b => b.Id == user.Id)
+                    .Select(b => b.AccountNumber)
+                    .FirstOrDefaultAsync(),
                 IsActive = user.IsActive
             };
 
@@ -175,7 +141,8 @@ namespace UFSBankingSystemWebsite.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AdminEditUser(UserViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminEditUser(EditUserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -185,7 +152,7 @@ namespace UFSBankingSystemWebsite.Controllers
                     return NotFound();
                 }
 
-                // Update user details
+                // Update user properties
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
@@ -195,6 +162,7 @@ namespace UFSBankingSystemWebsite.Controllers
                 user.IsActive = model.IsActive;
 
                 var result = await _userManager.UpdateAsync(user);
+
                 if (result.Succeeded)
                 {
                     TempData["Message"] = "User updated successfully!";
@@ -250,6 +218,9 @@ namespace UFSBankingSystemWebsite.Controllers
                 }
                 return View();
             }
+
+            TempData["Message"] = "User deleted successful!";
+
             return View();
         }
 
@@ -590,9 +561,6 @@ namespace UFSBankingSystemWebsite.Controllers
             await _wrapper.Transactions.RemoveAsync(id);
             return RedirectToAction("Index");
         }
-
-        [TempData]
-        public string Message { get; set; }
 
         [HttpGet]
         public async Task<IActionResult> ViewAllLogins(string email)

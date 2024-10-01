@@ -66,9 +66,9 @@
                     </span>
                 </td>
                 <td>
-                    <a class="btn btn-warning btn-sm" asp-controller="AdminDashboard" asp-action="EditUser" asp-route-id="@user.Id">Edit</a>
+                    <a class="btn btn-warning btn-sm" asp-controller="AdminDashboard" asp-action="AdminEditUser" asp-route-id="@user.Id">Edit</a>
                     <a class="btn btn-danger btn-sm" asp-controller="AdminDashboard" asp-action="AdminDeleteUser" asp-route-email="@user.Email" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
-                    <a class="btn btn-info btn-sm" asp-controller="AdminDashboard" asp-action="ViewUser" asp-route-id="@user.Id">View</a>
+                    <a class="btn btn-info btn-sm" asp-controller="AdminDashboard" asp-action="AdminViewUser" asp-route-id="@user.Id">View</a>
                     <a class="btn btn-secondary btn-sm" asp-controller="AdminDashboard" asp-action="ToggleUserStatus" asp-route-id="@user.Id" asp-route-isActive="@user.IsActive">
                         @(user.IsActive ? "Deactivate" : "Activate")
                     </a>
