@@ -1,0 +1,58 @@
+﻿@model UFSBankingSystemWebsite.Models.ViewModels.BankAccountViewModel
+
+<h2>Account Details for @Model.BankAccount.AccountNumber</h2>
+
+<h3>Account Information</h3>
+<table class="table">
+    <tr>
+        <th>Account Type</th>
+        <td>@Model.BankAccount.BankAccountType</td>
+    </tr>
+    <tr>
+        <th>Balance</th>
+        <td>@Model.BankAccount.Balance.ToString("C")</td>
+    </tr>
+    <tr>
+        <th>Account Number</th>
+        <td>@Model.BankAccount.AccountNumber</td>
+    </tr>
+</table>
+
+<h3>Transactions</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Balance After</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Transactions != null && Model.Transactions.Any())
+        {
+            foreach (var transaction in Model.Transactions)
+            {
+                <tr>
+                    <td>@transaction.TransactionDate.ToShortDateString()</td>
+                    <td>@transaction.Reference</td>
+                    <td>@transaction.Amount.ToString("C")</td>
+                    <td>@transaction.BalanceAfter.ToString("C")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No transactions found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="AccountOverview" asp-route-userId="@Model.BankAccount.Id" class="btn btn-secondary">Back to Account Overview</a>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}

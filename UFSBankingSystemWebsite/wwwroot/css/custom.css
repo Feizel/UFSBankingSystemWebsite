@@ -32,6 +32,55 @@ body
     text-align: center; /* Center text */
 }
 
+/* Heading styles */
+h1, h2, h3, h4 {
+    color: #2c3e50; /* Darker color for headings */
+    margin-bottom: 15px; /* Space below headings */
+    text-align: left; /* Align headings to the left */
+    font-weight: bold; /* Bold headings */
+}
+
+/* Specific heading sizes */
+h1 {
+    font-size: 2.5rem; /* Large heading size */
+}
+
+h2 {
+    font-size: 2rem; /* Medium heading size */
+}
+
+h3 {
+    font-size: 1.75rem; /* Smaller heading size */
+}
+
+h4 {
+    font-size: 1.5rem; /* Even smaller heading size */
+}
+
+/* Paragraph styles */
+p {
+    margin-bottom: 15px; /* Space below paragraphs */
+    text-align: justify; /* Justify text for better alignment */
+}
+
+/* Link styles */
+a {
+    color: #3498db; /* Link color */
+    text-decoration: none; /* Remove underline from links */
+}
+
+    a:hover {
+        text-decoration: underline; /* Underline on hover for better UX */
+    }
+
+/* Alert styles for messages (optional) */
+.alert {
+    padding: 15px;
+    background-color: #dff0d8; /* Light green background for success messages */
+    border-left: 5px solid #3c763d; /* Dark green border on the left */
+    margin-bottom: 20px;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;

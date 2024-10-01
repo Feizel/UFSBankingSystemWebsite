@@ -1,0 +1,14 @@
+﻿@model UFSBankingSystemWebsite.Models.ViewModels.WithdrawSuccessViewModel
+
+<div class="container mt-4">
+    <h2 class="text-success">Withdrawal Successful</h2>
+
+    <div class="alert alert-success">
+        <p>You have successfully withdrawn <strong>@Model.Amount.ToString("C")</strong> from account <strong>@Model.AccountNumber</strong>.</p>
+        <p>Withdrawal Date: <strong>@Model.WithdrawDate.ToString("f")</strong></p>
+    </div>
+
+    <a asp-controller="CustomerDashboard" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+
+    <a asp-controller="CustomerDashboard" asp-action="TransactionHistory" class="btn btn-secondary">View Transaction History</a>
+</div>

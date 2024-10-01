@@ -1,0 +1,26 @@
+﻿@model WithdrawViewModel
+
+<h2>Withdraw Funds</h2>
+
+<form asp-action="Withdraw" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="BankAccountId" class="form-label">Bank Account ID</label>
+        <input asp-for="BankAccountId" class="form-control" />
+        <span asp-validation-for="BankAccountId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label">Amount</label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Withdraw</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}

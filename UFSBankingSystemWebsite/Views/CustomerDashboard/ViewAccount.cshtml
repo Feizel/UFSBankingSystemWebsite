@@ -16,17 +16,7 @@
     </thead>
     <tbody>
 
-        @foreach (var transaction in Model.Transactions)
-        {
-        <tr>
-            <td>@transaction.TransactionDate.ToShortDateString()</td>
-            <td>@transaction.Description</td>
-            <td>@transaction.Amount</td>
-            <td>@transaction.BalanceAfter</td>
-        </tr>
-        }
-
-        @* @if (Model?.Transactions != null && Model.Transactions.Any())
+        @if (Model?.Transactions != null && Model.Transactions.Any())
         {
             foreach (var transaction in Model.Transactions)
             {
@@ -43,7 +33,7 @@
             <tr>
                 <td colspan="4" class="text-center">No transactions found.</td>
             </tr>
-        } *@
+        }
     </tbody>
 </table>
 

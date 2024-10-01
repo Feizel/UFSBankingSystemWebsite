@@ -82,11 +82,6 @@ namespace UFSBankingSystemWebsite.Models.ViewModels
         [Compare("Password", ErrorMessage = "Passwords must match")]
         public string ConfirmPassword { get; set; }
     }
-    public class TransferSuccessViewModel
-    {
-        public decimal Amount { get; set; }
-        public string ReceiverAccount { get; set; }
-    }
     public class ChangePasswordViewModel
     {
         [Required]

@@ -1,4 +1,4 @@
-﻿@model UFSBankingSystemWebsite.Models.ViewModels.CreateAccountViewModel
+﻿@model UFSBankingSystemWebsite.Models.ViewModels.CreateBankAccountViewModel
 
 @{
     ViewData["Title"] = "Create Account";
@@ -8,18 +8,13 @@
 
 <form asp-action="CreateAccount" method="post">
     <div class="mb-3">
-        <label asp-for="AccountName" class="form-label">Account Name</label>
-        <input asp-for="AccountName" class="form-control" required />
-        <span asp-validation-for="AccountName" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
         <label asp-for="AccountType" class="form-label">Account Type</label>
         <select asp-for="AccountType" class="form-select" required>
             <option value="">Select Account Type</option>
             <option value="Savings">Savings</option>
             <option value="Cheque">Cheque</option>
             <option value="Business">Business</option>
+            <option value="Fixed">Business</option>
             <!-- Add more account types as needed -->
         </select>
         <span asp-validation-for="AccountType" class="text-danger"></span>

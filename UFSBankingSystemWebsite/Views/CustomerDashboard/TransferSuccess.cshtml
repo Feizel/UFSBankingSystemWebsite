@@ -1,6 +1,21 @@
-﻿@model TransferSuccessViewModel
+﻿@model UFSBankingSystemWebsite.Models.ViewModels.TransferSuccessViewModel
 
-<h2>Transfer Successful</h2>
+<div class="container mt-4">
+    <h2 class="text-success">Transfer Successful</h2>
 
-<p>You have successfully transferred @Model.Amount.ToString("C") to account @Model.ReceiverAccount.</p>
-<a asp-controller="Client" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+    <div class="alert alert-success">
+        <p>You have successfully transferred <strong>@Model.Amount.ToString("C")</strong> to account <strong>@Model.ReceiverAccount</strong>.</p>
+        <p>Transfer Date: <strong>@Model.TransferDate.ToString("f")</strong></p>
+        <p>From Account: <strong>@Model.SenderAccount</strong></p>
+    </div>
+
+    <a asp-controller="CustomerDashboard" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+
+    <a asp-controller="CustomerDashboard" asp-action="TransactionHistory" class="btn btn-secondary">View Transaction History</a>
+</div>
+
+@section Scripts {
+    <script>
+        // Optional: Add any JavaScript functionality here if needed
+    </script>
+}

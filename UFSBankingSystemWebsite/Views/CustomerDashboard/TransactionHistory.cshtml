@@ -14,25 +14,27 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var transaction in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>@transaction.TransactionDate.ToString("g")</td>
+                    <td>@transaction.Amount.ToString("C")</td>
+                    <td>@(transaction.Status ?? "Pending")</td>
+                    <td>@transaction.BankAccountIdSender</td>
+                    <td>@transaction.BankAccountIdReceiver</td>
+                    <td>@transaction.Reference</td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@transaction.TransactionDate.ToString("g")</td>
-                <td>@transaction.Amount.ToString("C")</td>
-                <td>
-                    @if (transaction.BankAccountIdSender.ToString() == transaction.UserEmail)
-                    {
-                        <span class="text-danger">Approved</span>
-                    }
-                    else
-                    {
-                        <span class="text-success">Approved</span>
-                    }
-                </td>
-                <td>@transaction.BankAccountIdSender</td>
-                <td>@transaction.BankAccountIdReceiver</td>
-                <td>@transaction.Reference</td>
+                <td colspan="6" class="text-center text-white">No transactions found.</td>
             </tr>
         }
     </tbody>
 </table>
+
+<a asp-controller="CustomerDashboard" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>

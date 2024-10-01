@@ -5,13 +5,18 @@
         </a>
     </li>
     <li>
-        <a asp-controller="CustomerDashboard" asp-action="ViewAccount">
+        <a asp-controller="CustomerDashboard" asp-action="AccountOverview">
             <i class="fas fa-wallet"></i> Account Overview
         </a>
     </li>
     <li>
-        <a asp-controller="CustomerDashboard" asp-action="TransferMoneyView">
+        <a asp-controller="CustomerDashboard" asp-action="Transfer">
             <i class="fas fa-exchange-alt"></i> Transfer Funds
+        </a>
+    </li>
+    <li>
+        <a asp-controller="CustomerDashboard" asp-action="Withdraw">
+            <i class="fas fa-money-bill-wave"></i> Withdraw Funds
         </a>
     </li>
     <li>
@@ -20,7 +25,17 @@
         </a>
     </li>
     <li>
-        <a asp-controller="Notification" asp-action="Index">
+        <a asp-controller="CustomerDashboard" asp-action="AddRating">
+            <i class="fas fa-star"></i> Ratings & Reviews
+        </a>
+    </li>
+    <li>
+        <a asp-controller="CustomerDashboard" asp-action="ViewAdvice">
+            <i class="fas fa-comments-dollar"></i> Financial Advice
+        </a>
+    </li>
+    <li>
+        <a asp-controller="CustomerDashboard" asp-action="NotificationMessage">
             <i class="fas fa-bell"></i> Notifications
         </a>
     </li>
@@ -32,16 +47,6 @@
     <li>
         <a asp-controller="Profile" asp-action="ChangePassword">
             <i class="fas fa-key"></i> Change Password
-        </a>
-    </li>
-    <li>
-        <a asp-controller="CustomerDashboard" asp-action="UserRatings">
-            <i class="fas fa-star"></i> Ratings & Reviews
-        </a>
-    </li>
-    <li>
-        <a asp-controller="FinancialAdvice" asp-action="ViewAdvice">
-            <i class="fas fa-comments-dollar"></i> Financial Advice
         </a>
     </li>
     <li>

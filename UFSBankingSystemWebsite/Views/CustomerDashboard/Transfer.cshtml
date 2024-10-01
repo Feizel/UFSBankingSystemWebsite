@@ -1,0 +1,30 @@
+﻿@model MoneyTransferViewModel
+
+<h2>Transfer Funds</h2>
+
+<form asp-action="Transfer" method="post">
+    <div class="mb-3">
+        <label asp-for="SenderBankAccountId" class="form-label">Sender's Bank Account ID</label>
+        <input asp-for="SenderBankAccountId" class="form-control" />
+        <span asp-validation-for="SenderBankAccountId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReceiverBankAccountId" class="form-label">Receiver's Bank Account ID</label>
+        <input asp-for="ReceiverBankAccountId" class="form-control" />
+        <span asp-validation-for="ReceiverBankAccountId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label">Amount</label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Transfer</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
